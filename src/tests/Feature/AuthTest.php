@@ -2,7 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 class AuthTest extends TestCase
@@ -44,5 +46,49 @@ class AuthTest extends TestCase
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors('email');
+    }
+
+    public function test_user_can_login_successfully(): void
+    {
+        // Kreiramo korisnika u bazi
+        User::factory()->create([
+            'email' => 'loginuser@testmail.com',
+            'password' => Hash::make('LoginUser123'),
+        ]);
+
+        $loginData = [
+            'email' => 'loginuser@testmail.com',
+            'password' => 'LoginUser123'
+        ];
+
+        $response = $this->postJson('/api/login', $loginData);
+
+        $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'data' => [
+                'user' => ['id', 'name', 'email'],
+                'access_token',
+                'token_type'
+            ]
+        ]);
+    }
+
+    public function test_login_fails_with_invalid_credentials(): void
+    {
+        User::factory()->create([
+            'email' => 'loginuser@testmail.com',
+            'password' => Hash::make('LoginUser123'),
+        ]);
+
+        $loginData = [
+            'email' => 'loginuser@testmail.com',
+            'password' => 'WrongPassword123'
+        ];
+
+        $response = $this->postJson('/api/login', $loginData);
+
+        // ValidationException vraća 422 status
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['email']);
     }
 }
