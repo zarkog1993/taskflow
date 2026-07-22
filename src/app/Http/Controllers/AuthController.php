@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginRequest;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Resources\AuthResource;
@@ -27,5 +28,22 @@ class AuthController extends Controller
         $result = $this->authService->register($data);
 
         return (new AuthResource($result))->response()->setStatusCode(201);
+    }
+
+    /**
+     * Login a user.
+     *
+     * @param LoginRequest $request
+     * @return JsonResponse
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function login(LoginRequest $request): JsonResponse
+    {
+        $credentials = $request->validated();
+        $result = $this->authService->login($credentials);
+
+        return (new AuthResource($result))
+            ->response()
+            ->setStatusCode(200); // Za login vraćamo 200 OK
     }
 }
