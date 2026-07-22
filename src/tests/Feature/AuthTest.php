@@ -91,4 +91,23 @@ class AuthTest extends TestCase
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['email']);
     }
+
+    public function test_authenticated_user_can_logout(): void
+    {
+        $user = User::factory()->create([
+            'email' => 'logoutuser@testmail.com',
+            'password' => Hash::make('LogoutUser123'),
+        ]);
+
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+        ])->postJson('/api/logout');
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            'message' => 'Uspešno ste se odjavili.'
+        ]);
+    }
 }

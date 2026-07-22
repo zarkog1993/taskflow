@@ -41,4 +41,10 @@ class AuthService
             'access_token' => $token,
         ];
     }
+
+    public function logout($user): void
+    {
+        // Briše token koji je trenutno iskorišćen za ovaj zahtev
+        $user->currentAccessToken()->delete();
+    }
 }
