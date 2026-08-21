@@ -28,6 +28,11 @@ class User extends Authenticatable
         'is_admin' => false,
     ];
 
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
+
     protected function casts(): array
     {
         return [
