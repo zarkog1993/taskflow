@@ -71,34 +71,74 @@ class UserTest extends TestCase
 
     public function test_authenticated_user_can_update_user_without_changing_email(): void
     {
-        $targetUser = User::factory()->create([
-            'name' => 'Staro Ime',
-            'email' => 'staro@testmail.com'
-        ]);
-
         $updatePayload = [
             'name' => 'Novo Novo Ime',
-            'email' => 'staro@testmail.com' // Isti email – testira Rule::unique()->ignore()
+            'email' => $this->authUser->email // Ažurira SEBE
         ];
 
-        $response = $this->putJson("/api/users/{$targetUser->id}", $updatePayload);
+        $response = $this->putJson("/api/users/{$this->authUser->id}", $updatePayload);
 
         $response->assertStatus(200);
         $this->assertDatabaseHas('users', [
-            'id' => $targetUser->id,
+            'id' => $this->authUser->id,
             'name' => 'Novo Novo Ime'
         ]);
     }
 
     public function test_authenticated_user_can_delete_user(): void
     {
-        $targetUser = User::factory()->create();
-
-        $response = $this->deleteJson("/api/users/{$targetUser->id}");
+        $response = $this->deleteJson("/api/users/{$this->authUser->id}"); // Briše SEBE
 
         $response->assertStatus(204);
         $this->assertDatabaseMissing('users', [
-            'id' => $targetUser->id
+            'id' => $this->authUser->id
+        ]);
+    }
+
+    public function test_authenticated_user_cannot_delete_another_user(): void
+    {
+        $anotherUser = User::factory()->create();
+
+        $response = $this->deleteJson("/api/users/{$anotherUser->id}");
+
+        $response->assertStatus(403); // Forbidden
+    }
+
+    public function test_user_cannot_update_another_user(): void
+    {
+        $anotherUser = User::factory()->create();
+
+        $response = $this->putJson("/api/users/{$anotherUser->id}", [
+            'name' => 'Neovlašćena Izmena',
+        ]);
+
+        $response->assertStatus(403);
+    }
+
+    public function test_user_can_update_their_own_profile(): void
+    {
+        $response = $this->putJson("/api/users/{$this->authUser->id}", [
+            'name' => 'Novo Moje Ime',
+        ]);
+
+        $response->assertStatus(200);
+        $this->assertDatabaseHas('users', [
+            'id' => $this->authUser->id,
+            'name' => 'Novo Moje Ime',
+        ]);
+    }
+
+    public function test_admin_can_delete_any_user(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $targetUser = User::factory()->create();
+
+        $response = $this->actingAs($admin, 'sanctum')
+            ->deleteJson("/api/users/{$targetUser->id}");
+
+        $response->assertStatus(204);
+        $this->assertDatabaseMissing('users', [
+            'id' => $targetUser->id,
         ]);
     }
 }
