@@ -7,8 +7,8 @@ use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Services\UserService;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
 {
@@ -43,13 +43,17 @@ class UserController extends Controller
 
     public function update(UpdateUserRequest $request, User $user): UserResource
     {
+        Gate::authorize('update', $user);
+
         $updatedUser = $this->userService->update($user, $request->validated());
 
         return new UserResource($updatedUser);
     }
 
-    public function destroy(User $user): Response
+    public function destroy(User $user)
     {
+        Gate::authorize('delete', $user);
+
         $this->userService->delete($user);
 
         return response()->noContent();
