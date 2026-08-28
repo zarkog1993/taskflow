@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -21,4 +22,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // RESTful User CRUD rute
     Route::apiResource('users', UserController::class);
     Route::apiResource('tasks', TaskController::class);
+
+    // Direktne rute za komentare
+    Route::put('/comments/{comment}', [CommentController::class, 'update']);
+    Route::delete('/comments/{comment}', [CommentController::class, 'destroy']);
 });
