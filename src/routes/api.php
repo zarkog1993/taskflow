@@ -22,6 +22,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // RESTful User CRUD rute
     Route::apiResource('users', UserController::class);
     Route::apiResource('tasks', TaskController::class);
+    Route::get('/tasks/{task}/comments', [CommentController::class, 'index']);
+    Route::post('/tasks/{task}/comments', [CommentController::class, 'store']);
 
     // Direktne rute za komentare
     Route::put('/comments/{comment}', [CommentController::class, 'update']);
