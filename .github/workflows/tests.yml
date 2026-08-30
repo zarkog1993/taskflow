@@ -17,15 +17,15 @@ jobs:
     - name: Setup PHP environment
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '8.3'
-        extensions: mbstring, dom, fileinfo, sqlite3, pdo_sqlite
+        php-version: '8.2'
+        extensions: mbstring, dom, fileinfo, sqlite3, pdo_sqlite, bcmath, ctype, json, openssl, pdo, tokenizer, xml
         coverage: none
 
     - name: Copy .env.testing
       run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
     - name: Install Composer Dependencies
-      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      run: composer install --no-ansi --no-interaction --no-progress --prefer-dist
 
     - name: Generate Application Key
       run: php artisan key:generate
