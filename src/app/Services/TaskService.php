@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Task;
+use App\Notifications\TaskAssignedNotification;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
@@ -41,11 +42,20 @@ class TaskService
         // Automatski dodeljujemo ulogovanog korisnika kao kreatora
         $data['user_id'] = $user->id;
 
-        return Task::create($data);
+        $task = Task::create($data);
+
+        if ($task->assigned_to && (int) $task->assigned_to !== (int) $task->user_id) {
+            $task->assignedUser?->notify(new TaskAssignedNotification($task));
+        }
+
+        return $task;
     }
 
     public function update(Task $task, array $data): Task
     {
+        if ($task->assigned_to && (int) $task->assigned_to !== (int) $task->user_id) {
+            $task->assignedUser?->notify(new TaskAssignedNotification($task));
+        }
         $task->update($data);
 
         return $task;
