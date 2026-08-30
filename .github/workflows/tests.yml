@@ -10,6 +10,10 @@ jobs:
   laravel-tests:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: src  # Promeni 'src' u naziv tvog podfoldera ako je npr. 'taskflow-api'
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
