@@ -11,6 +11,13 @@
       >
         Kanban Board
       </span>
+      <router-link 
+        to="/users" 
+        class="text-sm font-medium text-gray-300 hover:text-white transition px-2 py-1 rounded"
+        active-class="text-indigo-400 font-semibold"
+      >
+        Korisnici
+    </router-link>
     </div>
 
     <!-- Meni za ULOGOVANE korisnike -->

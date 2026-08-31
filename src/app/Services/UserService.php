@@ -10,7 +10,7 @@ class UserService
 {
     public function getAllPaginated(int $perPage = 15): LengthAwarePaginator
     {
-        return User::latest()->paginate($perPage);
+        return User::with('roles')->paginate();
     }
 
     public function store(array $data): User
@@ -29,6 +29,13 @@ class UserService
         $user->update($data);
 
         return $user;
+    }
+
+    public function updateRoles(User $user, array $roleIds): User
+    {
+        $user->roles()->sync($roleIds);
+
+        return $user->load('roles');
     }
 
     public function delete(User $user): bool
