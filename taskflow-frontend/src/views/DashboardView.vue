@@ -1,7 +1,6 @@
 <template>
   <div class="min-h-screen bg-gray-900 text-white">
     <!-- Navbar sa notifikacijama i korisničkim menijem -->
-    <Navbar />
 
     <!-- Glavni sadržaj -->
     <main class="p-6 max-w-7xl mx-auto">
@@ -23,7 +22,6 @@
 </template>
 
 <script setup>
-  import Navbar from '../components/Navbar.vue'
   // Ostali uvozi...
   import { ref } from 'vue'
 

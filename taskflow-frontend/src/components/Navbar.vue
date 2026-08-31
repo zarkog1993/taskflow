@@ -1,21 +1,24 @@
 <template>
   <header class="bg-gray-800 border-b border-gray-700 px-6 py-4 flex items-center justify-between">
-    <!-- Lijevi deo: Logo i naziv aplikacije -->
+    <!-- Logo i naziv -->
     <div class="flex items-center space-x-3">
       <router-link to="/" class="flex items-center space-x-2">
         <span class="text-2xl font-bold text-indigo-400 tracking-tight">TaskFlow</span>
       </router-link>
-      <span class="text-xs bg-indigo-500/20 text-indigo-300 px-2.5 py-1 rounded-full border border-indigo-500/30 font-medium">
+      <span 
+        v-if="authStore.isAuthenticated" 
+        class="text-xs bg-indigo-500/20 text-indigo-300 px-2.5 py-1 rounded-full border border-indigo-500/30 font-medium"
+      >
         Kanban Board
       </span>
     </div>
 
-    <!-- Desni deo: Notifikacije, Korisnik i Odjava -->
-    <div class="flex items-center space-x-4">
-      <!-- Meni za obaveštenja -->
+    <!-- Meni za ULOGOVANE korisnike -->
+    <div v-if="authStore.isAuthenticated" class="flex items-center space-x-4">
+      <!-- Notifikacije -->
       <NotificationDropdown />
 
-      <!-- Podaci o ulogovanom korisniku -->
+      <!-- Profil i Odjava -->
       <div class="flex items-center space-x-3 pl-4 border-l border-gray-700">
         <div class="flex flex-col text-right">
           <span class="text-sm font-semibold text-gray-200 leading-tight">
@@ -36,6 +39,22 @@
           </svg>
         </button>
       </div>
+    </div>
+
+    <!-- Meni za NE ULOGOVANE korisnike -->
+    <div v-else class="flex items-center space-x-3">
+      <router-link 
+        to="/login" 
+        class="text-sm font-medium text-gray-300 hover:text-white px-3 py-2 rounded-lg transition"
+      >
+        Prijava
+      </router-link>
+      <router-link 
+        to="/register" 
+        class="text-sm font-medium bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg shadow-md transition"
+      >
+        Registracija
+      </router-link>
     </div>
   </header>
 </template>
