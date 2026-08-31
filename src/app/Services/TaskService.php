@@ -16,10 +16,14 @@ class TaskService
     public function getPaginatedForUser(User $user, array $filters = [], int $perPage = 15): LengthAwarePaginator
     {
         return Task::query()
-            // 1. Osnovna autorizacija na nivou upita (Vidim samo svoje i meni dodeljene)
-            ->where(function ($query) use ($user) {
-                $query->where('user_id', $user->id)
+            // 1. Autorizacija na nivou upita:
+            // Ako NIJE admin, vidi samo svoje zadatke i zadatke koji su mu dodeljeni.
+            // Ako JESTE admin (hasRole('admin')), ovaj uslov se preskače i vratiće sve zadatke.
+            ->when(!$user->hasRole('admin'), function ($query) use ($user) {
+                $query->where(function ($q) use ($user) {
+                    $q->where('user_id', $user->id)
                     ->orWhere('assigned_to', $user->id);
+                });
             })
             // 2. Opcioni filter po statusu (npr. 'todo', 'in_progress', 'done')
             ->when(!empty($filters['status']), function ($query) use ($filters) {
