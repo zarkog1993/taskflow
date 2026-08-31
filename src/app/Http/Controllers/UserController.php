@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Services\UserService;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
 
@@ -57,5 +58,19 @@ class UserController extends Controller
         $this->userService->delete($user);
 
         return response()->noContent();
+    }
+
+    public function updateRoles(Request $request, User $user): UserResource
+    {
+        Gate::authorize('update', $user); // ili tvoja polisa za izmenu uloga
+
+        $request->validate([
+            'roles' => 'array',
+            'roles.*' => 'exists:roles,id',
+        ]);
+
+        $updatedUser = $this->userService->updateRoles($user, $request->input('roles', []));
+
+        return new UserResource($updatedUser);
     }
 }

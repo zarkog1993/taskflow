@@ -37,7 +37,7 @@ class UserPolicy
 
     public function update(User $user, User $model): bool
     {
-        return (int) $user->id === (int) $model->id;
+        return $user->hasRole('admin') || (int) $user->id === (int) $model->id;
     }
 
     public function delete(User $user, User $model): bool
