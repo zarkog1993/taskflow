@@ -17,6 +17,8 @@ return new class extends Migration
             $table->date('date_of_birth')->nullable();
             $table->enum('fitness_status', ['fit', 'injured', 'rehab', 'absent'])->default('fit');
             $table->text('medical_notes')->nullable();
+            $table->string('category')->default('seniori'); // npr. u11, u13, u15, u17, u19, seniori
+            $table->enum('seniority', ['academy', 'youth', 'senior'])->default('senior');
             $table->timestamps();
         });
     }

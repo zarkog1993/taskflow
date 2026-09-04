@@ -22,6 +22,13 @@
       >
         Korisnici
       </router-link>
+      <router-link 
+        to="/players" 
+        class="text-sm font-medium text-gray-300 hover:text-white transition px-2 py-1 rounded"
+        active-class="text-indigo-400 font-semibold"
+      >
+        Igrači
+      </router-link>
     </div>
 
     <!-- Meni za ULOGOVANE korisnike -->
