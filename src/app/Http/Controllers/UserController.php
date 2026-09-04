@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
@@ -30,11 +31,14 @@ class UserController extends Controller
         return UserResource::collection($users);
     }
 
-    public function store(StoreUserRequest $request): UserResource
+    public function store(StoreUserRequest $request): JsonResponse
     {
-        $data = $request->validated();
-        $user = $this->userService->store($data);
-        return new UserResource($user);
+        // Prosleđujemo sve validirane podatke servisu koji kreira korisnika i njegov profil
+        $user = $this->userService->store($request->validated());
+
+        return response()->json([
+            'data' => new UserResource($user)
+        ], 201);
     }
 
     public function show(User $user): UserResource

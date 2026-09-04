@@ -18,24 +18,17 @@ class UserService
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
-            'password' => bcrypt($data['password'] ?? 'password123'),
+            'password' => bcrypt($data['password']),
         ]);
 
-        // Automatski dodeli 'player' ulogu ako je prosleđen profil igrača
-        if (isset($data['player_profile'])) {
-            $playerRole = Role::where('slug', 'player')->first();
-            if ($playerRole) {
-                $user->roles()->sync([$playerRole->id]);
-            }
-
+        if (!empty($data['player_profile'])) {
             $user->playerProfile()->create([
                 'jersey_number' => $data['player_profile']['jersey_number'] ?? null,
                 'primary_position' => $data['player_profile']['primary_position'] ?? 'CM',
+                'preferred_foot' => $data['player_profile']['preferred_foot'] ?? 'right',
                 'category' => $data['player_profile']['category'] ?? 'seniori',
                 'seniority' => $data['player_profile']['seniority'] ?? 'senior',
-                'preferred_foot' => $data['player_profile']['preferred_foot'] ?? 'right',
                 'fitness_status' => $data['player_profile']['fitness_status'] ?? 'fit',
-                'date_of_birth' => $data['player_profile']['date_of_birth'] ?? null,
             ]);
         }
 

@@ -229,13 +229,13 @@ const showAddModal = ref(false)
 const newPlayer = reactive({
   name: '',
   email: '',
-  password: 'password123',
-  jersey_number: null,
-  primary_position: 'CM',
-  preferred_foot: 'right',
-  category: 'seniori',
-  seniority: 'senior',
-  fitness_status: 'fit'
+  password: '',
+  jersey_number: '',
+  primary_position: '',
+  preferred_foot: '',
+  category: '',
+  seniority: '',
+  fitness_status: ''
 })
 
 onMounted(() => {
@@ -257,6 +257,7 @@ const handleCreatePlayer = async () => {
       name: newPlayer.name,
       email: newPlayer.email,
       password: newPlayer.password,
+      password_confirmation: newPlayer.password, // Dodato polje da prođe validaciju
       player_profile: {
         jersey_number: newPlayer.jersey_number,
         primary_position: newPlayer.primary_position,
@@ -268,12 +269,18 @@ const handleCreatePlayer = async () => {
     })
 
     showAddModal.value = false
-    userStore.fetchUsers() // Osveži registar
+    userStore.fetchUsers()
 
     // Reset forme
     newPlayer.name = ''
     newPlayer.email = ''
-    newPlayer.jersey_number = null
+    newPlayer.jersey_number = ''
+    newPlayer.password = ''
+    newPlayer.category = ''
+    newPlayer.seniority = ''
+    newPlayer.primary_position = ''
+    newPlayer.preferred_foot = ''
+    newPlayer.fitness_status = ''
   } catch (err) {
     alert(err.response?.data?.message || 'Greška pri kreiranju igrača')
   }
