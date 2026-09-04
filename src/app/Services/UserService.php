@@ -3,43 +3,48 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Models\Role;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Hash;
 
 class UserService
 {
-    public function getAllPaginated(int $perPage = 15): LengthAwarePaginator
+    public function getAllPaginated(): LengthAwarePaginator
     {
-        return User::with(['roles', 'playerProfile'])->paginate($perPage);
+        return User::with(['roles', 'playerProfile'])->latest()->paginate(20);
     }
 
     public function store(array $data): User
     {
-        $data['password'] = Hash::make($data['password']);
+        $user = User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => bcrypt($data['password'] ?? 'password123'),
+        ]);
 
-        return User::create($data);
-    }
+        // Automatski dodeli 'player' ulogu ako je prosleđen profil igrača
+        if (isset($data['player_profile'])) {
+            $playerRole = Role::where('slug', 'player')->first();
+            if ($playerRole) {
+                $user->roles()->sync([$playerRole->id]);
+            }
 
-    public function update(User $user, array $data): User
-    {
-        if (isset($data['password'])) {
-            $data['password'] = Hash::make($data['password']);
+            $user->playerProfile()->create([
+                'jersey_number' => $data['player_profile']['jersey_number'] ?? null,
+                'primary_position' => $data['player_profile']['primary_position'] ?? 'CM',
+                'category' => $data['player_profile']['category'] ?? 'seniori',
+                'seniority' => $data['player_profile']['seniority'] ?? 'senior',
+                'preferred_foot' => $data['player_profile']['preferred_foot'] ?? 'right',
+                'fitness_status' => $data['player_profile']['fitness_status'] ?? 'fit',
+                'date_of_birth' => $data['player_profile']['date_of_birth'] ?? null,
+            ]);
         }
 
-        $user->update($data);
-
-        return $user;
+        return $user->load(['roles', 'playerProfile']);
     }
 
     public function updateRoles(User $user, array $roleIds): User
     {
         $user->roles()->sync($roleIds);
-
-        return $user->load('roles');
-    }
-
-    public function delete(User $user): bool
-    {
-        return $user->delete();
+        return $user->load(['roles', 'playerProfile']);
     }
 }
