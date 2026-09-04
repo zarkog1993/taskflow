@@ -2,7 +2,7 @@
   <div class="bg-gray-800 border border-gray-700/80 rounded-lg p-4 shadow-sm hover:border-indigo-500/50 transition">
     <div class="flex justify-between items-start mb-2">
       <h4 class="font-semibold text-sm text-gray-100 leading-snug">{{ task.title }}</h4>
-      
+
       <!-- Bedž za prioritet -->
       <span 
         :class="[

@@ -22,6 +22,9 @@ class CommentService
             ->get();
     }
 
+    /**
+     * Kreira komentar za zadatak i obaveštava relevantne korisnike.
+     */
     public function createForTask(User $user, Task $task, array $data): Model
     {
         $comment = $task->comments()->create([
