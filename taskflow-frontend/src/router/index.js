@@ -3,6 +3,7 @@ import LoginView from "../views/LoginView.vue"
 import RegisterView from "../views/RegisterView.vue"
 import DashboardView from "../views/DashboardView.vue"
 import UsersView from "../views/UsersView.vue"
+import Players from "../views/PlayersView.vue"
 
 const routes = [
     {
@@ -28,7 +29,13 @@ const routes = [
         name: 'users',
         component: UsersView,
         meta: { requiresAuth: true }
-    }
+    },
+    {
+        path: '/players',
+        name: 'players',
+        component: Players,
+        meta: { requiresAuth: true }
+    },
 ]
 
 const router = createRouter({

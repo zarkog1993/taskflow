@@ -10,7 +10,7 @@ class UserService
 {
     public function getAllPaginated(int $perPage = 15): LengthAwarePaginator
     {
-        return User::with('roles')->paginate();
+        return User::with(['roles', 'playerProfile'])->paginate($perPage);
     }
 
     public function store(array $data): User

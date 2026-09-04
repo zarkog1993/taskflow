@@ -28,6 +28,7 @@ class UserResource extends JsonResource
                     ];
                 });
             }),
+            'player_profile' => $this->whenLoaded('playerProfile'),
             'created_at' => $this->created_at->toIso8601String(),
         ];
     }
