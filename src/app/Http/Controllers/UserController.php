@@ -8,7 +8,6 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
 

@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\User;
-use App\Models\Role;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class UserService
@@ -33,6 +32,21 @@ class UserService
         }
 
         return $user->load(['roles', 'playerProfile']);
+    }
+
+    public function update(User $user, array $data): User
+    {
+        $user->update(array_filter([
+            'name' => $data['name'] ?? null,
+            'email' => $data['email'] ?? null,
+        ]));
+
+        return $user->fresh(['roles', 'playerProfile']);
+    }
+
+    public function delete(User $user): bool
+    {
+        return $user->delete();
     }
 
     public function updateRoles(User $user, array $roleIds): User
