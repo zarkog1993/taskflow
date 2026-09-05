@@ -4,6 +4,7 @@ import RegisterView from "../views/RegisterView.vue"
 import DashboardView from "../views/DashboardView.vue"
 import UsersView from "../views/UsersView.vue"
 import Players from "../views/PlayersView.vue"
+import TrainingsView from "../views/TrainingsView.vue"
 
 const routes = [
     {
@@ -34,6 +35,12 @@ const routes = [
         path: '/players',
         name: 'players',
         component: Players,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/trainings',
+        name: 'trainings',
+        component: TrainingsView,
         meta: { requiresAuth: true }
     },
 ]

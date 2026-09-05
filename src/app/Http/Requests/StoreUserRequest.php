@@ -23,9 +23,16 @@ class StoreUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:6|confirmed',
+            'player_profile' => 'nullable|array',
+            'player_profile.jersey_number' => 'nullable|integer',
+            'player_profile.primary_position' => 'nullable|string',
+            'player_profile.preferred_foot' => 'nullable|string',
+            'player_profile.category' => 'nullable|string',
+            'player_profile.seniority' => 'nullable|string',
+            'player_profile.fitness_status' => 'nullable|string',
         ];
     }
 }

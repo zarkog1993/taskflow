@@ -1,102 +1,65 @@
 <template>
-  <header
-    class="bg-gray-800 border-b border-gray-700 px-6 py-4 flex items-center justify-between"
-  >
-    <!-- Logo i naziv -->
-    <div class="flex items-center space-x-3">
-      <router-link to="/" class="flex items-center space-x-2">
-        <span class="text-2xl font-bold text-indigo-400 tracking-tight"
-          >TaskFlow</span
-        >
-      </router-link>
-      <span
-        v-if="authStore.isAuthenticated"
-        class="text-xs bg-indigo-500/20 text-indigo-300 px-2.5 py-1 rounded-full border border-indigo-500/30 font-medium"
-      >
-        Kanban Board
-      </span>
-      <router-link
-        to="/users"
-        class="text-sm font-medium text-gray-300 hover:text-white transition px-2 py-1 rounded"
-        active-class="text-indigo-400 font-semibold"
-      >
-        Korisnici
-      </router-link>
-      <router-link 
-        to="/players" 
-        class="text-sm font-medium text-gray-300 hover:text-white transition px-2 py-1 rounded"
-        active-class="text-indigo-400 font-semibold"
-      >
-        Igrači
-      </router-link>
-    </div>
+  <header class="bg-gray-900 border-b border-gray-800 sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-6">
+        <router-link to="/" class="flex items-center space-x-2">
+          <span class="text-2xl font-bold text-indigo-400 tracking-tight">TaskFlow</span>
+        </router-link>
 
-    <!-- Meni za ULOGOVANE korisnike -->
-    <div v-if="authStore.isAuthenticated" class="flex items-center space-x-4">
-      <!-- Notifikacije -->
-      <NotificationDropdown />
-
-      <!-- Profil i Odjava -->
-      <div class="flex items-center space-x-3 pl-4 border-l border-gray-700">
-        <div class="flex flex-col text-right">
-          <span class="text-sm font-semibold text-gray-200 leading-tight">
-            {{ authStore.user?.name || "Korisnik" }}
-          </span>
-          <span class="text-[11px] text-gray-400">
-            {{ authStore.user?.email }}
-          </span>
-        </div>
-
-        <button
-          @click="handleLogout"
-          class="p-2 text-gray-400 hover:text-red-400 hover:bg-gray-700/50 rounded-lg transition"
-          title="Odjavi se"
-        >
-          <svg
-            class="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+        <nav v-if="authStore.isAuthenticated" class="flex items-center space-x-3 pl-4 border-l border-gray-800">
+          <router-link 
+            to="/" 
+            class="text-xs font-semibold text-gray-300 hover:text-white transition px-3 py-1.5 rounded-lg"
+            active-class="bg-indigo-600/20 text-indigo-400 border border-indigo-500/30"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-            />
-          </svg>
+            Dashboard
+          </router-link>
+
+          <router-link 
+            to="/trainings" 
+            class="text-xs font-semibold text-gray-300 hover:text-white transition px-3 py-1.5 rounded-lg"
+            active-class="bg-indigo-600/20 text-indigo-400 border border-indigo-500/30"
+          >
+            Trening Sesije
+          </router-link>
+
+          <router-link 
+            to="/players" 
+            class="text-xs font-semibold text-gray-300 hover:text-white transition px-3 py-1.5 rounded-lg"
+            active-class="bg-indigo-600/20 text-indigo-400 border border-indigo-500/30"
+          >
+            Igrači / Registar
+          </router-link>
+
+          <router-link 
+            to="/users" 
+            class="text-xs font-semibold text-gray-300 hover:text-white transition px-3 py-1.5 rounded-lg"
+            active-class="bg-indigo-600/20 text-indigo-400 border border-indigo-500/30"
+          >
+            Korisnici
+          </router-link>
+        </nav>
+      </div>
+
+      <div v-if="authStore.isAuthenticated" class="flex items-center space-x-4">
+        <div class="text-right">
+          <div class="text-xs font-bold text-white">{{ authStore.user?.name }}</div>
+          <div class="text-[10px] text-gray-400">{{ authStore.user?.email }}</div>
+        </div>
+        <button 
+          @click="authStore.logout" 
+          class="text-gray-400 hover:text-red-400 p-2 transition"
+          title="Odjava"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
         </button>
       </div>
-    </div>
-
-    <!-- Meni za NE ULOGOVANE korisnike -->
-    <div v-else class="flex items-center space-x-3">
-      <router-link
-        to="/login"
-        class="text-sm font-medium text-gray-300 hover:text-white px-3 py-2 rounded-lg transition"
-      >
-        Prijava
-      </router-link>
-      <router-link
-        to="/register"
-        class="text-sm font-medium bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg shadow-md transition"
-      >
-        Registracija
-      </router-link>
     </div>
   </header>
 </template>
 
 <script setup>
-import { useRouter } from "vue-router";
-import { useAuthStore } from "../stores/auth";
-import NotificationDropdown from "./NotificationDropdown.vue";
+import { useAuthStore } from '../stores/auth'
 
-const router = useRouter();
-const authStore = useAuthStore();
-
-const handleLogout = async () => {
-  await authStore.logout();
-  router.push({ name: "login" });
-};
+const authStore = useAuthStore()
 </script>
