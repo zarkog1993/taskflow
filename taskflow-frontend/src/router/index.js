@@ -1,10 +1,12 @@
 import { createRouter, createWebHistory } from "vue-router"
-import LoginView from "../views/LoginView.vue"
 import RegisterView from "../views/RegisterView.vue"
+import TeamDetailView from "../views/TeamDetailView.vue"
+import LoginView from "../views/LoginView.vue"
 import DashboardView from "../views/DashboardView.vue"
 import UsersView from "../views/UsersView.vue"
 import Players from "../views/PlayersView.vue"
 import TrainingsView from "../views/TrainingsView.vue"
+import TeamsView from "../views/TeamsView.vue"
 
 const routes = [
     {
@@ -46,7 +48,13 @@ const routes = [
     {
         path: '/teams',
         name: 'teams',
-        component: () => import('../views/TeamsView.vue'),
+        component: TeamsView,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/teams/:id',
+        name: 'team-detail',
+        component: TeamDetailView,
         meta: { requiresAuth: true }
     },
 ]
