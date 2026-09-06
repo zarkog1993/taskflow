@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RoleController;
 use Illuminate\Http\Request;
+use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TrainingSessionController;
 use Illuminate\Support\Facades\Route;
 
@@ -46,4 +47,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/training-sessions', [TrainingSessionController::class, 'index']);
     Route::post('/training-sessions', [TrainingSessionController::class, 'store']);
     Route::put('/training-sessions/{trainingSession}/status', [TrainingSessionController::class, 'updateStatus']);
+
+    // Upravljanje Timovima / Starosnim Grupadama
+    Route::get('/teams', [TeamController::class, 'index']);
+    Route::post('/teams', [TeamController::class, 'store']);
+    Route::post('/teams/{team}/members', [TeamController::class, 'assignMembers']);
 });

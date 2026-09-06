@@ -43,6 +43,12 @@ const routes = [
         component: TrainingsView,
         meta: { requiresAuth: true }
     },
+    {
+        path: '/teams',
+        name: 'teams',
+        component: () => import('../views/TeamsView.vue'),
+        meta: { requiresAuth: true }
+    },
 ]
 
 const router = createRouter({

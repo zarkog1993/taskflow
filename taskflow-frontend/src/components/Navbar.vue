@@ -38,6 +38,13 @@
           >
             Korisnici
           </router-link>
+          <router-link 
+            to="/teams" 
+            class="text-xs font-semibold text-gray-300 hover:text-white transition px-3 py-1.5 rounded-lg"
+            active-class="bg-indigo-600/20 text-indigo-400 border border-indigo-500/30"
+          >
+            Ekipe
+          </router-link>
         </nav>
       </div>
 
