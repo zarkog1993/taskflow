@@ -76,4 +76,27 @@ class UserController extends Controller
 
         return new UserResource($updatedUser);
     }
+
+    /**
+     * Update the statistics of a user's player profile.
+     * @param Request $request
+     * @param User $user
+     * @return JsonResponse
+     */
+    public function updateStats(Request $request, User $user): JsonResponse
+    {
+        $validated = $request->validate([
+            'matches_played' => 'required|integer|min:0',
+            'trainings_attended' => 'required|integer|min:0',
+            'goals' => 'required|integer|min:0',
+            'assists' => 'required|integer|min:0',
+        ]);
+
+        $profile = $user->playerProfile()->firstOrCreate(['user_id' => $user->id]);
+        $profile->update($validated);
+
+        return response()->json([
+            'data' => $user->load(['roles', 'playerProfile'])
+        ]);
+    }
 }

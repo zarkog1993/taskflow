@@ -16,5 +16,9 @@ class PlayerProfile extends Model
         'category',
         'seniority',
         'medical_notes',
+        'matches_played',
+        'trainings_attended',
+        'goals',
+        'assists',
     ];
 }

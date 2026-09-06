@@ -40,6 +40,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Rute za upravljanje korisnicima i ulogama
     Route::apiResource('users', UserController::class);
     Route::put('users/{user}/roles', [UserController::class, 'updateRoles']);
+    Route::put('/users/{user}/stats', [UserController::class, 'updateStats']);
 
     Route::get('roles', [RoleController::class, 'index']);
 
