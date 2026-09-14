@@ -9,7 +9,24 @@ class UserService
 {
     public function getAllPaginated(): LengthAwarePaginator
     {
-        return User::with(['roles', 'playerProfile'])->latest()->paginate(20);
+        $user = auth()->user();
+
+        // Ako je korisnik admin (preko is_admin kolone ILI uloge 'admin')
+        if ($user && ($user->is_admin || $user->hasRole('admin'))) {
+            return User::with(['roles', 'playerProfile', 'teams'])
+                ->latest()
+                ->paginate(50);
+        }
+
+        // Za ostale (Team Admin) - prikazuje samo igrače iz njihovih timova
+        $teamIds = $user ? $user->teams()->pluck('teams.id') : [];
+
+        return User::whereHas('teams', function ($q) use ($teamIds) {
+            $q->whereIn('teams.id', $teamIds);
+        })
+            ->with(['roles', 'playerProfile', 'teams'])
+            ->latest()
+            ->paginate(50);
     }
 
     public function store(array $data): User

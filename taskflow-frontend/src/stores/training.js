@@ -54,6 +54,20 @@ export const useTrainingStore = defineStore('training', {
                 session.status = oldStatus
                 this.error = err.response?.data?.message || 'Greška pri izmeni statusa.'
             }
+        },
+
+        async saveAttendance(sessionId, playerIds) {
+            try {
+                const res = await api.post(`/training-sessions/${sessionId}/attendance`, { player_ids: playerIds })
+                const session = this.sessions.find(s => s.id === sessionId)
+                if (session) {
+                    session.attendees = res.data.data.attendees
+                }
+                return true
+            } catch (err) {
+                alert('Greška pri čuvanju prisustva')
+                return false
+            }
         }
     }
 })

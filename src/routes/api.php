@@ -53,4 +53,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/teams', [TeamController::class, 'index']);
     Route::post('/teams', [TeamController::class, 'store']);
     Route::post('/teams/{team}/members', [TeamController::class, 'assignMembers']);
+
+    // Prikaz pojedinačnog igrača (korisnika) sa svim povezanim podacima
+    Route::get('/users/{user}', [UserController::class, 'show']);
+
+    Route::post('/training-sessions/{trainingSession}/attendance', [TrainingSessionController::class, 'syncAttendance']);
 });

@@ -23,6 +23,10 @@ class UserController extends Controller
         $this->userService = $userService;
     }
 
+    /**
+     * Display a listing of the users.
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     */
     public function index()
     {
         $users = $this->userService->getAllPaginated();
@@ -30,9 +34,13 @@ class UserController extends Controller
         return UserResource::collection($users);
     }
 
+    /**
+     * Store a newly created user in storage.
+     * @param StoreUserRequest $request
+     * @return JsonResponse
+     */
     public function store(StoreUserRequest $request): JsonResponse
     {
-        // Prosleđujemo sve validirane podatke servisu koji kreira korisnika i njegov profil
         $user = $this->userService->store($request->validated());
 
         return response()->json([
@@ -40,11 +48,24 @@ class UserController extends Controller
         ], 201);
     }
 
-    public function show(User $user): UserResource
+        /**
+     * Display the specified user.
+     * @param User $user
+     * @return JsonResponse
+     */
+    public function show(User $user): JsonResponse
     {
-        return new UserResource($user);
+        return response()->json([
+            'data' => $user->load(['roles', 'playerProfile', 'teams'])
+        ]);
     }
 
+    /**
+     * Update the specified user in storage.
+     * @param UpdateUserRequest $request
+     * @param User $user
+     * @return UserResource
+     */
     public function update(UpdateUserRequest $request, User $user): UserResource
     {
         Gate::authorize('update', $user);
@@ -54,6 +75,10 @@ class UserController extends Controller
         return new UserResource($updatedUser);
     }
 
+    /**
+     * Delete a user.
+     * @param User $user
+     */
     public function destroy(User $user)
     {
         Gate::authorize('delete', $user);
@@ -63,9 +88,15 @@ class UserController extends Controller
         return response()->noContent();
     }
 
+    /**
+     * Update roles of a user.
+     * @param Request $request
+     * @param User $user
+     * @return UserResource
+     */
     public function updateRoles(Request $request, User $user): UserResource
     {
-        Gate::authorize('update', $user); // ili tvoja polisa za izmenu uloga
+        Gate::authorize('update', $user);
 
         $request->validate([
             'roles' => 'array',
@@ -90,6 +121,8 @@ class UserController extends Controller
             'trainings_attended' => 'required|integer|min:0',
             'goals' => 'required|integer|min:0',
             'assists' => 'required|integer|min:0',
+            'category' => 'nullable|string',
+            'seniority' => 'nullable|string',
         ]);
 
         $profile = $user->playerProfile()->firstOrCreate(['user_id' => $user->id]);

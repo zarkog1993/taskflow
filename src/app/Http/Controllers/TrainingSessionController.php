@@ -16,12 +16,22 @@ class TrainingSessionController extends Controller
         $this->sessionService = $sessionService;
     }
 
+    /**
+     * Display a listing of the training sessions.
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function index(Request $request): JsonResponse
     {
         $sessions = $this->sessionService->getAllSessions($request->user());
         return response()->json(['data' => $sessions]);
     }
 
+    /**
+     * Store a new training session.
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
@@ -38,6 +48,12 @@ class TrainingSessionController extends Controller
         return response()->json(['data' => $session], 201);
     }
 
+    /**
+     * Update the status of a training session.
+     * @param Request $request
+     * @param TrainingSession $trainingSession
+     * @return JsonResponse
+     */ 
     public function updateStatus(Request $request, TrainingSession $trainingSession): JsonResponse
     {
         $validated = $request->validate([
@@ -47,5 +63,19 @@ class TrainingSessionController extends Controller
         $updated = $this->sessionService->updateStatus($trainingSession, $validated['status']);
 
         return response()->json(['data' => $updated]);
+    }
+
+    public function syncAttendance(Request $request, TrainingSession $trainingSession): JsonResponse
+    {
+        $validated = $request->validate([
+            'player_ids' => 'array',
+            'player_ids.*' => 'exists:users,id'
+        ]);
+
+        $trainingSession->attendees()->sync($validated['player_ids']);
+
+        return response()->json([
+            'data' => $trainingSession->load('attendees')
+        ]);
     }
 }
