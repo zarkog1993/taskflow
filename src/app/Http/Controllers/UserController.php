@@ -79,13 +79,14 @@ class UserController extends Controller
      * Delete a user.
      * @param User $user
      */
-    public function destroy(User $user)
+    public function destroy(User $user): JsonResponse
     {
-        Gate::authorize('delete', $user);
+        // Briše igrača (zbog cascade podešavanja obrisaće se i player_profile)
+        $user->delete();
 
-        $this->userService->delete($user);
-
-        return response()->noContent();
+        return response()->json([
+            'message' => 'Igrač je uspešno obrisan.'
+        ]);
     }
 
     /**
@@ -130,6 +131,35 @@ class UserController extends Controller
 
         return response()->json([
             'data' => $user->load(['roles', 'playerProfile'])
+        ]);
+    }
+
+    public function updateProfile(Request $request, User $user): JsonResponse
+    {
+        $validated = $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'jersey_number' => 'nullable|string|max:10',
+            'primary_position' => 'nullable|string|max:10',
+            'preferred_foot' => 'nullable|string|max:20',
+            'date_of_birth' => 'nullable|date',
+            'fitness_status' => 'nullable|string|max:255',
+            'medical_notes' => 'nullable|string',
+            'photo_url' => 'nullable|string|max:500',
+            'category' => 'nullable|string|max:50',
+        ]);
+
+        if (isset($validated['name'])) {
+            $user->update(['name' => $validated['name']]);
+        }
+
+        $user->playerProfile()->updateOrCreate(
+            ['user_id' => $user->id],
+            array_diff_key($validated, ['name' => ''])
+        );
+
+        return response()->json([
+            'message' => 'Profil uspešno ažuriran.',
+            'data' => $user->load(['roles', 'playerProfile', 'teams'])
         ]);
     }
 }

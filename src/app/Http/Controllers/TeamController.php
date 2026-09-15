@@ -48,7 +48,7 @@ class TeamController extends Controller
      * @param Request $request
      * @param Team $team
      * @return JsonResponse
-     */ 
+     */
     public function assignMembers(Request $request, Team $team): JsonResponse
     {
         $validated = $request->validate([

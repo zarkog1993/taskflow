@@ -41,6 +41,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('users', UserController::class);
     Route::put('users/{user}/roles', [UserController::class, 'updateRoles']);
     Route::put('/users/{user}/stats', [UserController::class, 'updateStats']);
+    Route::put('/users/{user}/profile', [UserController::class, 'updateProfile']);
+    Route::get('/users/{user}', [UserController::class, 'show']);
+    Route::delete('/users/{user}', [UserController::class, 'destroy']);
 
     Route::get('roles', [RoleController::class, 'index']);
 
@@ -53,9 +56,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/teams', [TeamController::class, 'index']);
     Route::post('/teams', [TeamController::class, 'store']);
     Route::post('/teams/{team}/members', [TeamController::class, 'assignMembers']);
-
-    // Prikaz pojedinačnog igrača (korisnika) sa svim povezanim podacima
-    Route::get('/users/{user}', [UserController::class, 'show']);
 
     Route::post('/training-sessions/{trainingSession}/attendance', [TrainingSessionController::class, 'syncAttendance']);
 });
