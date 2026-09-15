@@ -46,14 +46,19 @@ class User extends Authenticatable
         return $this->belongsToMany(Role::class);
     }
 
+    public function hasRole(string $roleSlug): bool
+    {
+        // Proverava i preko is_admin polja ili kroz uloge u pivot tabeli
+        if ($roleSlug === 'admin' && $this->is_admin) {
+            return true;
+        }
+
+        return $this->roles->contains('slug', $roleSlug);
+    }
+
     public function permissions(): BelongsToMany
     {
         return $this->belongsToMany(Permission::class);
-    }
-
-    public function hasRole(string $roleSlug): bool
-    {
-        return $this->roles->contains('slug', $roleSlug);
     }
 
     public function hasPermission(string $permissionSlug): bool
@@ -88,5 +93,13 @@ class User extends Authenticatable
     public function attendances(): HasMany
     {
         return $this->hasMany(Attendance::class);
+    }
+
+    /**
+     * Ekipe kojima korisnik/trener/igrač pripada.
+     */
+    public function teams(): BelongsToMany
+    {
+        return $this->belongsToMany(Team::class);
     }
 }

@@ -20,5 +20,6 @@ class PlayerProfile extends Model
         'trainings_attended',
         'goals',
         'assists',
+        'photo_url'
     ];
 }

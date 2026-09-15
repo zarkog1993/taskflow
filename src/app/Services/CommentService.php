@@ -11,8 +11,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class CommentService
 {
+
     /**
      * Vraća sve komentare vezane za zadatak sa učitanim autorima.
+     * @param Task
+     * @return Collection
      */
     public function getForTask(Task $task): Collection
     {

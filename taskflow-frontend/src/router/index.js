@@ -57,6 +57,12 @@ const routes = [
         component: TeamDetailView,
         meta: { requiresAuth: true }
     },
+    {
+        path: '/players/:id',
+        name: 'player-profile',
+        component: () => import('../views/PlayerProfileView.vue'),
+        meta: { requiresAuth: true }
+    },
 ]
 
 const router = createRouter({

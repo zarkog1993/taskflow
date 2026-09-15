@@ -1,9 +1,9 @@
 <template>
   <div class="relative">
-    <!-- Dugiće za otvaranje notifikacija -->
+    <!-- Dugme za otvaranje notifikacija -->
     <button
       @click="isOpen = !isOpen"
-      class="relative p-2 text-gray-300 hover:text-white rounded-lg hover:bg-gray-700 transition"
+      class="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-800 rounded-lg transition"
     >
       <svg
         class="w-6 h-6"
@@ -31,21 +31,21 @@
     <!-- Meni sa listom notifikacija -->
     <div
       v-if="isOpen"
-      class="absolute right-0 mt-2 w-80 bg-gray-800 border border-gray-700 rounded-xl shadow-2xl z-50 overflow-hidden"
+      class="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl z-50 overflow-hidden"
     >
       <div
-        class="p-3 border-b border-gray-700 flex justify-between items-center"
+        class="p-3 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center"
       >
-        <h4 class="font-bold text-sm text-white">Obaveštenja</h4>
-        <span class="text-xs text-gray-400"
+        <h4 class="font-bold text-sm text-gray-900 dark:text-white">Obaveštenja</h4>
+        <span class="text-xs text-gray-500 dark:text-gray-400"
           >{{ notificationStore.unreadCount }} nepročitanih</span
         >
       </div>
 
-      <div class="max-h-80 overflow-y-auto divide-y divide-gray-700/50">
+      <div class="max-h-80 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700/50">
         <div
           v-if="notificationStore.notifications.length === 0"
-          class="p-4 text-center text-xs text-gray-400"
+          class="p-4 text-center text-xs text-gray-500 dark:text-gray-400"
         >
           Nemate obaveštenja.
         </div>
@@ -55,14 +55,14 @@
           :key="notification.id"
           @click="notificationStore.markAsRead(notification.id)"
           :class="[
-            'p-3 text-xs cursor-pointer hover:bg-gray-700/50 transition',
-            !notification.read_at ? 'bg-indigo-500/10' : '',
+            'p-3 text-xs cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 transition',
+            !notification.read_at ? 'bg-indigo-50 dark:bg-indigo-500/10' : '',
           ]"
         >
-          <p class="font-medium text-gray-200 mb-1">
+          <p class="font-medium text-gray-800 dark:text-gray-200 mb-1">
             {{ notification.data?.message || "Novo obaveštenje" }}
           </p>
-          <span class="text-[10px] text-gray-500">{{
+          <span class="text-[10px] text-gray-400 dark:text-gray-500">{{
             formatDate(notification.created_at)
           }}</span>
         </div>

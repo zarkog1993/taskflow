@@ -23,6 +23,10 @@ class UserController extends Controller
         $this->userService = $userService;
     }
 
+    /**
+     * Display a listing of the users.
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     */
     public function index()
     {
         $users = $this->userService->getAllPaginated();
@@ -30,9 +34,13 @@ class UserController extends Controller
         return UserResource::collection($users);
     }
 
+    /**
+     * Store a newly created user in storage.
+     * @param StoreUserRequest $request
+     * @return JsonResponse
+     */
     public function store(StoreUserRequest $request): JsonResponse
     {
-        // Prosleđujemo sve validirane podatke servisu koji kreira korisnika i njegov profil
         $user = $this->userService->store($request->validated());
 
         return response()->json([
@@ -40,11 +48,24 @@ class UserController extends Controller
         ], 201);
     }
 
-    public function show(User $user): UserResource
+        /**
+     * Display the specified user.
+     * @param User $user
+     * @return JsonResponse
+     */
+    public function show(User $user): JsonResponse
     {
-        return new UserResource($user);
+        return response()->json([
+            'data' => $user->load(['roles', 'playerProfile', 'teams'])
+        ]);
     }
 
+    /**
+     * Update the specified user in storage.
+     * @param UpdateUserRequest $request
+     * @param User $user
+     * @return UserResource
+     */
     public function update(UpdateUserRequest $request, User $user): UserResource
     {
         Gate::authorize('update', $user);
@@ -54,18 +75,29 @@ class UserController extends Controller
         return new UserResource($updatedUser);
     }
 
-    public function destroy(User $user)
+    /**
+     * Delete a user.
+     * @param User $user
+     */
+    public function destroy(User $user): JsonResponse
     {
-        Gate::authorize('delete', $user);
+        // Briše igrača (zbog cascade podešavanja obrisaće se i player_profile)
+        $user->delete();
 
-        $this->userService->delete($user);
-
-        return response()->noContent();
+        return response()->json([
+            'message' => 'Igrač je uspešno obrisan.'
+        ]);
     }
 
+    /**
+     * Update roles of a user.
+     * @param Request $request
+     * @param User $user
+     * @return UserResource
+     */
     public function updateRoles(Request $request, User $user): UserResource
     {
-        Gate::authorize('update', $user); // ili tvoja polisa za izmenu uloga
+        Gate::authorize('update', $user);
 
         $request->validate([
             'roles' => 'array',
@@ -90,6 +122,8 @@ class UserController extends Controller
             'trainings_attended' => 'required|integer|min:0',
             'goals' => 'required|integer|min:0',
             'assists' => 'required|integer|min:0',
+            'category' => 'nullable|string',
+            'seniority' => 'nullable|string',
         ]);
 
         $profile = $user->playerProfile()->firstOrCreate(['user_id' => $user->id]);
@@ -97,6 +131,35 @@ class UserController extends Controller
 
         return response()->json([
             'data' => $user->load(['roles', 'playerProfile'])
+        ]);
+    }
+
+    public function updateProfile(Request $request, User $user): JsonResponse
+    {
+        $validated = $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'jersey_number' => 'nullable|string|max:10',
+            'primary_position' => 'nullable|string|max:10',
+            'preferred_foot' => 'nullable|string|max:20',
+            'date_of_birth' => 'nullable|date',
+            'fitness_status' => 'nullable|string|max:255',
+            'medical_notes' => 'nullable|string',
+            'photo_url' => 'nullable|string|max:500',
+            'category' => 'nullable|string|max:50',
+        ]);
+
+        if (isset($validated['name'])) {
+            $user->update(['name' => $validated['name']]);
+        }
+
+        $user->playerProfile()->updateOrCreate(
+            ['user_id' => $user->id],
+            array_diff_key($validated, ['name' => ''])
+        );
+
+        return response()->json([
+            'message' => 'Profil uspešno ažuriran.',
+            'data' => $user->load(['roles', 'playerProfile', 'teams'])
         ]);
     }
 }

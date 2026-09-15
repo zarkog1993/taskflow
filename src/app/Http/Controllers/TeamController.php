@@ -16,12 +16,21 @@ class TeamController extends Controller
         $this->teamService = $teamService;
     }
 
+    /**
+     * Display a listing of the teams.
+     * @return JsonResponse
+     */
     public function index(): JsonResponse
     {
         $teams = $this->teamService->getAllTeams();
         return response()->json(['data' => $teams]);
     }
 
+    /**
+     * Store a new team.
+     * @param Request $request
+     * @return JsonResponse
+     */ 
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
@@ -34,6 +43,12 @@ class TeamController extends Controller
         return response()->json(['data' => $team], 201);
     }
 
+    /**
+     * Assign members to a team.
+     * @param Request $request
+     * @param Team $team
+     * @return JsonResponse
+     */
     public function assignMembers(Request $request, Team $team): JsonResponse
     {
         $validated = $request->validate([

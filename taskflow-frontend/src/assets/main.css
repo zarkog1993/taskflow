@@ -1,1 +1,4 @@
 @import "tailwindcss";
+
+/* Postavlja dark varijantu da zavisi od 'dark' klase na <html> tagu */
+@custom-variant dark (&:where(.dark, .dark *));
