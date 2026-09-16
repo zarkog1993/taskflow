@@ -40,8 +40,8 @@ class UserPolicy
         return $user->hasRole('admin') || (int) $user->id === (int) $model->id;
     }
 
-    public function delete(User $user, User $model): bool
+    public function delete(User $authUser, User $targetUser): bool
     {
-        return (int) $user->id === (int) $model->id;
+        return $authUser->id === $targetUser->id || $authUser->hasRole('admin');
     }
 }
