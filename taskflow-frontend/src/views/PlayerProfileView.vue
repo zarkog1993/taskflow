@@ -2,7 +2,7 @@
     <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
         <!-- Gornja Traka: Navigacija i Dugme za Izmenu -->
         <div
-            class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gray-800/60 p-5 rounded-2xl border border-gray-700/60 backdrop-blur-md shadow-xl"
+            class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white-50 dark:bg-gray-800/60 p-5 rounded-2xl border border-gray-700/60 backdrop-blur-md shadow-xl"
         >
             <button
                 @click="$router.back()"
@@ -27,7 +27,7 @@
         <div v-else-if="player" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Kartica Igrača: Profilna Slika i Osnovne Informacije -->
             <div
-                class="bg-gray-800/90 border border-gray-700/80 rounded-3xl p-6 shadow-xl text-center flex flex-col items-center justify-between"
+                class="bg-white-50 dark:bg-gray-800/90 border border-gray-700/80 rounded-3xl p-6 shadow-xl text-center flex flex-col items-center justify-between"
             >
                 <div class="w-full flex flex-col items-center">
                     <div class="relative w-36 h-36 mb-4">
@@ -46,16 +46,20 @@
                         </span>
                     </div>
 
-                    <h3 class="text-2xl font-extrabold text-white mb-0.5">
+                    <h3
+                        class="text-2xl font-extrabold text-gray-500 dark:text-white mb-0.5"
+                    >
                         {{ player.name }}
                     </h3>
-                    <p class="text-xs text-gray-400 font-mono mb-4">
+                    <p
+                        class="text-xs text-gray-500 dark:text-gray-400 font-mono mb-4"
+                    >
                         {{ player.email }}
                     </p>
 
                     <div class="flex flex-wrap justify-center gap-2 mb-6">
                         <span
-                            class="bg-indigo-600/20 text-indigo-300 border border-indigo-500/30 text-xs font-mono font-extrabold uppercase px-3 py-1 rounded-xl"
+                            class="bg-indigo-600/20 dark:bg-indigo-600/10 text-indigo-300 border border-indigo-500/30 text-xs font-mono font-extrabold uppercase px-3 py-1 rounded-xl"
                         >
                             {{
                                 player.player_profile?.primary_position || "CM"
@@ -166,10 +170,13 @@
                             <span class="text-gray-400 block mb-1"
                                 >Jača noga:</span
                             >
-                            <span class="text-white font-bold uppercase">{{
-                                player.player_profile?.preferred_foot ||
-                                "Nije podešeno"
-                            }}</span>
+                            <span
+                                class="dark:text-white font-bold uppercase text-gray-700"
+                                >{{
+                                    player.player_profile?.preferred_foot ||
+                                    "Nije podešeno"
+                                }}</span
+                            >
                         </div>
 
                         <div
@@ -178,22 +185,29 @@
                             <span class="text-gray-400 block mb-1"
                                 >Datum rođenja:</span
                             >
-                            <span class="text-white font-bold">{{
-                                player.player_profile?.date_of_birth ||
-                                "Nije uneto"
-                            }}</span>
+                            <span
+                                class="dark:text-white font-bold text-gray-700"
+                                >{{
+                                    player.player_profile?.date_of_birth ||
+                                    "Nije uneto"
+                                }}</span
+                            >
                         </div>
 
                         <div
                             class="bg-white/80 dark:bg-gray-900/60 p-4 rounded-2xl border border-gray-700/50 md:col-span-2"
                         >
-                            <span class="text-gray-400 dark:text-gray-100 block mb-1"
+                            <span
+                                class="text-gray-400 dark:text-gray-100 block mb-1"
                                 >Medicinske napomene / Povrede:</span
                             >
-                            <span class="text-gray-200 font-medium dark:text-gray-800">{{
-                                player.player_profile?.medical_notes ||
-                                "Nema zabeleženih medicinskih napomena."
-                            }}</span>
+                            <span
+                                class="dark:text-gray-200 font-medium text-gray-800"
+                                >{{
+                                    player.player_profile?.medical_notes ||
+                                    "Nema zabeleženih medicinskih napomena."
+                                }}</span
+                            >
                         </div>
                     </div>
                 </div>
@@ -337,14 +351,66 @@
                     <div>
                         <label
                             class="block text-xs font-bold uppercase text-gray-400 mb-1"
-                            >Status Fizičke Spreme</label
                         >
-                        <input
-                            v-model="form.fitness_status"
-                            type="text"
-                            placeholder="npr. Spreman za utakmicu ili Oporavak od povrede"
-                            class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500"
-                        />
+                            Status Fizičke Spreme
+                        </label>
+                        <div class="relative">
+                            <select
+                                v-model="form.fitness_status"
+                                class="w-full appearance-none bg-gray-900 border border-gray-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500 transition cursor-pointer pr-10"
+                            >
+                                <option
+                                    value=""
+                                    disabled
+                                    class="bg-gray-800 text-gray-400"
+                                >
+                                    Izaberite status...
+                                </option>
+                                <option
+                                    value="fit"
+                                    class="bg-gray-800 text-white"
+                                >
+                                    Spreman za utakmicu
+                                </option>
+                                <option
+                                    value="injured"
+                                    class="bg-gray-800 text-white"
+                                >
+                                    Povređen
+                                </option>
+                                <option
+                                    value="rehab"
+                                    class="bg-gray-800 text-white"
+                                >
+                                    Rovito / Oporavak
+                                </option>
+                                <option
+                                    value="absent"
+                                    class="bg-gray-800 text-white"
+                                >
+                                    Odsutan
+                                </option>
+                            </select>
+
+                            <!-- Custom SVG strelica umesto sistemske -->
+                            <div
+                                class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3.5 text-gray-400"
+                            >
+                                <svg
+                                    class="w-4 h-4"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M19 9l-7 7-7-7"
+                                    ></path>
+                                </svg>
+                            </div>
+                        </div>
                     </div>
 
                     <div>
@@ -356,7 +422,7 @@
                             v-model="form.medical_notes"
                             rows="3"
                             placeholder="Zabeleške o pošteđenosti ili tretmanima..."
-                            class="w-full bg-gray-900 border border-gray-700 rounded-xl p-3 text-xs text-white outline-none focus:border-indigo-500 resize-none"
+                            class="w-full dark:bg-gray-900 border border-gray-700 rounded-xl p-3 text-xs text-white outline-none dark:text-gray-900 focus:border-indigo-500 resize-none"
                         ></textarea>
                     </div>
 
@@ -424,7 +490,9 @@ const openEditModal = () => {
     if (!player.value) return;
 
     form.name = player.value.name || "";
-    form.jersey_number = player.value.player_profile?.jersey_number || "";
+    form.jersey_number = player.value.player_profile?.jersey_number !== null && player.value.player_profile?.jersey_number !== undefined
+      ? String(player.value.player_profile?.jersey_number) 
+      : null;
     form.primary_position =
         player.value.player_profile?.primary_position || "CM";
     form.preferred_foot =

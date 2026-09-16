@@ -291,6 +291,12 @@
                             required
                             class="w-full bg-gray-900 border border-gray-700 rounded-xl p-3 text-white text-xs outline-none focus:border-indigo-500"
                         />
+                        <input
+                            v-model="newPlayer.password_confirmation"
+                            type="password"
+                            required
+                            class="w-full bg-gray-900 border border-gray-700 rounded-xl p-3 text-white text-xs outline-none focus:border-indigo-500"
+                        />
                     </div>
 
                     <div class="grid grid-cols-2 gap-3">
@@ -409,6 +415,7 @@ const newPlayer = reactive({
     name: "",
     email: "",
     password: "password123",
+    password_confirmation: "password123",
     jersey_number: "",
     primary_position: "CM",
     seniority: "senior",

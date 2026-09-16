@@ -23,7 +23,10 @@ class TrainingSessionController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $sessions = $this->sessionService->getAllSessions($request->user());
+        $sessions = TrainingSession::with(['attendees.playerProfile'])
+            ->latest('scheduled_at')
+            ->get();
+
         return response()->json(['data' => $sessions]);
     }
 
@@ -53,7 +56,7 @@ class TrainingSessionController extends Controller
      * @param Request $request
      * @param TrainingSession $trainingSession
      * @return JsonResponse
-     */ 
+     */
     public function updateStatus(Request $request, TrainingSession $trainingSession): JsonResponse
     {
         $validated = $request->validate([
@@ -68,14 +71,15 @@ class TrainingSessionController extends Controller
     public function syncAttendance(Request $request, TrainingSession $trainingSession): JsonResponse
     {
         $validated = $request->validate([
-            'player_ids' => 'array',
+            'player_ids' => 'nullable|array',
             'player_ids.*' => 'exists:users,id'
         ]);
 
-        $trainingSession->attendees()->sync($validated['player_ids']);
+        $trainingSession->attendees()->sync($validated['player_ids'] ?? []);
 
         return response()->json([
-            'data' => $trainingSession->load('attendees')
+            'message' => 'Prisustvo uspešno sačuvano.',
+            'data' => $trainingSession->fresh(['attendees.playerProfile'])
         ]);
     }
 }

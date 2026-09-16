@@ -36,4 +36,9 @@ class TrainingSession extends Model
     {
         return $this->belongsToMany(User::class, 'attendance')->withPivot('status')->withTimestamps();
     }
+
+    public function season(): BelongsTo
+    {
+        return $this->belongsTo(Season::class);
+    }
 }
