@@ -1,11 +1,12 @@
-import axios from "axios"
+import axios from 'axios'
 
 const api = axios.create({
-    baseURL: "http://localhost:8080/api",
-    headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-    }
+  baseURL: 'http://localhost:8080/api',
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  },
+  withCredentials: true
 })
 
 // Request Interceptor: automatski dodaje Sanctum token

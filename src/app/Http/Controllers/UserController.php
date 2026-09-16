@@ -10,6 +10,8 @@ use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -76,17 +78,22 @@ class UserController extends Controller
     }
 
     /**
-     * Delete a user.
-     * @param User $user
+     * Uklanja korisnika iz baze.
      */
-    public function destroy(User $user): JsonResponse
+    public function destroy(User $user): Response
     {
-        // Briše igrača (zbog cascade podešavanja obrisaće se i player_profile)
+        // 1. Autorizacija: Da li ulogovani korisnik briše samog sebe ILI je admin?
+        // Ako koristiš Laravel Policy: $this->authorize('delete', $user);
+        // Ako koristiš direktnu proveru:
+        if (Auth::id() !== $user->id && !Auth::user()->hasRole('admin')) {
+            abort(403, 'Nemate dozvolu za brisanje ovog korisnika.');
+        }
+
+        // 2. Brisanje korisnika (i vezanog profila ako postoji)
         $user->delete();
 
-        return response()->json([
-            'message' => 'Igrač je uspešno obrisan.'
-        ]);
+        // 3. Vraćanje HTTP statusa 204 No Content (bez tela odgovora)
+        return response()->noContent();
     }
 
     /**
