@@ -4,49 +4,46 @@ import api from '../services/api'
 export const useTeamStore = defineStore('team', {
     state: () => ({
         teams: [],
-        loading: false,
-        error: null
+        loading: false
     }),
 
     actions: {
         async fetchTeams() {
             this.loading = true
-            this.error = null
             try {
-                const response = await api.get('/teams')
-                this.teams = response.data.data || response.data
+                const res = await api.get('/teams')
+                // Normalizujemo podatke: preslikavamo 'users' u 'members' ako backend vrati 'users'
+                this.teams = (res.data.data || []).map(team => ({
+                    ...team,
+                    members: team.members || team.users || []
+                }))
             } catch (err) {
-                this.error = err.response?.data?.message || 'Greška pri učitavanju timova.'
+                console.error('Greška pri učitavanju ekipa:', err)
             } finally {
                 this.loading = false
             }
         },
 
-        async createTeam(teamData) {
-            this.error = null
-            try {
-                const response = await api.post('/teams', teamData)
-                const created = response.data.data || response.data
-                this.teams.push(created)
-                return true
-            } catch (err) {
-                this.error = err.response?.data?.message || 'Greška pri kreiranju tima.'
-                return false
-            }
-        },
-
         async assignMembers(teamId, userIds) {
-            this.error = null
             try {
-                const response = await api.post(`/teams/${teamId}/members`, { user_ids: userIds })
-                const updated = response.data.data || response.data
+                const res = await api.post(`/teams/${teamId}/members`, {
+                    user_ids: userIds
+                })
+
+                const updatedTeam = res.data.data
+
+                // Osvežavamo tim u lokalom Pinia stanju sa 'members' ključem
                 const index = this.teams.findIndex(t => t.id === teamId)
                 if (index !== -1) {
-                    this.teams[index] = updated
+                    this.teams[index] = {
+                        ...updatedTeam,
+                        members: updatedTeam.members || updatedTeam.users || []
+                    }
                 }
+
                 return true
             } catch (err) {
-                this.error = err.response?.data?.message || 'Greška pri dodeljivanju igrača.'
+                alert(err.response?.data?.message || 'Greška pri čuvanju sastava')
                 return false
             }
         }

@@ -3,7 +3,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-4 sm:space-x-6">
                 <router-link to="/" class="flex items-center space-x-2">
-                    <span class="text-xl sm:text-2xl font-bold text-indigo-600 dark:text-indigo-400 tracking-tight">TaskFlow</span>
+                    <span class="text-xl sm:text-2xl font-bold text-indigo-600 dark:text-indigo-400 tracking-tight">Pravi Fudbal</span>
                 </router-link>
 
                 <!-- Desktop Navigacija -->
@@ -19,13 +19,7 @@
 
             <div class="flex items-center space-x-3">
                 <!-- Theme Toggle uvek dostupan na desnoj strani -->
-                    <router-link 
-                        to="/calendar" 
-                        class="text-xs font-bold px-3 py-2 rounded-xl transition"
-                        :class="$route.path === '/calendar' ? 'bg-indigo-600 text-white' : 'text-gray-400 hover:text-white'"
-                        >
-                        📅 Kalendar
-                    </router-link>
+                <router-link to="/calendar" class="text-xs font-bold px-3 py-2 rounded-xl transition" :class="$route.path === '/calendar' ? 'bg-indigo-600 text-white' : 'text-gray-400 hover:text-white'">📅 Kalendar</router-link>
                 <ThemeToggle />
 
                 <template v-if="authStore.isAuthenticated">
@@ -61,7 +55,7 @@
                 to="/matches"
                 class="block text-sm font-semibold text-gray-700 dark:text-gray-300 py-2 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition"
                 :class="$route.path === '/matches' ? 'bg-indigo-600 text-white' : 'text-gray-400 hover:text-white'"
-                >
+            >
                 Utakmice & Zapisnik
             </router-link>
             <router-link @click="mobileMenuOpen = false" to="/trainings" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 py-2 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition">Trening Sesije</router-link>
