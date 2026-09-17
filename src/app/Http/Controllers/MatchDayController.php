@@ -8,15 +8,14 @@ use Illuminate\Http\JsonResponse;
 
 class MatchDayController extends Controller
 {
-    public function index(Request $request): \Illuminate\Http\JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $query = MatchDay::with(['team', 'players.playerProfile']);
-
-        if ($request->has('team_id')) {
-            $query->where('team_id', $request->team_id);
-        }
-
-        $matches = $query->orderBy('scheduled_at', 'asc')->get();
+        $matches = MatchDay::with([
+            'team.users.playerProfile', // Ključno: Učitava sve igrače tima za zapisnik
+            'players.playerProfile'      // Učitava već unete podatke iz match_day_user
+        ])
+        ->orderBy('scheduled_at', 'desc')
+        ->get();
 
         return response()->json(['data' => $matches]);
     }

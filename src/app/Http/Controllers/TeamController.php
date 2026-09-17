@@ -20,9 +20,10 @@ class TeamController extends Controller
      * Display a listing of the teams.
      * @return JsonResponse
      */
-    public function index(): JsonResponse
+    public function index()
     {
-        $teams = $this->teamService->getAllTeams();
+        // Učitavamo relaciju sa profilom igrača
+        $teams = Team::with(['users.playerProfile'])->get();
         return response()->json(['data' => $teams]);
     }
 
