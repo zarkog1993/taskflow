@@ -32,4 +32,13 @@ class Team extends Model
             ->orderBy('scheduled_at', 'asc')
             ->with(['attendees.playerProfile']);
     }
+
+    /**
+     * Igrači / korisnici koji pripadaju ovoj ekipi.
+     */
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'team_user', 'team_id', 'user_id')
+                    ->withTimestamps();
+    }
 }

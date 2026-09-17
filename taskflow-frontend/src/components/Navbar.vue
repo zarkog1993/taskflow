@@ -9,6 +9,7 @@
                 <!-- Desktop Navigacija -->
                 <nav v-if="authStore.isAuthenticated" class="hidden md:flex items-center space-x-1 sm:space-x-2 pl-4 border-l border-gray-200 dark:border-gray-800">
                     <router-link to="/" class="text-xs font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition px-3 py-1.5 rounded-lg" active-class="bg-indigo-50 text-indigo-600 border border-indigo-200 dark:bg-indigo-600/20 dark:text-indigo-400 dark:border-indigo-500/30">Dashboard</router-link>
+                    <router-link to="/matches" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 py-2 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition" :class="$route.path === '/matches' ? 'bg-indigo-600 text-white' : 'text-gray-400 hover:text-white'">Utakmice & Zapisnik</router-link>
                     <router-link to="/trainings" class="text-xs font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition px-3 py-1.5 rounded-lg" active-class="bg-indigo-50 text-indigo-600 border border-indigo-200 dark:bg-indigo-600/20 dark:text-indigo-400 dark:border-indigo-500/30">Trening Sesije</router-link>
                     <router-link to="/teams" class="text-xs font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition px-3 py-1.5 rounded-lg" active-class="bg-indigo-50 text-indigo-600 border border-indigo-200 dark:bg-indigo-600/20 dark:text-indigo-400 dark:border-indigo-500/30">Moj Tim</router-link>
                     <router-link to="/players" class="text-xs font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition px-3 py-1.5 rounded-lg" active-class="bg-indigo-50 text-indigo-600 border border-indigo-200 dark:bg-indigo-600/20 dark:text-indigo-400 dark:border-indigo-500/30">Igrači / Registar</router-link>
@@ -18,6 +19,13 @@
 
             <div class="flex items-center space-x-3">
                 <!-- Theme Toggle uvek dostupan na desnoj strani -->
+                    <router-link 
+                        to="/calendar" 
+                        class="text-xs font-bold px-3 py-2 rounded-xl transition"
+                        :class="$route.path === '/calendar' ? 'bg-indigo-600 text-white' : 'text-gray-400 hover:text-white'"
+                        >
+                        📅 Kalendar
+                    </router-link>
                 <ThemeToggle />
 
                 <template v-if="authStore.isAuthenticated">
@@ -49,6 +57,13 @@
                 <div class="text-[10px] text-gray-500 dark:text-gray-400">{{ authStore.user?.email }}</div>
             </div>
             <router-link @click="mobileMenuOpen = false" to="/" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 py-2 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition">Dashboard</router-link>
+            <router-link
+                to="/matches"
+                class="block text-sm font-semibold text-gray-700 dark:text-gray-300 py-2 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+                :class="$route.path === '/matches' ? 'bg-indigo-600 text-white' : 'text-gray-400 hover:text-white'"
+                >
+                Utakmice & Zapisnik
+            </router-link>
             <router-link @click="mobileMenuOpen = false" to="/trainings" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 py-2 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition">Trening Sesije</router-link>
             <router-link @click="mobileMenuOpen = false" to="/teams" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 py-2 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition">Moj Tim</router-link>
             <router-link @click="mobileMenuOpen = false" to="/players" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 py-2 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition">Igrači / Registar</router-link>

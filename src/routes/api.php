@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\MatchDayController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\NotificationController;
@@ -56,6 +57,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/teams', [TeamController::class, 'index']);
     Route::post('/teams', [TeamController::class, 'store']);
     Route::post('/teams/{team}/members', [TeamController::class, 'assignMembers']);
+
+    Route::get('/matches', [MatchDayController::class, 'index']);
+    Route::post('/matches', [MatchDayController::class, 'store']);
+    Route::put('/matches/{match}/stats', [MatchDayController::class, 'updateStats']);
 
     Route::post('/training-sessions/{trainingSession}/attendance', [TrainingSessionController::class, 'syncAttendance']);
 });

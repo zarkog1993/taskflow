@@ -7,6 +7,9 @@ import UsersView from "../views/UsersView.vue"
 import Players from "../views/PlayersView.vue"
 import TrainingsView from "../views/TrainingsView.vue"
 import TeamsView from "../views/TeamsView.vue"
+import PlayerProfileView from "../views/PlayerProfileView.vue"
+import MatchesView from "../views/MatchesView.vue"
+import CalendarView from "../views/CalendarView.vue"
 
 const routes = [
     {
@@ -60,7 +63,19 @@ const routes = [
     {
         path: '/players/:id',
         name: 'player-profile',
-        component: () => import('../views/PlayerProfileView.vue'),
+        component: PlayerProfileView,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/matches',
+        name: 'matches',
+        component: MatchesView,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/calendar',
+        name: 'calendar',
+        component: CalendarView,
         meta: { requiresAuth: true }
     },
 ]
