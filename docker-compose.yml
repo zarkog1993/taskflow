@@ -84,13 +84,13 @@ services:
       timeout: 5s
       retries: 5
 
-  mailhog:
-    image: mailhog/mailhog:latest
-    container_name: taskflow_mailhog
+  mailpit:
+    image: 'axllent/mailpit:latest'
+    container_name: taskflow_mailpit
     restart: unless-stopped
     ports:
-      - "1025:1025"   # SMTP
-      - "8025:8025"   # Web UI
+      - "1025:1025" # SMTP port
+      - "8025:8025" # Web Dashboard UI
     networks:
       - taskflow_network
 

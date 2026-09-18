@@ -68,6 +68,19 @@ export const useTrainingStore = defineStore('training', {
                 alert('Greška pri čuvanju prisustva')
                 return false
             }
+        },
+
+        async deleteSession(sessionId) {
+            try {
+                await api.delete(`/training-sessions/${sessionId}`);
+                // Uklanjamo obrisani trening iz lokalnog state-a
+                this.sessions = this.sessions.filter(s => s.id !== sessionId);
+                return true;
+            } catch (err) {
+                console.error('Greška pri brisanju treninga:', err);
+                alert('Došlo je do greške prilikom brisanja treninga.');
+                return false;
+            }
         }
     }
 })

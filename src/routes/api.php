@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\MatchDayController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\NotificationController;
@@ -17,6 +18,9 @@ Route::get('/user', function (Request $request) {
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login'])->name('login');
+Route::get('/trainings/{session}/rsvp/{user}/{status}', [TrainingSessionController::class, 'handleRsvp'])
+    ->name('trainings.rsvp')
+    ->middleware('signed');
 
 // Zaštićene rute (zahtevaju važeći Bearer token)
 Route::middleware('auth:sanctum')->group(function () {
@@ -51,11 +55,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/training-sessions', [TrainingSessionController::class, 'index']);
     Route::post('/training-sessions', [TrainingSessionController::class, 'store']);
     Route::put('/training-sessions/{trainingSession}/status', [TrainingSessionController::class, 'updateStatus']);
+    Route::delete('/training-sessions/{trainingSession}', [TrainingSessionController::class, 'destroy']);
 
     // Upravljanje Timovima / Starosnim Grupadama
     Route::get('/teams', [TeamController::class, 'index']);
     Route::post('/teams', [TeamController::class, 'store']);
     Route::post('/teams/{team}/members', [TeamController::class, 'assignMembers']);
+
+    Route::get('/matches', [MatchDayController::class, 'index']);
+    Route::post('/matches', [MatchDayController::class, 'store']);
+    Route::put('/matches/{match}/stats', [MatchDayController::class, 'updateStats']);
 
     Route::post('/training-sessions/{trainingSession}/attendance', [TrainingSessionController::class, 'syncAttendance']);
 });

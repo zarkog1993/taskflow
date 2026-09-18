@@ -102,4 +102,11 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Team::class);
     }
+
+    public function trainingSessions(): BelongsToMany
+    {
+        return $this->belongsToMany(TrainingSession::class, 'training_user', 'user_id', 'training_session_id')
+            ->withPivot('attended')
+            ->withTimestamps();
+    }
 }

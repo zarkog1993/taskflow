@@ -15,10 +15,10 @@
                     <div class="flex items-center gap-3">
                         <h2 class="text-3xl font-black text-white tracking-tight">{{ team.name }}</h2>
                         <span class="text-xs font-mono font-bold uppercase text-indigo-400 bg-indigo-600/20 px-3 py-1 rounded-lg border border-indigo-500/30">
-              {{ team.age_group }}
-            </span>
+                          {{ team.age_group }}
+                        </span>
                     </div>
-                    <p class="text-xs text-gray-400 mt-1">Ukupno {{ team.members?.length || 0 }} igrača u sastavu</p>
+                    <p class="text-xs text-gray-400 mt-1">Ukupno {{ teamPlayers.length }} igrača u sastavu</p>
                 </div>
             </div>
         </div>
@@ -31,20 +31,20 @@
 
         <!-- Grid Kartica Igrača -->
         <div v-else-if="team" class="space-y-6">
-            <div v-if="team.members && team.members.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div v-if="teamPlayers.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 <div
-                    v-for="member in team.members"
+                    v-for="member in teamPlayers"
                     :key="member.id"
                     class="bg-gray-800/80 hover:bg-gray-800 border border-gray-700/80 hover:border-indigo-500/50 rounded-2xl p-5 shadow-xl transition-all duration-300 flex flex-col justify-between group relative overflow-hidden"
                 >
                     <!-- Gornji Akcenat sa Brojem Dres-a -->
                     <div class="flex justify-between items-start mb-4">
-            <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-400 bg-indigo-950/80 px-2.5 py-1 rounded-md border border-indigo-800/50">
-              {{ member.player_profile?.primary_position || 'CM' }}
-            </span>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-400 bg-indigo-950/80 px-2.5 py-1 rounded-md border border-indigo-800/50">
+                          {{ member.player_profile?.primary_position || 'CM' }}
+                        </span>
                         <span class="text-xs font-mono font-extrabold text-white bg-indigo-600 px-2.5 py-1 rounded-lg shadow-md">
-              #{{ member.player_profile?.jersey_number || '-' }}
-            </span>
+                          #{{ member.player_profile?.jersey_number || '-' }}
+                        </span>
                     </div>
 
                     <!-- Slika, Ime i Klik ka Detaljima -->
@@ -89,7 +89,7 @@
                     <!-- Akcija: Izmena Učinka -->
                     <button
                         @click="openEditModal(member)"
-                        class="w-full py-2 px-3 bg-gray-700/60 hover:bg-gray-700 text-gray-200 text-xs font-semibold rounded-xl transition border border-gray-600/50 flex items-center justify-center gap-1.5"
+                        class="w-full py-2 px-3 bg-gray-700/60 hover:bg-gray-700 text-gray-200 text-xs font-semibold rounded-xl transition border border-gray-600/50 flex items-center justify-center gap-1.5 cursor-pointer"
                     >
                         ✏️ Izmeni Učinak
                     </button>
@@ -184,7 +184,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import api from '../services/api'
 
@@ -203,12 +203,24 @@ const statsForm = reactive({
     seniority: 'senior'
 })
 
+// Computovana osobina koja uvek sigurno hvata listu igrača nezavisno od naziva ključa (users vs members)
+const teamPlayers = computed(() => {
+    if (!team.value) return []
+    return team.value.users || team.value.members || []
+})
+
 const loadTeamData = async () => {
     loading.value = true
     try {
         const res = await api.get('/teams')
         const teams = res.data.data || res.data
-        team.value = teams.find(t => String(t.id) === String(route.params.id))
+        const foundTeam = teams.find(t => String(t.id) === String(route.params.id))
+
+        if (foundTeam) {
+            // Osiguravamo da i `members` i `users` budu popunjeni
+            foundTeam.members = foundTeam.users || foundTeam.members || []
+            team.value = foundTeam
+        }
     } catch (err) {
         console.error('Greška pri učitavanju tima:', err)
     } finally {
