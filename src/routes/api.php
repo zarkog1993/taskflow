@@ -1,9 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\CommentController;
 use App\Http\Controllers\MatchDayController;
-use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RoleController;
@@ -29,13 +27,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // RESTful User CRUD rute
     Route::apiResource('users', UserController::class);
-    Route::apiResource('tasks', TaskController::class);
-    Route::get('/tasks/{task}/comments', [CommentController::class, 'index']);
-    Route::post('/tasks/{task}/comments', [CommentController::class, 'store']);
-
-    // Direktne rute za komentare
-    Route::put('/comments/{comment}', [CommentController::class, 'update']);
-    Route::delete('/comments/{comment}', [CommentController::class, 'destroy']);
 
     Route::get('/notifications', [NotificationController::class, 'index']);
     Route::get('/notifications/unread', [NotificationController::class, 'unread']);
