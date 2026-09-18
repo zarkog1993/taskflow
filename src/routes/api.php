@@ -18,6 +18,9 @@ Route::get('/user', function (Request $request) {
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login'])->name('login');
+Route::get('/trainings/{session}/rsvp/{user}/{status}', [TrainingSessionController::class, 'handleRsvp'])
+    ->name('trainings.rsvp')
+    ->middleware('signed');
 
 // Zaštićene rute (zahtevaju važeći Bearer token)
 Route::middleware('auth:sanctum')->group(function () {
@@ -52,6 +55,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/training-sessions', [TrainingSessionController::class, 'index']);
     Route::post('/training-sessions', [TrainingSessionController::class, 'store']);
     Route::put('/training-sessions/{trainingSession}/status', [TrainingSessionController::class, 'updateStatus']);
+    Route::delete('/training-sessions/{trainingSession}', [TrainingSessionController::class, 'destroy']);
 
     // Upravljanje Timovima / Starosnim Grupadama
     Route::get('/teams', [TeamController::class, 'index']);

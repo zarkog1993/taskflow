@@ -10,6 +10,7 @@ import TeamsView from "../views/TeamsView.vue"
 import PlayerProfileView from "../views/PlayerProfileView.vue"
 import MatchesView from "../views/MatchesView.vue"
 import CalendarView from "../views/CalendarView.vue"
+import RsvpConfirmationView from "../views/RsvpConfirmationView.vue";
 
 const routes = [
     {
@@ -77,6 +78,11 @@ const routes = [
         name: 'calendar',
         component: CalendarView,
         meta: { requiresAuth: true }
+    },
+    {
+        path: '/rsvp-confirmation',
+        name: 'rsvp-confirmation',
+        component: RsvpConfirmationView
     },
 ]
 
