@@ -72,6 +72,64 @@
                         </span>
                     </div>
                 </div>
+                <div
+                    class="bg-white/80 dark:bg-gray-800/80 border border-gray-700/80 rounded-3xl p-6 shadow-xl space-y-4"
+                >
+                    <h4
+                        class="text-lg font-bold text-white border-b border-gray-700/60 pb-3"
+                    >
+                        Detaljni Podaci Profila
+                    </h4>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                        <div
+                            class="bg-white/80 dark:bg-gray-900/60 p-4 rounded-2xl border border-gray-700/50"
+                        >
+                            <span class="text-gray-400 block mb-1"
+                            >Jača noga:</span
+                            >
+                            <span
+                                class="dark:text-white font-bold uppercase text-gray-700"
+                            >{{
+                                    player.player_profile?.preferred_foot ||
+                                    "Nije podešeno"
+                                }}</span
+                            >
+                        </div>
+
+                        <div
+                            class="bg-white/80 dark:bg-gray-900/60 p-4 rounded-2xl border border-gray-700/50"
+                        >
+                            <span class="text-gray-400 block mb-1"
+                            >Datum rođenja:</span
+                            >
+                            <span
+                                class="dark:text-white font-bold text-gray-700"
+                            >{{
+                                    player.player_profile?.date_of_birth ||
+                                    "Nije uneto"
+                                }}</span
+                            >
+                        </div>
+
+                        <div
+                            class="bg-white/80 dark:bg-gray-900/60 p-4 rounded-2xl border border-gray-700/50 md:col-span-2"
+                        >
+                            <span
+                                class="text-gray-400 dark:text-gray-100 block mb-1"
+                            >Medicinske napomene / Povrede:</span
+                            >
+                            <span
+                                class="dark:text-gray-200 font-medium text-gray-800"
+                            >{{
+                                    player.player_profile?.medical_notes ||
+                                    "Nema zabeleženih medicinskih napomena."
+                                }}</span
+                            >
+                        </div>
+                    </div>
+                </div>
+
 
                 <!-- Fizički Status / Napomena -->
                 <div
@@ -152,65 +210,10 @@
                         </div>
                     </div>
                 </div>
-
+                <PitchPositionMap
+                    :position="playerProfile?.primary_position || playerProfile?.player_profile?.primary_position || player?.primary_position || player?.player_profile?.primary_position"
+                />
                 <!-- Evidencija Treninga i Napomena -->
-                <div
-                    class="bg-white/80 dark:bg-gray-800/80 border border-gray-700/80 rounded-3xl p-6 shadow-xl space-y-4"
-                >
-                    <h4
-                        class="text-lg font-bold text-white border-b border-gray-700/60 pb-3"
-                    >
-                        Detaljni Podaci Profila
-                    </h4>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                        <div
-                            class="bg-white/80 dark:bg-gray-900/60 p-4 rounded-2xl border border-gray-700/50"
-                        >
-                            <span class="text-gray-400 block mb-1"
-                                >Jača noga:</span
-                            >
-                            <span
-                                class="dark:text-white font-bold uppercase text-gray-700"
-                                >{{
-                                    player.player_profile?.preferred_foot ||
-                                    "Nije podešeno"
-                                }}</span
-                            >
-                        </div>
-
-                        <div
-                            class="bg-white/80 dark:bg-gray-900/60 p-4 rounded-2xl border border-gray-700/50"
-                        >
-                            <span class="text-gray-400 block mb-1"
-                                >Datum rođenja:</span
-                            >
-                            <span
-                                class="dark:text-white font-bold text-gray-700"
-                                >{{
-                                    player.player_profile?.date_of_birth ||
-                                    "Nije uneto"
-                                }}</span
-                            >
-                        </div>
-
-                        <div
-                            class="bg-white/80 dark:bg-gray-900/60 p-4 rounded-2xl border border-gray-700/50 md:col-span-2"
-                        >
-                            <span
-                                class="text-gray-400 dark:text-gray-100 block mb-1"
-                                >Medicinske napomene / Povrede:</span
-                            >
-                            <span
-                                class="dark:text-gray-200 font-medium text-gray-800"
-                                >{{
-                                    player.player_profile?.medical_notes ||
-                                    "Nema zabeleženih medicinskih napomena."
-                                }}</span
-                            >
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -453,6 +456,7 @@
 import { ref, reactive, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import api from "../services/api";
+import PitchPositionMap from '../components/PitchPositionMap.vue'
 
 const route = useRoute();
 const player = ref(null);

@@ -55,7 +55,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/matches', [MatchDayController::class, 'index']);
     Route::post('/matches', [MatchDayController::class, 'store']);
+    Route::put('/matches/{match}/status', [MatchDayController::class, 'updateStatus']);
     Route::put('/matches/{match}/stats', [MatchDayController::class, 'updateStats']);
+    Route::delete('/matches/{match}', [MatchDayController::class, 'destroy']);
 
     Route::post('/training-sessions/{trainingSession}/attendance', [TrainingSessionController::class, 'syncAttendance']);
 });

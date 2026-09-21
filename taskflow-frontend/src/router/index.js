@@ -11,6 +11,7 @@ import PlayerProfileView from "../views/PlayerProfileView.vue"
 import MatchesView from "../views/MatchesView.vue"
 import CalendarView from "../views/CalendarView.vue"
 import RsvpConfirmationView from "../views/RsvpConfirmationView.vue";
+import TacticsView from "../views/TacticsView.vue";
 
 const routes = [
     {
@@ -83,6 +84,11 @@ const routes = [
         path: '/rsvp-confirmation',
         name: 'rsvp-confirmation',
         component: RsvpConfirmationView
+    },
+    {
+        path: '/tactics',
+        name: 'tactics',
+        component: TacticsView
     },
 ]
 

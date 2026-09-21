@@ -39,8 +39,8 @@ class MatchDayController extends Controller
     {
         $validated = $request->validate([
             'status' => 'required|in:scheduled,completed,canceled',
-            'home_score' => 'nullable|integer|min:0',
-            'away_score' => 'nullable|integer|min:0',
+            'home_score' => 'required|integer|min:0',
+            'away_score' => 'required|integer|min:0',
             'players' => 'array',
             'players.*.id' => 'exists:users,id',
             'players.*.attended' => 'boolean',
@@ -48,28 +48,55 @@ class MatchDayController extends Controller
             'players.*.assists' => 'integer|min:0',
         ]);
 
-        // Ako je uneta krajnji rezultat ili je status eksplicitno promenjen
+        // 1. Ažuriramo status i rezultat utakmice
         $match->update([
             'status' => $validated['status'],
             'home_score' => $validated['home_score'],
             'away_score' => $validated['away_score'],
         ]);
 
+        // 2. Ažuriramo igrače u pivot tabeli
         if (isset($validated['players'])) {
-            $syncData = [];
-            foreach ($validated['players'] as $p) {
-                $syncData[$p['id']] = [
-                    'attended' => $p['attended'] ?? false,
-                    'goals' => $p['goals'] ?? 0,
-                    'assists' => $p['assists'] ?? 0,
-                ];
+            foreach ($validated['players'] as $playerData) {
+                $match->players()->syncWithoutDetaching([
+                    $playerData['id'] => [
+                        'attended' => $playerData['attended'],
+                        'goals' => $playerData['goals'],
+                        'assists' => $playerData['assists'],
+                    ]
+                ]);
             }
-            $match->players()->sync($syncData);
         }
 
         return response()->json([
-            'message' => 'Zapisnik uspešno ažuriran.',
+            'message' => 'Zapisnik je uspešno sačuvan!',
+            'data' => $match->fresh(['team', 'players'])
+        ]);
+    }
+
+    public function updateStatus(Request $request, MatchDay $match): JsonResponse
+    {
+        $validated = $request->validate([
+            'status' => 'required|in:scheduled,completed,canceled',
+        ]);
+
+        $match->update([
+            'status' => $validated['status'],
+        ]);
+
+        return response()->json([
+            'message' => 'Status meča uspešno ažuriran.',
             'data' => $match->fresh(['team.users.playerProfile', 'players.playerProfile'])
+        ]);
+    }
+
+    public function destroy(MatchDay $match): JsonResponse
+    {
+        $match->players()->detach(); // Uklanja sve veze u pivot tabeli
+        $match->delete();
+
+        return response()->json([
+            'message' => 'Meč uspešno obrisan.'
         ]);
     }
 }
