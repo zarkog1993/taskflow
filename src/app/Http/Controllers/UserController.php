@@ -141,6 +141,9 @@ class UserController extends Controller
         ]);
     }
 
+    /**
+     * Ažuriranje profila igrača sa novim fizičkim i fudbalskim parametrima.
+     */
     public function updateProfile(Request $request, User $user): JsonResponse
     {
         $validated = $request->validate([
@@ -148,6 +151,9 @@ class UserController extends Controller
             'jersey_number' => 'nullable|string|max:10',
             'primary_position' => 'nullable|string|max:10',
             'preferred_foot' => 'nullable|string|max:20',
+            'height' => 'nullable|integer',
+            'weight' => 'nullable|integer',
+            'seniority' => 'nullable|string|max:50',
             'date_of_birth' => 'nullable|date',
             'fitness_status' => 'nullable|string|max:255',
             'medical_notes' => 'nullable|string',

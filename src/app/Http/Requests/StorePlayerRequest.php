@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreUserRequest extends FormRequest
+class StorePlayerRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -15,16 +15,16 @@ class StoreUserRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'email' => 'nullable|email|unique:users,email',
-
-            // Fudbalski i fizički parametri igrača
+            'email' => 'nullable|email|max:255',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:500', // Max 500 KB
             'primary_position' => 'required|string|max:10',
+            'seniority' => 'nullable|string|max:50',
             'jersey_number' => 'nullable|integer',
             'height' => 'nullable|integer',
             'weight' => 'nullable|integer',
             'date_of_birth' => 'nullable|date',
             'preferred_foot' => 'nullable|string|in:right,left,both',
-            'seniority' => 'nullable|string|max:50',
+            'coach_notes' => 'nullable|string',
             'team_id' => 'nullable|exists:teams,id',
         ];
     }

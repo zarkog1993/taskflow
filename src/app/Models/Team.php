@@ -34,11 +34,10 @@ class Team extends Model
     }
 
     /**
-     * Igrači / korisnici koji pripadaju ovoj ekipi.
+     * Relacija ka novom Player modelu
      */
-    public function users(): BelongsToMany
+    public function players(): HasMany
     {
-        return $this->belongsToMany(User::class, 'team_user', 'team_id', 'user_id')
-                    ->withTimestamps();
+        return $this->hasMany(Player::class);
     }
 }
