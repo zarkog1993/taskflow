@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class UserService
 {
@@ -31,24 +33,41 @@ class UserService
 
     public function store(array $data): User
     {
+        // 1. Ako e-mail nije unet, generišemo privremeni
+        $email = (!empty($data['email']))
+            ? $data['email']
+            : Str::slug($data['name']) . rand(100, 999) . '@taskflow.local';
+
+        // 2. Proveravamo da li je prosleđena lozinka; ako nije, generišemo nasumičnu
+        $password = !empty($data['password'])
+            ? Hash::make($data['password'])
+            : Hash::make(Str::random(16));
+
+        // 3. Kreiramo User-a
         $user = User::create([
             'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => bcrypt($data['password']),
+            'email' => $email,
+            'password' => $password,
         ]);
 
-        if (!empty($data['player_profile'])) {
+        // 4. Kreiramo profil ako postoje fudbalski parametri
+        if (isset($data['primary_position'])) {
             $user->playerProfile()->create([
-                'jersey_number' => $data['player_profile']['jersey_number'] ?? null,
-                'primary_position' => $data['player_profile']['primary_position'] ?? 'CM',
-                'preferred_foot' => $data['player_profile']['preferred_foot'] ?? 'right',
-                'category' => $data['player_profile']['category'] ?? 'seniori',
-                'seniority' => $data['player_profile']['seniority'] ?? 'senior',
-                'fitness_status' => $data['player_profile']['fitness_status'] ?? 'fit',
+                'primary_position' => $data['primary_position'],
+                'jersey_number' => $data['jersey_number'] ?? null,
+                'height' => $data['height'] ?? null,
+                'weight' => $data['weight'] ?? null,
+                'date_of_birth' => $data['date_of_birth'] ?? null,
+                'preferred_foot' => $data['preferred_foot'] ?? 'right',
+                'seniority' => $data['seniority'] ?? 'Seniori',
             ]);
         }
 
-        return $user->load(['roles', 'playerProfile']);
+        if (!empty($data['team_id'])) {
+            $user->teams()->sync([$data['team_id']]);
+        }
+
+        return $user->load(['roles', 'playerProfile', 'teams']);
     }
 
     public function update(User $user, array $data): User
