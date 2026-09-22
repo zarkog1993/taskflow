@@ -15,7 +15,7 @@
                     <div class="flex items-center gap-3">
                         <h2 class="text-3xl font-black text-white tracking-tight">{{ team.name }}</h2>
                         <span class="text-xs font-mono font-bold uppercase text-indigo-400 bg-indigo-600/20 px-3 py-1 rounded-lg border border-indigo-500/30">
-                          {{ team.age_group }}
+                          {{ team.category || team.age_group || 'Seniori' }}
                         </span>
                     </div>
                     <p class="text-xs text-gray-400 mt-1">Ukupno {{ teamPlayers.length }} igrača u sastavu</p>
@@ -33,39 +33,41 @@
         <div v-else-if="team" class="space-y-6">
             <div v-if="teamPlayers.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 <div
-                    v-for="member in teamPlayers"
-                    :key="member.id"
+                    v-for="player in teamPlayers"
+                    :key="player.id"
                     class="bg-gray-800/80 hover:bg-gray-800 border border-gray-700/80 hover:border-indigo-500/50 rounded-2xl p-5 shadow-xl transition-all duration-300 flex flex-col justify-between group relative overflow-hidden"
                 >
-                    <!-- Gornji Akcenat sa Brojem Dres-a -->
+                    <!-- Gornji Akcenat sa Brojem Dresa -->
                     <div class="flex justify-between items-start mb-4">
                         <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-400 bg-indigo-950/80 px-2.5 py-1 rounded-md border border-indigo-800/50">
-                          {{ member.player_profile?.primary_position || 'CM' }}
+                          {{ player.primary_position || 'CM' }}
                         </span>
                         <span class="text-xs font-mono font-extrabold text-white bg-indigo-600 px-2.5 py-1 rounded-lg shadow-md">
-                          #{{ member.player_profile?.jersey_number || '-' }}
+                          #{{ player.jersey_number || '-' }}
                         </span>
                     </div>
 
                     <!-- Slika, Ime i Klik ka Detaljima -->
                     <div
-                        @click="$router.push(`/players/${member.id}`)"
+                        @click="$router.push(`/players/${player.id}`)"
                         class="cursor-pointer text-center space-y-3 my-2 group-hover:transform group-hover:-translate-y-1 transition duration-200"
                     >
-                        <div class="relative w-24 h-24 mx-auto">
+                        <div class="relative w-24 h-24 mx-auto rounded-full bg-indigo-950 border-2 border-indigo-500/30 group-hover:border-indigo-500 overflow-hidden shadow-lg flex items-center justify-center font-bold text-indigo-300 text-xl">
                             <img
-                                :src="member.player_profile?.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name)}&background=312e81&color=c7d2fe&size=128`"
-                                class="w-full h-full object-cover rounded-full border-2 border-indigo-500/30 group-hover:border-indigo-500 shadow-lg transition"
-                                :alt="member.name"
+                                v-if="player.photo_url"
+                                :src="player.photo_url"
+                                class="w-full h-full object-cover"
+                                :alt="player.name"
                             />
+                            <span v-else>#{{ player.jersey_number || '-' }}</span>
                         </div>
 
                         <div>
                             <h3 class="text-lg font-bold text-white group-hover:text-indigo-300 transition-colors leading-snug">
-                                {{ member.name }}
+                                {{ player.name }}
                             </h3>
                             <p class="text-[11px] text-gray-400 mt-0.5 font-mono">
-                                {{ member.player_profile?.category || 'Seniori' }}
+                                {{ player.seniority || 'Seniori' }}
                             </p>
                         </div>
                     </div>
@@ -74,21 +76,21 @@
                     <div class="grid grid-cols-3 gap-2 my-4 bg-gray-900/60 p-2.5 rounded-xl border border-gray-700/50 text-center text-xs">
                         <div>
                             <div class="text-[9px] font-bold uppercase text-gray-400">Utakmice</div>
-                            <div class="font-bold text-emerald-400 mt-0.5">{{ member.player_profile?.matches_played || 0 }}</div>
+                            <div class="font-bold text-emerald-400 mt-0.5">{{ getStat(player, 'matches_played') }}</div>
                         </div>
                         <div>
                             <div class="text-[9px] font-bold uppercase text-gray-400">Golovi</div>
-                            <div class="font-bold text-yellow-400 mt-0.5">{{ member.player_profile?.goals || 0 }}</div>
+                            <div class="font-bold text-yellow-400 mt-0.5">{{ getStat(player, 'goals') }}</div>
                         </div>
                         <div>
                             <div class="text-[9px] font-bold uppercase text-gray-400">Asist.</div>
-                            <div class="font-bold text-purple-400 mt-0.5">{{ member.player_profile?.assists || 0 }}</div>
+                            <div class="font-bold text-purple-400 mt-0.5">{{ getStat(player, 'assists') }}</div>
                         </div>
                     </div>
 
                     <!-- Akcija: Izmena Učinka -->
                     <button
-                        @click="openEditModal(member)"
+                        @click="openEditModal(player)"
                         class="w-full py-2 px-3 bg-gray-700/60 hover:bg-gray-700 text-gray-200 text-xs font-semibold rounded-xl transition border border-gray-600/50 flex items-center justify-center gap-1.5 cursor-pointer"
                     >
                         ✏️ Izmeni Učinak
@@ -111,22 +113,21 @@
                 <form @submit.prevent="handleSaveStats" class="space-y-4">
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Kategorija</label>
-                            <select v-model="statsForm.category" class="w-full bg-gray-900 border border-gray-700 rounded-xl p-2.5 text-white text-xs outline-none">
-                                <option value="seniori">Seniori</option>
-                                <option value="u19">U19 (Omladinci)</option>
-                                <option value="u17">U17 (Kadeti)</option>
-                                <option value="u15">U15 (Pioniri)</option>
-                                <option value="u13">U13 (Mlađi pioniri)</option>
-                                <option value="u11">U11 (Petlići)</option>
-                            </select>
-                        </div>
-                        <div>
                             <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Senioritet</label>
                             <select v-model="statsForm.seniority" class="w-full bg-gray-900 border border-gray-700 rounded-xl p-2.5 text-white text-xs outline-none">
-                                <option value="senior">Prvi Tim (Senior)</option>
-                                <option value="youth">Omladinski Pogon (Youth)</option>
-                                <option value="academy">Škola Fudbala (Academy)</option>
+                                <option value="Seniori">Seniori</option>
+                                <option value="U19">U19 (Omladinci)</option>
+                                <option value="U17">U17 (Kadeti)</option>
+                                <option value="U15">U15 (Pioniri)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Jača Noga</label>
+                            <select v-model="statsForm.preferred_foot" class="w-full bg-gray-900 border border-gray-700 rounded-xl p-2.5 text-white text-xs outline-none">
+                                <option value="right">Desna</option>
+                                <option value="left">Leva</option>
+                                <option value="both">Obe</option>
                             </select>
                         </div>
                     </div>
@@ -175,7 +176,7 @@
 
                     <div class="flex justify-end space-x-3 pt-4 border-t border-gray-700">
                         <button type="button" @click="showEditModal = false" class="px-4 py-2 text-xs text-gray-400 hover:text-white font-semibold">Odustani</button>
-                        <button type="submit" class="px-5 py-2.5 text-xs bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold transition shadow-lg">Sačuvaj Učinak</button>
+                        <button type="submit" class="px-5 py-2.5 text-xs bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold transition shadow-lg cursor-pointer">Sačuvaj Učinak</button>
                     </div>
                 </form>
             </div>
@@ -199,26 +200,46 @@ const statsForm = reactive({
     matches_played: 0,
     goals: 0,
     assists: 0,
-    category: 'seniori',
-    seniority: 'senior'
+    seniority: 'Seniori',
+    preferred_foot: 'right'
 })
 
-// Computovana osobina koja uvek sigurno hvata listu igrača nezavisno od naziva ključa (users vs members)
+// Prihvata listu igrača za tim nezavisno od toga da li stiže kao team.players ili team.members
 const teamPlayers = computed(() => {
     if (!team.value) return []
-    return team.value.users || team.value.members || []
+    return team.value.players || team.value.members || []
 })
+
+// Pomoćna funkcija za siguran pristup statistici bez obzira da li je u stats objektu ili na samom igraču
+const getStat = (player, field) => {
+    if (player.stats && player.stats[field] !== undefined) {
+        return player.stats[field]
+    }
+    return player[field] || 0
+}
 
 const loadTeamData = async () => {
     loading.value = true
     try {
-        const res = await api.get('/teams')
-        const teams = res.data.data || res.data
-        const foundTeam = teams.find(t => String(t.id) === String(route.params.id))
+        const [teamsRes, playersRes] = await Promise.all([
+            api.get('/teams'),
+            api.get('/players')
+        ])
+
+        const teams = teamsRes.data.data || teamsRes.data || []
+        const allPlayers = playersRes.data.data || playersRes.data || []
+
+        const targetTeamId = Number(route.params.id)
+        const foundTeam = teams.find(t => Number(t.id) === targetTeamId)
 
         if (foundTeam) {
-            // Osiguravamo da i `members` i `users` budu popunjeni
-            foundTeam.members = foundTeam.users || foundTeam.members || []
+            // Povezujemo igrače proverom Number(p.team_id) ili proveravamo da li je backend već poslao t.players
+            const assignedPlayers = allPlayers.filter(p => Number(p.team_id) === targetTeamId)
+
+            foundTeam.players = (foundTeam.players && foundTeam.players.length)
+                ? foundTeam.players
+                : assignedPlayers
+
             team.value = foundTeam
         }
     } catch (err) {
@@ -234,12 +255,12 @@ onMounted(() => {
 
 const openEditModal = (player) => {
     selectedPlayer.value = player
-    statsForm.trainings_attended = player.player_profile?.trainings_attended || 0
-    statsForm.matches_played = player.player_profile?.matches_played || 0
-    statsForm.goals = player.player_profile?.goals || 0
-    statsForm.assists = player.player_profile?.assists || 0
-    statsForm.category = player.player_profile?.category || 'seniori'
-    statsForm.seniority = player.player_profile?.seniority || 'senior'
+    statsForm.trainings_attended = getStat(player, 'trainings_attended')
+    statsForm.matches_played = getStat(player, 'matches_played')
+    statsForm.goals = getStat(player, 'goals')
+    statsForm.assists = getStat(player, 'assists')
+    statsForm.seniority = player.seniority || 'Seniori'
+    statsForm.preferred_foot = player.preferred_foot || 'right'
     showEditModal.value = true
 }
 
@@ -247,10 +268,20 @@ const handleSaveStats = async () => {
     if (!selectedPlayer.value) return
 
     try {
-        await api.put(`/users/${selectedPlayer.value.id}/stats`, statsForm)
+        const payload = {
+            matches_played: statsForm.matches_played,
+            trainings_attended: statsForm.trainings_attended,
+            goals: statsForm.goals,
+            assists: statsForm.assists,
+            seniority: statsForm.seniority,
+            preferred_foot: statsForm.preferred_foot
+        }
+
+        await api.put(`/players/${selectedPlayer.value.id}`, payload)
         showEditModal.value = false
-        await loadTeamData()
+        await loadTeamData() // Ponovo učitavamo podatke sa svežom statistikom
     } catch (err) {
+        console.error('Greška pri čuvanju statistike:', err)
         alert(err.response?.data?.message || 'Greška pri čuvanju statistike')
     }
 }

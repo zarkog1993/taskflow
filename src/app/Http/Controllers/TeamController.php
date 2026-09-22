@@ -22,8 +22,8 @@ class TeamController extends Controller
      */
     public function index()
     {
-        // Učitavamo relaciju sa profilom igrača
-        $teams = Team::with(['users.playerProfile'])->get();
+        // Učitavamo 'players' relaciju za svaki tim
+        $teams = Team::with('players')->get();
         return response()->json(['data' => $teams]);
     }
 

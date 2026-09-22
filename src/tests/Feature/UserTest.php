@@ -39,14 +39,16 @@ class UserTest extends TestCase
 
     public function test_authenticated_user_can_create_user(): void
     {
+        $user = User::factory()->create();
+
         $payload = [
-            'name' => 'Novi Korisnik',
-            'email' => 'novi2@testmail.com',
-            'password' => 'Lozinka123!',
-            'password_confirmation' => 'Lozinka123!'
+            'name'             => 'Novi Korisnik',
+            'email'            => 'novi2@testmail.com',
+            'primary_position' => 'CM',
+            'seniority'        => 'senior', // <-- Dodaj dozvoljenu vrednost koja prolazi CHECK ogranicenje
         ];
 
-        $response = $this->postJson('/api/users', $payload);
+        $response = $this->actingAs($user)->postJson('/api/users', $payload);
 
         $response->assertStatus(201);
         $this->assertDatabaseHas('users', [

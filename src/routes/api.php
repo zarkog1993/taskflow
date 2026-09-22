@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MatchDayController;
+use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RoleController;
@@ -27,6 +28,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // RESTful User CRUD rute
     Route::apiResource('users', UserController::class);
+    // RESTful Player CRUD rute
+    Route::apiResource('players', PlayerController::class);
 
     Route::get('/notifications', [NotificationController::class, 'index']);
     Route::get('/notifications/unread', [NotificationController::class, 'unread']);
