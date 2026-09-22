@@ -27,13 +27,14 @@ class UserController extends Controller
 
     /**
      * Display a listing of the users.
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = $this->userService->getAllPaginated();
+        Gate::authorize('viewAny', User::class);
 
-        return UserResource::collection($users);
+        return response()->json(
+            $this->userService->getPaginatedUsers($request->user())
+        );
     }
 
     /**
@@ -41,13 +42,13 @@ class UserController extends Controller
      * @param StoreUserRequest $request
      * @return JsonResponse
      */
-    public function store(StoreUserRequest $request): JsonResponse
+    public function store(StoreUserRequest $request)
     {
-        $user = $this->userService->store($request->validated());
+        Gate::authorize('create', User::class);
 
-        return response()->json([
-            'data' => new UserResource($user)
-        ], 201);
+        $user = $this->userService->store($request->validated(), $request->user());
+
+        return response()->json($user, 201);
     }
 
         /**
@@ -80,20 +81,13 @@ class UserController extends Controller
     /**
      * Uklanja korisnika iz baze.
      */
-    public function destroy(User $user): Response
+    public function destroy(Request $request, User $user)
     {
-        // 1. Autorizacija: Da li ulogovani korisnik briše samog sebe ILI je admin?
-        // Ako koristiš Laravel Policy: $this->authorize('delete', $user);
-        // Ako koristiš direktnu proveru:
-        if (Auth::id() !== $user->id && !Auth::user()->hasRole('admin')) {
-            abort(403, 'Nemate dozvolu za brisanje ovog korisnika.');
-        }
+        Gate::authorize('delete', $user);
 
-        // 2. Brisanje korisnika (i vezanog profila ako postoji)
-        $user->delete();
+        $this->userService->delete($user);
 
-        // 3. Vraćanje HTTP statusa 204 No Content (bez tela odgovora)
-        return response()->noContent();
+        return response()->json(null, 204);
     }
 
     /**

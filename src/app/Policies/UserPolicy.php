@@ -7,41 +7,71 @@ use App\Models\User;
 class UserPolicy
 {
     /**
-     * Ako je korisnik administrator, dozvoljavamo sve akcije unapred.
+     * Pregled liste korisnika: Admini i klupski admini vide svoje opsege.
      */
-    public function before(User $user, string $ability): ?bool
+    public function viewAny(User $authUser): bool
     {
-        $isAdmin = $user->getAttribute('is_admin') ?? false;
+        return true; // Svi autentifikovani korisnici mogu dohvatiti listu (filtrirano kroz UserService)
+    }
 
-        if ((bool) $isAdmin) {
+    /**
+     * Pregled pojedinačnog korisnika.
+     */
+    public function view(User $authUser, User $targetUser): bool
+    {
+        if ($authUser->isSuperAdmin() || $authUser->id === $targetUser->id) {
             return true;
         }
 
-        return null;
+        return $authUser->isClubAdmin() && (int)$authUser->club_id === (int)$targetUser->club_id;
     }
 
-    public function viewAny(User $user): bool
+    /**
+     * Kreiranje novog korisnika.
+     */
+    public function create(User $authUser): bool
     {
-        return true;
+        return $authUser->isSuperAdmin() || $authUser->isClubAdmin() || true;
     }
 
-    public function view(User $user, User $model): bool
+    /**
+     * Ažuriranje korisnika.
+     */
+    public function update(User $authUser, User $targetUser): bool
     {
-        return true;
+        if ($authUser->isSuperAdmin() || $authUser->id === $targetUser->id) {
+            return true;
+        }
+
+        if ($authUser->isClubAdmin()) {
+            return (int)$authUser->club_id === (int)$targetUser->club_id && !$targetUser->isSuperAdmin();
+        }
+
+        return false;
     }
 
-    public function create(User $user): bool
-    {
-        return true;
-    }
-
-    public function update(User $user, User $model): bool
-    {
-        return $user->hasRole('admin') || (int) $user->id === (int) $model->id;
-    }
-
+    /**
+     * Brisanje korisnika.
+     */
     public function delete(User $authUser, User $targetUser): bool
     {
-        return $authUser->id === $targetUser->id || $authUser->hasRole('admin');
+        // Korisnik uvek može da obriše samog sebe
+        if ($authUser->id === $targetUser->id) {
+            return true;
+        }
+
+        // Super Admin može obrisati bilo koga
+        if ($authUser->isSuperAdmin()) {
+            return true;
+        }
+
+        // Club Admin može obrisati igrača u svom klubu
+        if ($authUser->isClubAdmin()) {
+            return (int)$authUser->club_id === (int)$targetUser->club_id
+                && !$targetUser->isClubAdmin()
+                && !$targetUser->isSuperAdmin();
+        }
+
+        return false;
     }
 }

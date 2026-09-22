@@ -16,7 +16,7 @@ class UserTest extends TestCase
     {
         parent::setUp();
 
-        // Kreiramo i autentifikujemo korisnika pre svakog testa
+        // Kreiramo i logujemo osnovnog korisnika za testove
         $this->authUser = User::factory()->create();
         $this->actingAs($this->authUser, 'sanctum');
     }
@@ -32,8 +32,6 @@ class UserTest extends TestCase
             'data' => [
                 '*' => ['id', 'name', 'email', 'created_at']
             ],
-            'links',
-            'meta'
         ]);
     }
 
