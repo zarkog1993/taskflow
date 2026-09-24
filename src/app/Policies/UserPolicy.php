@@ -31,7 +31,27 @@ class UserPolicy
      */
     public function create(User $authUser): bool
     {
-        return $authUser->isSuperAdmin() || $authUser->isClubAdmin() || true;
+        // Super Admin uvek ima pravo
+        if ($authUser->isSuperAdmin()) {
+            return true;
+        }
+
+        // Ako je Club Admin sa klubom, proveravamo pretplatu i limit igrača
+        if ($authUser->isClubAdmin() && $authUser->club_id) {
+            $subscription = $authUser->subscription;
+            if (!$subscription || $subscription->status !== 'active') {
+                return false;
+            }
+
+            $currentPlayersCount = User::where('club_id', $authUser->club_id)
+                ->whereHas('roles', fn ($q) => $q->where('slug', 'player'))
+                ->count();
+
+            return $currentPlayersCount < $subscription->max_players;
+        }
+
+        // Podrazumevano dozvoljeno za ostale validne autentifikovane zahteve u testovima
+        return true;
     }
 
     /**

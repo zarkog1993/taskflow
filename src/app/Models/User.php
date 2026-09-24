@@ -138,4 +138,15 @@ class User extends Authenticatable
         return $this->roles()->where('slug', 'club-admin')->exists()
             || $this->hasRole('club-admin');
     }
+
+    // Unutar User klase:
+    public function subscription(): HasOne
+    {
+        return $this->hasOne(Subscription::class);
+    }
+
+    public function hasActiveSubscription(): bool
+    {
+        return $this->subscription && $this->subscription->status === 'active';
+    }
 }

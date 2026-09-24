@@ -140,11 +140,13 @@
 
                     <div>
                         <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Kategorija</label>
-                        <select v-model="newTeam.category" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-indigo-500 cursor-pointer">
-                            <option value="Seniori">Seniori</option>
-                            <option value="U19">U19 (Omladinci)</option>
-                            <option value="U17">U17 (Kadeti)</option>
-                            <option value="U15">U15 (Pioniri)</option>
+                        <select v-model="newTeam.age_group" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-indigo-500 cursor-pointer">
+                            <option value="senior">Seniori</option>
+                            <option value="u19">U19 (Omladinci)</option>
+                            <option value="u17">U17 (Kadeti)</option>
+                            <option value="u15">U15 (Pioniri)</option>
+                            <option value="u13">U13 (Mlađi pioniri)</option>
+                            <option value="u11">U11 (Petlići)</option>
                         </select>
                     </div>
 
@@ -233,7 +235,7 @@ const isSubmitting = ref(false)
 
 const newTeam = reactive({
     name: '',
-    category: 'Seniori'
+    age_group: 'senior'
 })
 
 // Dohvatanje timova i svih igrača sa backenda
@@ -274,7 +276,7 @@ const handleCreateTeam = async () => {
         await api.post('/teams', newTeam)
         showCreateTeamModal.value = false
         newTeam.name = ''
-        newTeam.category = 'Seniori'
+        newTeam.age_group = 'senior'
         await fetchData()
     } catch (err) {
         alert(err.response?.data?.message || 'Greška pri kreiranju ekipe')

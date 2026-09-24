@@ -6,6 +6,7 @@ use App\Models\Team;
 use App\Services\TeamService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Gate; // <-- 1. DODAT IMPORT
 
 class TeamController extends Controller
 {
@@ -22,6 +23,8 @@ class TeamController extends Controller
      */
     public function index()
     {
+        Gate::authorize('viewAny', Team::class);
+
         // Učitavamo 'players' relaciju za svaki tim
         $teams = Team::with('players')->get();
         return response()->json(['data' => $teams]);
@@ -31,14 +34,22 @@ class TeamController extends Controller
      * Store a new team.
      * @param Request $request
      * @return JsonResponse
-     */ 
+     */
     public function store(Request $request): JsonResponse
     {
+        // 2. POZIV POLICY PROVERE (Vraća 403 ako je limit dostignut)
+        Gate::authorize('create', Team::class);
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'age_group' => 'required|string|in:u9,u11,u13,u15,u17,u19,senior',
             'academy_id' => 'nullable|exists:academies,id',
         ]);
+
+        // Automatski dodeljujemo club_id ulogovanog korisnika ako nije prosleđen
+        if ($request->user() && $request->user()->club_id) {
+            $validated['club_id'] = $request->user()->club_id;
+        }
 
         $team = $this->teamService->createTeam($validated);
         return response()->json(['data' => $team], 201);
@@ -52,6 +63,8 @@ class TeamController extends Controller
      */
     public function assignMembers(Request $request, Team $team): JsonResponse
     {
+        Gate::authorize('update', $team);
+
         $validated = $request->validate([
             'user_ids' => 'required|array',
             'user_ids.*' => 'exists:users,id',
