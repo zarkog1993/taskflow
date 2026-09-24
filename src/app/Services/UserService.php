@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Hash;
@@ -31,35 +32,60 @@ class UserService
             ->paginate(50);
     }
 
-    public function store(array $data): User
+    public function getPaginatedUsers(User $authUser)
     {
-        // 1. Ako e-mail nije unet, generišemo privremeni
+        $query = User::with(['club', 'roles', 'playerProfile']);
+
+        // Ako je klupski admin, prikazuj samo korisnike njegovog kluba
+        if ($authUser->isClubAdmin()) {
+            $query->where('club_id', $authUser->club_id);
+        }
+        // Ako nije ni super-admin ni club-admin (npr. običan igrač), odbij pristup ili vrati samo njegov profil
+        elseif (!$authUser->isSuperAdmin()) {
+            $query->where('id', $authUser->id);
+        }
+
+        return $query->paginate(15);
+    }
+
+    public function store(array $data, User $authUser): User
+    {
+        // Ako kreira klupski admin, automatski se forsira njegov club_id
+        if ($authUser->isClubAdmin()) {
+            $data['club_id'] = $authUser->club_id;
+        }
+
         $email = (!empty($data['email']))
             ? $data['email']
             : Str::slug($data['name']) . rand(100, 999) . '@taskflow.local';
 
-        // 2. Proveravamo da li je prosleđena lozinka; ako nije, generišemo nasumičnu
         $password = !empty($data['password'])
             ? Hash::make($data['password'])
             : Hash::make(Str::random(16));
 
-        // 3. Kreiramo User-a
         $user = User::create([
-            'name' => $data['name'],
-            'email' => $email,
+            'name'     => $data['name'],
+            'email'    => $email,
             'password' => $password,
+            'club_id'  => $data['club_id'] ?? null,
         ]);
 
-        // 4. Kreiramo profil ako postoje fudbalski parametri
+        // Dodeljivanje uloge
+        $roleSlug = $data['role'] ?? 'player';
+        $role = Role::where('slug', $roleSlug)->first();
+        if ($role) {
+            $user->roles()->sync([$role->id]);
+        }
+
         if (isset($data['primary_position'])) {
             $user->playerProfile()->create([
                 'primary_position' => $data['primary_position'],
-                'jersey_number' => $data['jersey_number'] ?? null,
-                'height' => $data['height'] ?? null,
-                'weight' => $data['weight'] ?? null,
-                'date_of_birth' => $data['date_of_birth'] ?? null,
-                'preferred_foot' => $data['preferred_foot'] ?? 'right',
-                'seniority' => $data['seniority'] ?? 'Seniori',
+                'jersey_number'    => $data['jersey_number'] ?? null,
+                'height'           => $data['height'] ?? null,
+                'weight'           => $data['weight'] ?? null,
+                'date_of_birth'    => $data['date_of_birth'] ?? null,
+                'preferred_foot'   => $data['preferred_foot'] ?? 'right',
+                'seniority'        => $data['seniority'] ?? 'senior',
             ]);
         }
 
@@ -67,7 +93,7 @@ class UserService
             $user->teams()->sync([$data['team_id']]);
         }
 
-        return $user->load(['roles', 'playerProfile', 'teams']);
+        return $user->load(['roles', 'playerProfile', 'teams', 'club']);
     }
 
     public function update(User $user, array $data): User

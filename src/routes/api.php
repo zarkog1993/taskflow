@@ -2,9 +2,9 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MatchDayController;
+use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RoleController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\TeamController;
@@ -28,20 +28,14 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // RESTful User CRUD rute
     Route::apiResource('users', UserController::class);
+    // Super Admin pregled svih klubova i vlasnika
+    Route::get('/admin/clubs', [UserController::class, 'adminClubsOverview']);
+
     // RESTful Player CRUD rute
     Route::apiResource('players', PlayerController::class);
 
-    Route::get('/notifications', [NotificationController::class, 'index']);
-    Route::get('/notifications/unread', [NotificationController::class, 'unread']);
-    Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
-
     // Rute za upravljanje korisnicima i ulogama
     Route::apiResource('users', UserController::class);
-    Route::put('users/{user}/roles', [UserController::class, 'updateRoles']);
-    Route::put('/users/{user}/stats', [UserController::class, 'updateStats']);
-    Route::put('/users/{user}/profile', [UserController::class, 'updateProfile']);
-    Route::get('/users/{user}', [UserController::class, 'show']);
-    Route::delete('/users/{user}', [UserController::class, 'destroy']);
 
     Route::get('roles', [RoleController::class, 'index']);
 
@@ -63,4 +57,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/matches/{match}', [MatchDayController::class, 'destroy']);
 
     Route::post('/training-sessions/{trainingSession}/attendance', [TrainingSessionController::class, 'syncAttendance']);
+    Route::post('/onboarding/complete', [OnboardingController::class, 'store']);
 });

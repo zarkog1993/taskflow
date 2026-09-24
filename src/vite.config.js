@@ -20,5 +20,14 @@ export default defineConfig({
         watch: {
             ignored: ['**/storage/framework/views/**'],
         },
+        proxy: {
+            '/api': {
+                target: 'http://localhost:8080', // Unesi port tvog Laravel backend-a
+                changeOrigin: true,
+                headers: {
+                    Accept: 'application/json',
+                },
+            },
+        },
     },
 });

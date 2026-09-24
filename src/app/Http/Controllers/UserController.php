@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
+use App\Models\Club;
 use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Http\Request;
@@ -27,13 +28,14 @@ class UserController extends Controller
 
     /**
      * Display a listing of the users.
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = $this->userService->getAllPaginated();
+        Gate::authorize('viewAny', User::class);
 
-        return UserResource::collection($users);
+        return response()->json(
+            $this->userService->getPaginatedUsers($request->user())
+        );
     }
 
     /**
@@ -41,13 +43,13 @@ class UserController extends Controller
      * @param StoreUserRequest $request
      * @return JsonResponse
      */
-    public function store(StoreUserRequest $request): JsonResponse
+    public function store(StoreUserRequest $request)
     {
-        $user = $this->userService->store($request->validated());
+        Gate::authorize('create', User::class);
 
-        return response()->json([
-            'data' => new UserResource($user)
-        ], 201);
+        $user = $this->userService->store($request->validated(), $request->user());
+
+        return response()->json($user, 201);
     }
 
         /**
@@ -80,99 +82,24 @@ class UserController extends Controller
     /**
      * Uklanja korisnika iz baze.
      */
-    public function destroy(User $user): Response
+    public function destroy(Request $request, User $user)
     {
-        // 1. Autorizacija: Da li ulogovani korisnik briše samog sebe ILI je admin?
-        // Ako koristiš Laravel Policy: $this->authorize('delete', $user);
-        // Ako koristiš direktnu proveru:
-        if (Auth::id() !== $user->id && !Auth::user()->hasRole('admin')) {
-            abort(403, 'Nemate dozvolu za brisanje ovog korisnika.');
+        Gate::authorize('delete', $user);
+
+        $this->userService->delete($user);
+
+        return response()->json(null, 204);
+    }
+
+    public function adminClubsOverview(Request $request): JsonResponse
+    {
+        if (!$request->user()->isSuperAdmin()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        // 2. Brisanje korisnika (i vezanog profila ako postoji)
-        $user->delete();
+        // Učitavamo klubove sa vlasnikom, timovima i igračima
+        $clubs = Club::with(['owner', 'teams.players', 'subscription'])->get();
 
-        // 3. Vraćanje HTTP statusa 204 No Content (bez tela odgovora)
-        return response()->noContent();
-    }
-
-    /**
-     * Update roles of a user.
-     * @param Request $request
-     * @param User $user
-     * @return UserResource
-     */
-    public function updateRoles(Request $request, User $user): UserResource
-    {
-        Gate::authorize('update', $user);
-
-        $request->validate([
-            'roles' => 'array',
-            'roles.*' => 'exists:roles,id',
-        ]);
-
-        $updatedUser = $this->userService->updateRoles($user, $request->input('roles', []));
-
-        return new UserResource($updatedUser);
-    }
-
-    /**
-     * Update the statistics of a user's player profile.
-     * @param Request $request
-     * @param User $user
-     * @return JsonResponse
-     */
-    public function updateStats(Request $request, User $user): JsonResponse
-    {
-        $validated = $request->validate([
-            'matches_played' => 'required|integer|min:0',
-            'trainings_attended' => 'required|integer|min:0',
-            'goals' => 'required|integer|min:0',
-            'assists' => 'required|integer|min:0',
-            'category' => 'nullable|string',
-            'seniority' => 'nullable|string',
-        ]);
-
-        $profile = $user->playerProfile()->firstOrCreate(['user_id' => $user->id]);
-        $profile->update($validated);
-
-        return response()->json([
-            'data' => $user->load(['roles', 'playerProfile'])
-        ]);
-    }
-
-    /**
-     * Ažuriranje profila igrača sa novim fizičkim i fudbalskim parametrima.
-     */
-    public function updateProfile(Request $request, User $user): JsonResponse
-    {
-        $validated = $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'jersey_number' => 'nullable|string|max:10',
-            'primary_position' => 'nullable|string|max:10',
-            'preferred_foot' => 'nullable|string|max:20',
-            'height' => 'nullable|integer',
-            'weight' => 'nullable|integer',
-            'seniority' => 'nullable|string|max:50',
-            'date_of_birth' => 'nullable|date',
-            'fitness_status' => 'nullable|string|max:255',
-            'medical_notes' => 'nullable|string',
-            'photo_url' => 'nullable|string|max:500',
-            'category' => 'nullable|string|max:50',
-        ]);
-
-        if (isset($validated['name'])) {
-            $user->update(['name' => $validated['name']]);
-        }
-
-        $user->playerProfile()->updateOrCreate(
-            ['user_id' => $user->id],
-            array_diff_key($validated, ['name' => ''])
-        );
-
-        return response()->json([
-            'message' => 'Profil uspešno ažuriran.',
-            'data' => $user->load(['roles', 'playerProfile', 'teams'])
-        ]);
+        return response()->json(['data' => $clubs]);
     }
 }

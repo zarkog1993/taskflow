@@ -14,16 +14,21 @@ class TrainingSession extends Model
 
     protected $fillable = [
         'team_id',
+        'club_id', // <-- Dodato
         'title',
         'scheduled_at',
         'location',
         'created_by',
     ];
 
-    // Obavezno pretvaranje u Carbon/DateTime objekat
     protected $casts = [
         'scheduled_at' => 'datetime',
     ];
+
+    public function club(): BelongsTo
+    {
+        return $this->belongsTo(Club::class);
+    }
 
     public function creator(): BelongsTo
     {
@@ -45,12 +50,8 @@ class TrainingSession extends Model
         return $this->belongsTo(Season::class);
     }
 
-    /**
-     * Igrači koji prisustvuju treningu.
-     */
     public function users(): BelongsToMany
     {
-        // Koristimo 'training_user' kao naziv pivot tabele
         return $this->belongsToMany(User::class, 'training_user', 'training_session_id', 'user_id')
             ->withPivot('attended')
             ->withTimestamps();

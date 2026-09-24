@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -19,6 +20,7 @@ class User extends Authenticatable
         'email',
         'password',
         'is_admin',
+        'club_id',
     ];
 
     protected $hidden = [
@@ -108,5 +110,43 @@ class User extends Authenticatable
         return $this->belongsToMany(TrainingSession::class, 'training_user', 'user_id', 'training_session_id')
             ->withPivot('attended')
             ->withTimestamps();
+    }
+
+    /**
+     * Relacija sa klubom kom korisnik pripada.
+     */
+    public function club(): BelongsTo
+    {
+        return $this->belongsTo(Club::class);
+    }
+
+    /**
+     * Provera da li je korisnik Super Admin (glavni admin aplikacije).
+     */
+    public function isSuperAdmin(): bool
+    {
+        // Proverava da li korisnik ima rolu 'admin' ili 'super-admin'
+        return $this->roles()->whereIn('slug', ['admin', 'super-admin', 'admin'])->exists()
+            || $this->hasRole('admin');
+    }
+
+    /**
+     * Provera da li je korisnik Admin konkretnog kluba.
+     */
+    public function isClubAdmin(): bool
+    {
+        return $this->roles()->where('slug', 'club-admin')->exists()
+            || $this->hasRole('club-admin');
+    }
+
+    // Unutar User klase:
+    public function subscription(): HasOne
+    {
+        return $this->hasOne(Subscription::class);
+    }
+
+    public function hasActiveSubscription(): bool
+    {
+        return $this->subscription && $this->subscription->status === 'active';
     }
 }

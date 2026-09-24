@@ -12,6 +12,8 @@ import MatchesView from "../views/MatchesView.vue"
 import CalendarView from "../views/CalendarView.vue"
 import RsvpConfirmationView from "../views/RsvpConfirmationView.vue";
 import TacticsView from "../views/TacticsView.vue";
+import Onboarding from "../views/Onboarding.vue";
+import SuperAdminView from "../views/SuperAdminView.vue";
 
 const routes = [
     {
@@ -89,6 +91,17 @@ const routes = [
         path: '/tactics',
         name: 'tactics',
         component: TacticsView
+    },
+    {
+        path: '/onboarding',
+        name: 'onboarding',
+        component: Onboarding,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/super-admin',
+        name: 'super-admin',
+        component: SuperAdminView, // Novi pogled za Super Admina
     },
 ]
 
