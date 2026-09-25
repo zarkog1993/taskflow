@@ -14,6 +14,7 @@ import RsvpConfirmationView from "../views/RsvpConfirmationView.vue";
 import TacticsView from "../views/TacticsView.vue";
 import Onboarding from "../views/Onboarding.vue";
 import SuperAdminView from "../views/SuperAdminView.vue";
+import SubscriptionPendingView from "../views/SubscriptionPendingView.vue";
 
 const routes = [
     {
@@ -23,64 +24,76 @@ const routes = [
         meta: { guestOnly: true }
     },
     {
+        path: '/subscription-pending',
+        name: 'subscription-pending',
+        component: SubscriptionPendingView,
+        meta: { requiresAuth: true, allowPendingSubscription: true }
+    },
+    {
         path: "/register",
         name: "register",
         component: RegisterView,
         meta: { guestOnly: true }
     },
     {
-        path: "/",
-        name: "dashboard",
+        path: '/',
+        name: 'dashboard',
         component: DashboardView,
+        meta: { requiresAuth: true, subscriptionRequired: true }
+    },
+    {
+        path: '/super-admin',
+        name: 'super-admin',
+        component: SuperAdminView,
         meta: { requiresAuth: true }
     },
     {
         path: '/users',
         name: 'users',
         component: UsersView,
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, subscriptionRequired: true, feature: 'advanced.management' }
     },
     {
         path: '/players',
         name: 'players',
         component: Players,
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, subscriptionRequired: true, feature: 'players' }
     },
     {
         path: '/trainings',
         name: 'trainings',
         component: TrainingsView,
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, subscriptionRequired: true, feature: 'teams' }
     },
     {
         path: '/teams',
         name: 'teams',
         component: TeamsView,
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, subscriptionRequired: true, feature: 'teams' }
     },
     {
         path: '/teams/:id',
         name: 'team-detail',
         component: TeamDetailView,
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, subscriptionRequired: true, feature: 'teams' }
     },
     {
         path: '/players/:id',
         name: 'player-profile',
         component: PlayerProfileView,
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, subscriptionRequired: true, feature: 'players' }
     },
     {
         path: '/matches',
         name: 'matches',
         component: MatchesView,
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, subscriptionRequired: true, feature: 'matches' }
     },
     {
         path: '/calendar',
         name: 'calendar',
         component: CalendarView,
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, subscriptionRequired: true }
     },
     {
         path: '/rsvp-confirmation',
@@ -90,18 +103,19 @@ const routes = [
     {
         path: '/tactics',
         name: 'tactics',
-        component: TacticsView
+        component: TacticsView,
+        meta: { requiresAuth: true, subscriptionRequired: true }
     },
     {
         path: '/onboarding',
         name: 'onboarding',
         component: Onboarding,
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, subscriptionRequired: true }
     },
     {
-        path: '/super-admin',
-        name: 'super-admin',
-        component: SuperAdminView, // Novi pogled za Super Admina
+        path: '/onboarding/:token',
+        name: 'onboarding-token',
+        component: Onboarding,
     },
 ]
 
@@ -110,17 +124,48 @@ const router = createRouter({
     routes
 })
 
-// Navigation Guard
+const isSuperAdmin = (user) => {
+    if (!user) return false
+
+    return user.is_admin === 1
+        || user.is_admin === '1'
+        || user.is_admin === true
+        || user.roles?.some(role => role.slug === 'super-admin' || role.name === 'Super Admin')
+}
+
 router.beforeEach((to, from, next) => {
-    const token = localStorage.getItem("token")
+    const token = localStorage.getItem('token')
+    const user = JSON.parse(localStorage.getItem('user') || '{}')
 
     if (to.meta.requiresAuth && !token) {
-        next({ name: "login" })
-    } else if (to.meta.guestOnly && token) {
-        next({ name: "dashboard" })
-    } else {
-        next()
+        return next({ name: 'login' })
     }
+
+    if (to.meta.guestOnly && token) {
+        return next(isSuperAdmin(user)
+            ? '/super-admin'
+            : user.subscription_status === 'approved' || user.subscription_status === 'active'
+                ? { name: 'dashboard' }
+                : { name: 'subscription-pending' })
+    }
+
+    if (to.meta.subscriptionRequired
+        && !isSuperAdmin(user)
+        && !['approved', 'active'].includes(user.subscription_status)) {
+        return next({ name: 'subscription-pending' })
+    }
+
+    if (to.meta.feature
+        && !isSuperAdmin(user)
+        && !user.subscription_features?.includes(to.meta.feature)) {
+        return next({ name: 'dashboard' })
+    }
+
+    if ((to.name === 'dashboard' || to.path === '/dashboard') && isSuperAdmin(user)) {
+        return next('/super-admin')
+    }
+
+    next()
 })
 
 export default router

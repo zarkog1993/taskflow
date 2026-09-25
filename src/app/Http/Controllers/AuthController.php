@@ -49,13 +49,21 @@ class AuthController extends Controller
             ->setStatusCode(200); // Za login vraćamo 200 OK
     }
 
-    public function me(Request $request): AuthResource
+    public function me(Request $request)
     {
-        // Vraćamo korisnika kroz naš AuthResource, ali bez tokena ovoga puta
-        // Možemo proslediti strukturu sličnu servisu
-        return new AuthResource([
-            'user' => $request->user(),
-            'access_token' => null, // ili možemo prilagoditi resurs, ali za /me nam token ne treba ponovo
+        $user = $request->user()->load(['roles', 'club.teams']);
+
+        return response()->json([
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'is_admin' => (bool) $user->is_admin,
+            'club_id' => $user->club_id ?? $user->academy_id,
+            'team_ids' => $user->club?->teams->pluck('id')->values() ?? [],
+            'roles' => $user->roles,
+            'club_status' => $user->club?->status,
+            'subscription_status' => $user->subscription?->status,
+            'subscription_features' => $user->subscription?->features ?? [],
         ]);
     }
 

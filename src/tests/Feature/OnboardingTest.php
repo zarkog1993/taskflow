@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Club;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -18,9 +19,13 @@ class OnboardingTest extends TestCase
         Role::firstOrCreate(['slug' => 'club-admin'], ['name' => 'Club Admin']);
     }
 
-    public function test_user_can_complete_onboarding_and_create_club_with_subscription(): void
+    public function test_user_can_select_pending_subscription_for_registered_club(): void
     {
-        $user = User::factory()->create();
+        $club = Club::create([
+            'name' => 'FK Srem Vrdnik',
+            'status' => 'pending',
+        ]);
+        $user = User::factory()->create(['club_id' => $club->id]);
 
         $payload = [
             'club_name' => 'FK Srem Vrdnik',
@@ -30,17 +35,17 @@ class OnboardingTest extends TestCase
         $response = $this->actingAs($user, 'sanctum')
             ->postJson('/api/onboarding/complete', $payload);
 
-        $response->assertStatus(201)
+        $response->assertStatus(202)
             ->assertJsonPath('club.name', 'FK Srem Vrdnik');
 
-        // Provera baze
         $this->assertDatabaseHas('clubs', [
+            'id' => $club->id,
             'name' => 'FK Srem Vrdnik',
         ]);
 
         $this->assertDatabaseHas('users', [
             'id' => $user->id,
-            'club_id' => $response->json('club.id'),
+            'club_id' => $club->id,
         ]);
 
         $this->assertDatabaseHas('subscriptions', [
@@ -48,7 +53,7 @@ class OnboardingTest extends TestCase
             'plan_type' => 'pro',
             'max_teams' => 5,
             'max_players' => 150,
-            'status' => 'active',
+            'status' => 'pending',
         ]);
     }
 }

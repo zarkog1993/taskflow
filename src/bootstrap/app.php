@@ -13,7 +13,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+            'subscription.active' => \App\Http\Middleware\EnsureActiveSubscription::class,
+            'subscription.feature' => \App\Http\Middleware\EnsureSubscriptionFeature::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

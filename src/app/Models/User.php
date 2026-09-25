@@ -125,9 +125,8 @@ class User extends Authenticatable
      */
     public function isSuperAdmin(): bool
     {
-        // Proverava da li korisnik ima rolu 'admin' ili 'super-admin'
-        return $this->roles()->whereIn('slug', ['admin', 'super-admin', 'admin'])->exists()
-            || $this->hasRole('admin');
+        return (bool) $this->is_admin
+            || $this->roles()->whereIn('slug', ['admin', 'super-admin'])->exists();
     }
 
     /**
@@ -147,6 +146,11 @@ class User extends Authenticatable
 
     public function hasActiveSubscription(): bool
     {
-        return $this->subscription && $this->subscription->status === 'active';
+        return $this->subscription?->isActive() ?? false;
+    }
+
+    public function hasFeature(string $feature): bool
+    {
+        return $this->hasActiveSubscription() && $this->subscription->hasFeature($feature);
     }
 }

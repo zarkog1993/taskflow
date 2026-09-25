@@ -59,7 +59,7 @@ class TrainingSessionService
             $query->where('club_id', $authUser->club_id);
         } elseif (!$authUser->isSuperAdmin()) {
             // Ako je igrač, prikazujemo samo treninge timova u kojima se on nalazi
-            $query->whereHas('team.users', function ($q) use ($authUser) {
+            $query->whereHas('team.members', function ($q) use ($authUser) {
                 $q->where('users.id', $authUser->id);
             });
         }
@@ -69,12 +69,11 @@ class TrainingSessionService
 
     public function store(array $data, User $authUser): TrainingSession
     {
-        if ($authUser->isClubAdmin() && !isset($data['club_id'])) {
-            $data['club_id'] = $authUser->club_id;
-        }
-
+        $data['club_id'] = $authUser->isSuperAdmin()
+            ? \App\Models\Team::findOrFail($data['team_id'])->club_id
+            : $authUser->club_id;
         $data['created_by'] = $authUser->id;
 
-        return TrainingSession::create($data);
+        return TrainingSession::create($data)->load(['team', 'creator']);
     }
 }

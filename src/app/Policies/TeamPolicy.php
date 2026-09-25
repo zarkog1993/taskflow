@@ -33,7 +33,7 @@ class TeamPolicy
 
         // Provera aktivne pretplate
         $subscription = $authUser->subscription;
-        if (!$subscription || $subscription->status !== 'active') {
+        if (!$subscription || !$subscription->isActive()) {
             return false;
         }
 
@@ -49,7 +49,9 @@ class TeamPolicy
             return true;
         }
 
-        return $authUser->isClubAdmin() && (int) $authUser->club_id === (int) $team->club_id;
+        return $authUser->isClubAdmin()
+            && $authUser->hasActiveSubscription()
+            && (int) $authUser->club_id === (int) $team->club_id;
     }
 
     public function delete(User $authUser, Team $team): bool
@@ -58,6 +60,8 @@ class TeamPolicy
             return true;
         }
 
-        return $authUser->isClubAdmin() && (int) $authUser->club_id === (int) $team->club_id;
+        return $authUser->isClubAdmin()
+            && $authUser->hasActiveSubscription()
+            && (int) $authUser->club_id === (int) $team->club_id;
     }
 }

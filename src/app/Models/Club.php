@@ -6,13 +6,28 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 class Club extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name'];
+    protected $fillable = [
+        'name',
+        'status',
+        'logo_url',
+        'address',
+        'city',
+        'country',
+        'phone',
+        'onboarding_token_hash',
+        'onboarding_token_expires_at',
+        'onboarding_completed_at',
+    ];
+
+    protected $casts = [
+        'onboarding_token_expires_at' => 'datetime',
+        'onboarding_completed_at' => 'datetime',
+    ];
 
     // Timovi koji pripadaju klubu
     public function teams(): HasMany
@@ -35,15 +50,8 @@ class Club extends Model
     }
 
     // Pretplata kluba (preko vlasnika kluba)
-    public function subscription(): HasOneThrough
+    public function subscription(): HasOne
     {
-        return $this->hasOneThrough(
-            Subscription::class,
-            User::class,
-            'club_id', // Strani ključ u users tabeli
-            'user_id', // Strani ključ u subscriptions tabeli
-            'id',      // Lokalni ključ u clubs tabeli
-            'id'       // Lokalni ključ u users tabeli
-        );
+        return $this->hasOne(Subscription::class);
     }
 }

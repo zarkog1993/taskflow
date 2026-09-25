@@ -16,6 +16,9 @@ class TrainingSession extends Model
         'team_id',
         'club_id', // <-- Dodato
         'title',
+        'description',
+        'type',
+        'status',
         'scheduled_at',
         'location',
         'created_by',
