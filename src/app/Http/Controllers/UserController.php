@@ -6,6 +6,8 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\Club;
+use App\Models\Role;
+use App\Models\Subscription;
 use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Http\Request;
@@ -13,6 +15,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -38,18 +41,62 @@ class UserController extends Controller
         );
     }
 
+    public function superAdminDashboard(Request $request): JsonResponse
+    {
+        // Provera da li je Super Admin
+        if (!$request->user()->isSuperAdmin()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        return response()->json([
+            'stats' => [
+                'total_clubs' => Club::count(),
+                'total_users' => User::count(),
+                'active_subscriptions' => Subscription::where('status', 'active')->count(),
+                'monthly_revenue' => Subscription::where('status', 'active')->sum('price'),
+            ],
+            'clubs' => Club::with(['owner', 'teams', 'subscription'])->get(),
+            'users' => User::with(['club', 'roles'])->latest()->get(),
+            'subscriptions' => Subscription::with('user.club')->latest()->get(),
+        ]);
+    }
+
     /**
      * Store a newly created user in storage.
      * @param StoreUserRequest $request
      * @return JsonResponse
      */
-    public function store(StoreUserRequest $request)
+    public function store(Request $request): JsonResponse
     {
+        // Samo Super Admin i Club Admin mogu da kreiraju korisnike
         Gate::authorize('create', User::class);
 
-        $user = $this->userService->store($request->validated(), $request->user());
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8',
+            'club_id' => 'nullable|exists:clubs,id',
+            'role' => 'required|string|exists:roles,slug',
+        ]);
 
-        return response()->json($user, 201);
+        // Kreiranje korisnika
+        $user = User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'club_id' => $validated['club_id'] ?? $request->user()->club_id,
+        ]);
+
+        // Dodeljivanje uloge
+        $role = Role::where('slug', $validated['role'])->first();
+        if ($role) {
+            $user->roles()->attach($role->id);
+        }
+
+        return response()->json([
+            'message' => 'Korisnik uspešno kreiran',
+            'data' => $user->load(['club', 'roles'])
+        ], 201);
     }
 
         /**

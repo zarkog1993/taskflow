@@ -18,6 +18,11 @@ class RegisterRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Password::defaults()],
+            'club_name' => ['nullable', 'string', 'max:255'],
+            'address' => ['nullable', 'string', 'max:255'],
+            'city' => ['nullable', 'string', 'max:100'],
+            'country' => ['nullable', 'string', 'max:100'],
+            'phone' => ['nullable', 'string', 'max:50'],
         ];
     }
 }

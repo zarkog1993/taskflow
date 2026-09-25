@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\TrainingSession;
 use App\Models\User;
+use App\Models\Team;
 use App\Notifications\TrainingScheduledNotification; // <-- Sastavni uvoz!
 use App\Services\TrainingSessionService;
 use Illuminate\Http\JsonResponse;
@@ -44,7 +45,24 @@ class TrainingSessionController extends Controller
     {
         Gate::authorize('create', TrainingSession::class);
 
-        $session = $this->sessionService->store($request->validated(), $request->user());
+        $validated = $request->validate([
+            'team_id' => ['required', 'integer', 'exists:teams,id'],
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'type' => ['nullable', 'in:training,match,tactical_analysis,fitness'],
+            'status' => ['nullable', 'in:planned,in_progress,completed'],
+            'scheduled_at' => ['required', 'date'],
+            'location' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $team = Team::findOrFail($validated['team_id']);
+        abort_unless(
+            $request->user()->isSuperAdmin()
+            || (int) $team->club_id === (int) $request->user()->club_id,
+            403,
+        );
+
+        $session = $this->sessionService->store($validated, $request->user());
 
         return response()->json($session, 201);
     }
@@ -57,6 +75,8 @@ class TrainingSessionController extends Controller
      */
     public function updateStatus(Request $request, TrainingSession $trainingSession): JsonResponse
     {
+        Gate::authorize('update', $trainingSession);
+
         $validated = $request->validate([
             'status' => 'required|in:planned,in_progress,completed',
         ]);
@@ -66,11 +86,46 @@ class TrainingSessionController extends Controller
         return response()->json(['data' => $updated]);
     }
 
+    public function update(Request $request, TrainingSession $trainingSession): JsonResponse
+    {
+        Gate::authorize('update', $trainingSession);
+
+        $validated = $request->validate([
+            'team_id' => ['sometimes', 'required', 'integer', 'exists:teams,id'],
+            'title' => ['sometimes', 'required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'type' => ['sometimes', 'in:training,match,tactical_analysis,fitness'],
+            'status' => ['sometimes', 'in:planned,in_progress,completed'],
+            'scheduled_at' => ['sometimes', 'required', 'date'],
+            'location' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        if (isset($validated['team_id'])) {
+            $team = Team::findOrFail($validated['team_id']);
+            abort_unless(
+                $request->user()->isSuperAdmin()
+                || (int) $team->club_id === (int) $request->user()->club_id,
+                403,
+            );
+            $validated['club_id'] = $team->club_id;
+        }
+
+        $trainingSession->update($validated);
+
+        return response()->json(['data' => $trainingSession->fresh(['team', 'creator'])]);
+    }
+
     public function syncAttendance(Request $request, TrainingSession $trainingSession): JsonResponse
     {
+        Gate::authorize('update', $trainingSession);
+
         $validated = $request->validate([
             'player_ids' => 'nullable|array',
-            'player_ids.*' => 'exists:users,id'
+            'player_ids.*' => [
+                'integer',
+                \Illuminate\Validation\Rule::exists('users', 'id')
+                    ->where('club_id', $trainingSession->club_id),
+            ],
         ]);
 
         $trainingSession->users()->sync($validated['player_ids'] ?? []);
@@ -104,6 +159,8 @@ class TrainingSessionController extends Controller
      */
     public function destroy(TrainingSession $trainingSession): JsonResponse
     {
+        Gate::authorize('delete', $trainingSession);
+
         // Brisanje zavisnosti u pivot tabeli i samog treninga
         $trainingSession->users()->detach();
         $trainingSession->delete();

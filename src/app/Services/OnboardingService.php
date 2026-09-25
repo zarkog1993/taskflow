@@ -3,67 +3,129 @@
 namespace App\Services;
 
 use App\Models\Club;
-use App\Models\Role;
 use App\Models\Subscription;
+use App\Models\SubscriptionPlan;
 use App\Models\User;
+use App\Mail\SubscriptionPendingMail;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class OnboardingService
 {
-    /**
-     * Konfiguracija limita po paketima
-     */
-    protected array $planLimits = [
-        'basic' => [
-            'max_teams' => 1,
-            'max_players' => 25,
-        ],
-        'pro' => [
-            'max_teams' => 5,
-            'max_players' => 150,
-        ],
-        'unlimited' => [
-            'max_teams' => 999,
-            'max_players' => 9999,
-        ],
-    ];
+    public function plans()
+    {
+        return SubscriptionPlan::query()
+            ->where('is_active', true)
+            ->orderBy('price')
+            ->get();
+    }
 
-    /**
-     * Zpocinje i zavrsava onboarding: kreira Klub, dodeljuje Pretplatu i ulogu club-admin korisniku.
-     */
+    public function findByToken(string $token): Club
+    {
+        $club = Club::with('users')->where('onboarding_token_hash', hash('sha256', $token))->first();
+
+        if (!$club || !$club->onboarding_token_expires_at || $club->onboarding_token_expires_at->isPast()) {
+            throw new HttpException(410, 'Onboarding link is invalid or has expired.');
+        }
+
+        return $club;
+    }
+
+    public function selectPlan(string $token, string $planType): Subscription
+    {
+        return DB::transaction(function () use ($token, $planType) {
+            $club = $this->findByToken($token);
+            $owner = $club->users()->oldest('users.id')->firstOrFail();
+            $plan = SubscriptionPlan::where('slug', $planType)->where('is_active', true)->firstOrFail();
+
+            $subscription = Subscription::updateOrCreate(
+                ['user_id' => $owner->id],
+                [
+                    'club_id' => $club->id,
+                    'subscription_plan_id' => $plan->id,
+                    'plan_type' => $plan->slug,
+                    'status' => 'pending',
+                    'max_teams' => $plan->max_teams,
+                    'max_players' => $plan->max_players,
+                    'features' => $plan->features,
+                    'price' => $plan->price,
+                    'ends_at' => null,
+                ],
+            );
+
+            $club->update([
+                'status' => 'pending_subscription',
+                'onboarding_token_hash' => null,
+                'onboarding_token_expires_at' => null,
+            ]);
+
+            $subscription = $subscription->load(['plan', 'user', 'club']);
+
+            User::query()
+                ->where('is_admin', true)
+                ->orWhereHas('roles', fn ($query) => $query->whereIn('slug', ['admin', 'super-admin']))
+                ->get()
+                ->each(fn (User $superAdmin) => Mail::to($superAdmin->email)->send(
+                    new SubscriptionPendingMail($subscription)
+                ));
+
+            return $subscription;
+        });
+    }
+
     public function completeOnboarding(User $user, array $data): Club
     {
-        return DB::transaction(function () use ($user, $data) {
-            $planType = $data['plan_type'];
-            $limits = $this->planLimits[$planType] ?? $this->planLimits['basic'];
+        $club = $user->club;
+        if (!$club) {
+            throw new HttpException(422, 'No pending club registration found.');
+        }
 
-            // 1. Kreiranje kluba
-            $club = Club::create([
-                'name' => $data['club_name'],
+        $subscription = $this->selectPlanForUser($user, $data['plan_type']);
+        return $club->fresh()->load('users', 'subscription');
+    }
+
+    private function selectPlanForUser(User $user, string $planType): Subscription
+    {
+        $plan = SubscriptionPlan::where('slug', $planType)->where('is_active', true)->firstOrFail();
+
+        return Subscription::updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'club_id' => $user->club_id,
+                'subscription_plan_id' => $plan->id,
+                'plan_type' => $plan->slug,
+                'status' => 'pending',
+                'max_teams' => $plan->max_teams,
+                'max_players' => $plan->max_players,
+                'features' => $plan->features,
+                'price' => $plan->price,
+                'ends_at' => null,
+            ],
+        );
+    }
+
+    public function approve(Subscription $subscription, string $status, User $approver): Subscription
+    {
+        if (!in_array($status, ['approved', 'active', 'rejected', 'cancelled', 'expired'], true)) {
+            throw new HttpException(422, 'Invalid subscription status.');
+        }
+
+        return DB::transaction(function () use ($subscription, $status, $approver) {
+            $subscription->update([
+                'status' => $status,
+                'approved_by' => in_array($status, ['approved', 'active'], true) ? $approver->id : null,
+                'approved_at' => in_array($status, ['approved', 'active'], true) ? now() : null,
+                'rejected_at' => $status === 'rejected' ? now() : null,
+                'ends_at' => in_array($status, ['approved', 'active'], true) ? now()->addMonth() : null,
             ]);
 
-            // 2. Ažuriranje korisnika (povezivanje sa klubom)
-            $user->update([
-                'club_id' => $club->id,
+            $subscription->club()->update([
+                'status' => in_array($status, ['approved', 'active'], true) ? 'active' : 'pending_subscription',
+                'onboarding_completed_at' => in_array($status, ['approved', 'active'], true) ? now() : null,
             ]);
 
-            // 3. Dodeljivanje uloge 'club-admin'
-            $role = Role::where('slug', 'club-admin')->first();
-            if ($role) {
-                $user->roles()->syncWithoutDetaching([$role->id]);
-            }
-
-            // 4. Kreiranje pretplate
-            Subscription::create([
-                'user_id' => $user->id,
-                'plan_type' => $planType,
-                'status' => 'active',
-                'max_teams' => $limits['max_teams'],
-                'max_players' => $limits['max_players'],
-                'ends_at' => now()->addMonth(), // Mesečna pretplata
-            ]);
-
-            return $club->load(['users']);
+            return $subscription->fresh('plan');
         });
     }
 }

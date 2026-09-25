@@ -28,15 +28,20 @@ class TeamService
 
     public function createTeam(array $data): Team
     {
+        if (empty($data['club_id'])) {
+            abort(422, 'A team must belong to a club.');
+        }
+
         $team = Team::create([
             'name' => $data['name'],
             'age_group' => $data['age_group'],
             'academy_id' => $data['academy_id'] ?? null,
+            'club_id' => $data['club_id'],
         ]);
 
         // Automatski dodajemo kreatora (Team Admin-a) u članove tima
         if (auth()->check()) {
-            $team->members()->attach(auth()->id());
+            $team->members()->syncWithoutDetaching([auth()->id()]);
         }
 
         return $team;
