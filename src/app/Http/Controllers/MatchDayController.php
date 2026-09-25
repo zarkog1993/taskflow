@@ -4,16 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Models\MatchDay;
 use App\Models\Team;
+use App\Services\EventInvitationService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
 class MatchDayController extends Controller
 {
+    public function __construct(private EventInvitationService $invitationService) {}
+
     public function index(Request $request): JsonResponse
     {
         $query = MatchDay::with([
             'team.members.playerProfile',
             'players.playerProfile',
+            'invitedPlayers',
         ])->orderBy('scheduled_at', 'desc');
 
         if (!$request->user()->isSuperAdmin()) {
@@ -31,14 +35,23 @@ class MatchDayController extends Controller
             'is_home' => 'required|boolean',
             'scheduled_at' => 'required|date',
             'location' => 'nullable|string|max:255',
+            'attendees' => 'nullable|array',
+            'attendees.*' => [
+                'integer',
+                \Illuminate\Validation\Rule::exists('players', 'id')->where('team_id', $request->input('team_id')),
+            ],
         ]);
 
         $team = Team::findOrFail($validated['team_id']);
         abort_unless($request->user()->isSuperAdmin() || (int) $team->club_id === (int) $request->user()->club_id, 403);
 
-        $matchDay = MatchDay::create($validated);
+        $attendeeIds = $validated['attendees'] ?? [];
+        unset($validated['attendees']);
 
-        return response()->json(['message' => 'Utakmica uspešno zakazana.', 'data' => $matchDay], 201);
+        $matchDay = MatchDay::create($validated);
+        $this->invitationService->invite($matchDay, $attendeeIds);
+
+        return response()->json(['message' => 'Utakmica uspešno zakazana.', 'data' => $matchDay->load('invitedPlayers')], 201);
     }
 
     public function updateStats(Request $request, MatchDay $match): JsonResponse

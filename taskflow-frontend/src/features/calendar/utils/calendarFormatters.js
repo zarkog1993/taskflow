@@ -7,7 +7,7 @@ export function normalizeTraining(t) {
         title: t.title,
         location: t.location,
         team: t.team,
-        users: t.users || t.attendees || [],
+        users: t.invited_players || [],
         scheduled_at: new Date(t.scheduled_at),
         time: new Date(t.scheduled_at).toLocaleTimeString('sr-RS', {
             hour: '2-digit',
@@ -23,7 +23,7 @@ export function normalizeMatch(m) {
         title: `vs ${m.opponent}`,
         location: m.location,
         team: m.team,
-        users: m.users || m.players || [],
+        users: m.invited_players || [],
         scheduled_at: new Date(m.scheduled_at),
         time: new Date(m.scheduled_at).toLocaleTimeString('sr-RS', {
             hour: '2-digit',

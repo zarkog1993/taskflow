@@ -7,6 +7,7 @@ Route::get('/', function () {
 });
 
 // Catch-all ruta za Vue SPA Router
+// routes/web.php
 Route::get('/{any}', function () {
-    return view('app'); // naziv tvog glavnog blade fajla (resources/views/app.blade.php)
+    return view('welcome'); // ili 'app' ako stvoriš resources/views/app.blade.php
 })->where('any', '.*');

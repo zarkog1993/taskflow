@@ -7,6 +7,7 @@
                 <th class="p-2">Email</th>
                 <th class="p-2">Klub</th>
                 <th class="p-2">Uloga</th>
+                <th class="p-2">Actions</th>
             </tr>
             </thead>
             <tbody class="divide-y divide-gray-700/50">
@@ -18,6 +19,14 @@
                         <span class="px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800 font-bold uppercase text-[10px]">
                             {{ u.roles?.[0]?.name || 'Player' }}
                         </span>
+                </td>
+                <td class="p-2">
+                    <button
+                        @click="$emit('delete', u)"
+                        class="rounded border border-red-800 bg-red-950 px-2 py-1 font-bold text-red-300"
+                    >
+                        Delete
+                    </button>
                 </td>
             </tr>
             </tbody>
@@ -32,4 +41,6 @@ defineProps({
         default: () => []
     }
 })
+
+defineEmits(['delete'])
 </script>

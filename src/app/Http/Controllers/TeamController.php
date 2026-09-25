@@ -6,7 +6,7 @@ use App\Models\Team;
 use App\Services\TeamService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Gate; // <-- 1. DODAT IMPORT
+use Illuminate\Support\Facades\Gate;
 
 class TeamController extends Controller
 {

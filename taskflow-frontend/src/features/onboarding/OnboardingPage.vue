@@ -3,7 +3,7 @@
         <div class="mx-auto max-w-6xl">
             <div v-if="loading" class="text-center text-slate-300">Loading onboarding...</div>
             <div v-else-if="error" class="mx-auto max-w-md rounded-xl border border-red-500/30 bg-red-500/10 p-6 text-red-300">{{ error }}</div>
-            <template v-else>
+            <template v-else-if="club">
                 <div class="mb-8 text-center">
                     <h1 class="text-3xl font-bold text-emerald-400">Complete {{ club.name }} onboarding</h1>
                     <p class="mt-2 text-slate-300">Choose a package. Access starts only after approval.</p>
@@ -14,6 +14,9 @@
                     {{ submitting ? 'Submitting...' : 'Submit package for approval' }}
                 </button>
             </template>
+            <div v-else class="mx-auto max-w-md rounded-xl border border-red-500/30 bg-red-500/10 p-6 text-red-300">
+                Club registration could not be loaded.
+            </div>
         </div>
     </div>
 </template>

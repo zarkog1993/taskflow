@@ -5,20 +5,21 @@ namespace App\Http\Controllers;
 use App\Models\TrainingSession;
 use App\Models\User;
 use App\Models\Team;
-use App\Notifications\TrainingScheduledNotification; // <-- Sastavni uvoz!
+use App\Services\EventInvitationService;
 use App\Services\TrainingSessionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Notification; // <-- Sastavni uvoz!
 
 class TrainingSessionController extends Controller
 {
     private TrainingSessionService $sessionService;
 
-    public function __construct(TrainingSessionService $sessionService)
-    {
+    public function __construct(
+        TrainingSessionService $sessionService,
+        private EventInvitationService $invitationService,
+    ) {
         $this->sessionService = $sessionService;
     }
 
@@ -53,6 +54,11 @@ class TrainingSessionController extends Controller
             'status' => ['nullable', 'in:planned,in_progress,completed'],
             'scheduled_at' => ['required', 'date'],
             'location' => ['nullable', 'string', 'max:255'],
+            'attendees' => ['nullable', 'array'],
+            'attendees.*' => [
+                'integer',
+                \Illuminate\Validation\Rule::exists('players', 'id')->where('team_id', $request->input('team_id')),
+            ],
         ]);
 
         $team = Team::findOrFail($validated['team_id']);
@@ -62,9 +68,13 @@ class TrainingSessionController extends Controller
             403,
         );
 
-        $session = $this->sessionService->store($validated, $request->user());
+        $attendeeIds = $validated['attendees'] ?? [];
+        unset($validated['attendees']);
 
-        return response()->json($session, 201);
+        $session = $this->sessionService->store($validated, $request->user());
+        $this->invitationService->invite($session, $attendeeIds);
+
+        return response()->json($session->load('invitedPlayers'), 201);
     }
 
     /**

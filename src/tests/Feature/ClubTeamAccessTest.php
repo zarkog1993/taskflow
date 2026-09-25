@@ -37,8 +37,39 @@ class ClubTeamAccessTest extends TestCase
 
         $this->assertSame('FK Test', $user->club->name);
         $this->assertSame('FK Test', $team->name);
+        $this->assertSame(['club-admin'], $user->roles()->pluck('slug')->all());
         $this->assertTrue($team->members()->whereKey($user->id)->exists());
         Mail::assertSent(ClubOnboardingMail::class, fn ($mail) => $mail->hasTo($user->email));
+    }
+
+    public function test_player_cannot_create_another_player(): void
+    {
+        $club = Club::create(['name' => 'Player Club', 'status' => 'active']);
+        $team = Team::create([
+            'club_id' => $club->id,
+            'name' => 'Player Club',
+            'age_group' => 'senior',
+        ]);
+        $playerUser = User::factory()->create(['club_id' => $club->id]);
+        $playerRole = Role::firstOrCreate(['slug' => 'player'], ['name' => 'Player']);
+        $playerUser->roles()->sync([$playerRole->id]);
+        Subscription::create([
+            'user_id' => $playerUser->id,
+            'club_id' => $club->id,
+            'plan_type' => 'standard',
+            'status' => 'active',
+            'max_teams' => 5,
+            'max_players' => 150,
+            'features' => ['players'],
+        ]);
+
+        $this->actingAs($playerUser, 'sanctum')->postJson('/api/players', [
+            'team_id' => $team->id,
+            'name' => 'New Player',
+            'primary_position' => 'CM',
+        ])->assertForbidden();
+
+        $this->assertDatabaseMissing('players', ['name' => 'New Player']);
     }
 
     public function test_club_admin_only_sees_teams_from_their_club(): void

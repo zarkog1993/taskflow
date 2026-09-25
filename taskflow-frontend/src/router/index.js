@@ -10,11 +10,12 @@ import TeamsView from "../views/TeamsView.vue"
 import PlayerProfileView from "../views/PlayerProfileView.vue"
 import MatchesView from "../views/MatchesView.vue"
 import CalendarView from "../views/CalendarView.vue"
-import RsvpConfirmationView from "../views/RsvpConfirmationView.vue";
-import TacticsView from "../views/TacticsView.vue";
-import Onboarding from "../views/Onboarding.vue";
-import SuperAdminView from "../views/SuperAdminView.vue";
-import SubscriptionPendingView from "../views/SubscriptionPendingView.vue";
+import RsvpConfirmationView from "../views/RsvpConfirmationView.vue"
+import TacticsView from "../views/TacticsView.vue"
+import Onboarding from "../views/Onboarding.vue"
+import SuperAdminView from "../views/SuperAdminView.vue"
+import SubscriptionPendingView from "../views/SubscriptionPendingView.vue"
+import AnalyticsView from "../views/AnalyticsView.vue";
 
 const routes = [
     {
@@ -24,16 +25,16 @@ const routes = [
         meta: { guestOnly: true }
     },
     {
-        path: '/subscription-pending',
-        name: 'subscription-pending',
-        component: SubscriptionPendingView,
-        meta: { requiresAuth: true, allowPendingSubscription: true }
-    },
-    {
         path: "/register",
         name: "register",
         component: RegisterView,
         meta: { guestOnly: true }
+    },
+    {
+        path: '/subscription-pending',
+        name: 'subscription-pending',
+        component: SubscriptionPendingView,
+        meta: { requiresAuth: true, allowPendingSubscription: true }
     },
     {
         path: '/',
@@ -104,18 +105,31 @@ const routes = [
         path: '/tactics',
         name: 'tactics',
         component: TacticsView,
-        meta: { requiresAuth: true, subscriptionRequired: true }
+        meta: { requiresAuth: true, subscriptionRequired: true, feature: 'tactics' }
     },
+
+    // ONBOARDING RUTE (ISPRAVLJENO: Ne zahtevaju aktivnu pretplatu)
     {
         path: '/onboarding',
         name: 'onboarding',
         component: Onboarding,
-        meta: { requiresAuth: true, subscriptionRequired: true }
+        meta: { allowPendingSubscription: true, publicTokenAccess: true }
     },
     {
         path: '/onboarding/:token',
         name: 'onboarding-token',
         component: Onboarding,
+        meta: { allowPendingSubscription: true, publicTokenAccess: true }
+    },
+    {
+        path: '/analytics',
+        name: 'analytics',
+        component: AnalyticsView,
+        meta: {
+            requiresAuth: true,
+            subscriptionRequired: true,
+            feature: 'advanced_stats'
+        }
     },
 ]
 
@@ -137,32 +151,44 @@ router.beforeEach((to, from, next) => {
     const token = localStorage.getItem('token')
     const user = JSON.parse(localStorage.getItem('user') || '{}')
 
+    // AKO JE ONBOARDING SA TOKENOM IZ EMAILA — DOZVOLI PRISTUP BEZ AUTENTIFIKACIJE
+    if ((to.name === 'onboarding' || to.name === 'onboarding-token') && (to.query.token || to.params.token)) {
+        return next()
+    }
+
+    // 1. Provera autentifikacije za ostale zaštićene rute
     if (to.meta.requiresAuth && !token) {
         return next({ name: 'login' })
     }
 
+    // 2. Preusmeravanje za ulogovane korisnike ako posete login ili register
     if (to.meta.guestOnly && token) {
-        return next(isSuperAdmin(user)
-            ? '/super-admin'
-            : user.subscription_status === 'approved' || user.subscription_status === 'active'
-                ? { name: 'dashboard' }
-                : { name: 'subscription-pending' })
+        if (isSuperAdmin(user)) {
+            return next('/super-admin')
+        }
+
+        return ['approved', 'active'].includes(user.subscription_status)
+            ? next({ name: 'dashboard' })
+            : next({ name: 'subscription-pending' })
     }
 
+    // 3. Automatsko preusmeravanje Super Admina sa početne strane
+    if ((to.name === 'dashboard' || to.path === '/') && isSuperAdmin(user)) {
+        return next('/super-admin')
+    }
+
+    // 4. Provera da li nalog čeka odobrenje pretplate
     if (to.meta.subscriptionRequired
         && !isSuperAdmin(user)
         && !['approved', 'active'].includes(user.subscription_status)) {
         return next({ name: 'subscription-pending' })
     }
 
+    // 5. Provera feature flag-ova za odabrani paket
     if (to.meta.feature
         && !isSuperAdmin(user)
         && !user.subscription_features?.includes(to.meta.feature)) {
         return next({ name: 'dashboard' })
-    }
-
-    if ((to.name === 'dashboard' || to.path === '/dashboard') && isSuperAdmin(user)) {
-        return next('/super-admin')
     }
 
     next()

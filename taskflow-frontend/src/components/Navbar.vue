@@ -39,11 +39,21 @@
                     </router-link>
 
                     <router-link
+                        v-if="hasFeature('tactics')"
                         to="/tactics"
                         class="text-xs font-semibold px-3 py-2 rounded-xl transition shrink-0"
                         :class="$route.path === '/tactics' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'"
                     >
                         Taktika
+                    </router-link>
+
+                    <router-link
+                        v-if="hasFeature('advanced_stats')"
+                        to="/analytics"
+                        class="text-xs font-semibold px-3 py-2 rounded-xl transition shrink-0"
+                        :class="$route.path === '/analytics' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'"
+                    >
+                        Analitika
                     </router-link>
 
                     <router-link
@@ -154,6 +164,7 @@
             </div>
 
             <router-link
+                v-if="hasFeature('tactics')"
                 @click="mobileMenuOpen = false"
                 :to="dashboardRoute"
                 class="block text-sm font-semibold text-slate-300 py-2 px-3 rounded-xl hover:bg-slate-800 transition"

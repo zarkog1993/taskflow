@@ -53,7 +53,7 @@ class TrainingSessionService
 
     public function getPaginatedSessions(User $authUser, int $perPage = 15)
     {
-        $query = TrainingSession::with(['team', 'creator']);
+        $query = TrainingSession::with(['team', 'creator', 'invitedPlayers']);
 
         if ($authUser->isClubAdmin()) {
             $query->where('club_id', $authUser->club_id);

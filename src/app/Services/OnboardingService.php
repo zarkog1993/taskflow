@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\Club;
 use App\Models\Subscription;
-use App\Models\SubscriptionPlan;
 use App\Models\User;
 use App\Mail\SubscriptionPendingMail;
 use Illuminate\Support\Facades\DB;
@@ -13,17 +12,27 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class OnboardingService
 {
+    public function __construct(private readonly SubscriptionPlanService $planService)
+    {
+    }
+
     public function plans()
     {
-        return SubscriptionPlan::query()
-            ->where('is_active', true)
-            ->orderBy('price')
-            ->get();
+        return $this->planService->all();
     }
 
     public function findByToken(string $token): Club
     {
         $club = Club::with('users')->where('onboarding_token_hash', hash('sha256', $token))->first();
+
+        if (!$club) {
+            $club = User::query()
+                ->where('onboarding_token', $token)
+                ->where('onboarding_token_expires_at', '>', now())
+                ->with('club.users')
+                ->first()
+                ?->club;
+        }
 
         if (!$club || !$club->onboarding_token_expires_at || $club->onboarding_token_expires_at->isPast()) {
             throw new HttpException(410, 'Onboarding link is invalid or has expired.');
@@ -37,7 +46,7 @@ class OnboardingService
         return DB::transaction(function () use ($token, $planType) {
             $club = $this->findByToken($token);
             $owner = $club->users()->oldest('users.id')->firstOrFail();
-            $plan = SubscriptionPlan::where('slug', $planType)->where('is_active', true)->firstOrFail();
+            $plan = $this->planService->find($planType);
 
             $subscription = Subscription::updateOrCreate(
                 ['user_id' => $owner->id],
@@ -57,6 +66,10 @@ class OnboardingService
             $club->update([
                 'status' => 'pending_subscription',
                 'onboarding_token_hash' => null,
+                'onboarding_token_expires_at' => null,
+            ]);
+            $owner->update([
+                'onboarding_token' => null,
                 'onboarding_token_expires_at' => null,
             ]);
 
@@ -87,7 +100,7 @@ class OnboardingService
 
     private function selectPlanForUser(User $user, string $planType): Subscription
     {
-        $plan = SubscriptionPlan::where('slug', $planType)->where('is_active', true)->firstOrFail();
+        $plan = $this->planService->find($planType);
 
         return Subscription::updateOrCreate(
             ['user_id' => $user->id],
@@ -112,7 +125,14 @@ class OnboardingService
         }
 
         return DB::transaction(function () use ($subscription, $status, $approver) {
+            $plan = $this->planService->find($subscription->plan_type);
+
             $subscription->update([
+                'subscription_plan_id' => $plan->id,
+                'max_teams' => $plan->max_teams,
+                'max_players' => $plan->max_players,
+                'features' => $plan->features,
+                'price' => $plan->price,
                 'status' => $status,
                 'approved_by' => in_array($status, ['approved', 'active'], true) ? $approver->id : null,
                 'approved_at' => in_array($status, ['approved', 'active'], true) ? now() : null,

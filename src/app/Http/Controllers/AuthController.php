@@ -24,12 +24,13 @@ class AuthController extends Controller
      * @param RegisterRequest $registerRequest
      * @return JsonResponse
      */
-    public function register(RegisterRequest $registerRequest): JsonResponse
+    public function register(RegisterRequest $request): JsonResponse
     {
-        $data = $registerRequest->validated();
-        $result = $this->authService->register($data);
+        $result = $this->authService->register($request->validated());
 
-        return (new AuthResource($result))->response()->setStatusCode(201);
+        return (new AuthResource($result))
+            ->response()
+            ->setStatusCode(201);
     }
 
     /**

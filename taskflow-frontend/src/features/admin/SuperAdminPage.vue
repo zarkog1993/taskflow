@@ -25,10 +25,30 @@
         <div v-if="loading" class="text-center py-12 text-gray-400 italic">Učitavanje admin podataka...</div>
 
         <div v-else>
-            <ClubsTab v-if="activeTab === 'clubs'" :clubs="clubs" />
-            <AdminUsersTab v-if="activeTab === 'users'" :users="users" />
-            <SubscriptionsTab v-if="activeTab === 'subscriptions'" :subscriptions="subscriptions" @approve="approveSubscription" />
+            <ClubsTab v-if="activeTab === 'clubs'" :clubs="clubs" @delete="deleteClub" />
+            <AdminUsersTab v-if="activeTab === 'users'" :users="users" @delete="deleteUser" />
+            <SubscriptionsTab
+                v-if="activeTab === 'subscriptions'"
+                :subscriptions="subscriptions"
+                :plans="plans"
+                @approve="approveSubscription"
+                @cancel="cancelSubscription"
+                @change-plan="changeSubscriptionPlan"
+            />
         </div>
+
+        <AdminConfirmModal
+            v-if="confirmation"
+            :title="confirmation.title"
+            :message="confirmation.message"
+            :confirm-label="confirmation.confirmLabel"
+            :processing-label="confirmation.processingLabel"
+            :icon="confirmation.icon"
+            :processing="confirmationProcessing"
+            :error="confirmationError"
+            @close="closeConfirmation"
+            @confirm="confirmAction"
+        />
     </div>
 </template>
 
@@ -39,6 +59,7 @@ import AdminTabsNav from './components/AdminTabsNav.vue'
 import ClubsTab from './components/ClubsTab.vue'
 import AdminUsersTab from './components/AdminUsersTab.vue'
 import SubscriptionsTab from './components/SubscriptionsTab.vue'
+import AdminConfirmModal from './components/AdminConfirmModal.vue'
 
 const {
     activeTab,
@@ -47,6 +68,16 @@ const {
     clubs,
     users,
     subscriptions,
-    approveSubscription
+    plans,
+    confirmation,
+    confirmationProcessing,
+    confirmationError,
+    approveSubscription,
+    deleteUser,
+    deleteClub,
+    cancelSubscription,
+    closeConfirmation,
+    confirmAction,
+    changeSubscriptionPlan
 } = useSuperAdminDashboard()
 </script>

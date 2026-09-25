@@ -44,10 +44,11 @@ class AuthService
             ]);
             $team->members()->syncWithoutDetaching([$user->id]);
 
-            $clubAdmin = Role::where('slug', 'club-admin')->first();
-            if ($clubAdmin) {
-                $user->roles()->syncWithoutDetaching([$clubAdmin->id]);
-            }
+            $clubAdmin = Role::firstOrCreate(
+                ['slug' => 'club-admin'],
+                ['name' => 'Club Admin'],
+            );
+            $user->roles()->sync([$clubAdmin->id]);
 
             $accessToken = $user->createToken('auth_token')->plainTextToken;
             $onboardingUrl = rtrim(config('app.frontend_url', env('FRONTEND_URL', 'http://localhost:5173')), '/')
