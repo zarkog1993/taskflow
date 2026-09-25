@@ -9,6 +9,7 @@ use App\Models\Club;
 use App\Models\Role;
 use App\Models\Subscription;
 use App\Models\User;
+use App\Services\SubscriptionPlanService;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -24,7 +25,10 @@ class UserController extends Controller
      */
     private UserService $userService;
 
-    public function __construct(UserService $userService)
+    public function __construct(
+        UserService $userService,
+        private readonly SubscriptionPlanService $planService,
+    )
     {
         $this->userService = $userService;
     }
@@ -58,6 +62,7 @@ class UserController extends Controller
             'clubs' => Club::with(['owner', 'teams', 'subscription'])->get(),
             'users' => User::with(['club', 'roles'])->latest()->get(),
             'subscriptions' => Subscription::with('user.club')->latest()->get(),
+            'plans' => $this->planService->all(),
         ]);
     }
 

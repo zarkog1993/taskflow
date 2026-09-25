@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\Club;
+use App\Models\Subscription;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -16,9 +18,26 @@ class UserTest extends TestCase
     {
         parent::setUp();
 
-        // Kreiramo i logujemo osnovnog korisnika za testove
-        $this->authUser = User::factory()->create();
-        $this->actingAs($this->authUser, 'sanctum');
+        // 1. Stvaramo klub
+        $club = Club::factory()->create([
+            'status' => 'approved'
+        ]);
+
+        // 2. Stvaramo autentificiranog korisnika dodijeljenog tom klubu
+        $this->authUser = User::factory()->create([
+            'club_id' => $club->id,
+        ]);
+
+        // 3. Stvaramo aktivnu pretplatu s 'advanced.management' mogućnosti
+        Subscription::factory()->create([
+            'club_id' => $club->id,
+            'user_id' => $this->authUser->id,
+            'status' => 'active',
+            'features' => ['advanced.management', 'players', 'teams', 'matches']
+        ]);
+
+        // Postavljamo korisnika kao ulogiranog za testove
+        $this->actingAs($this->authUser);
     }
 
     public function test_authenticated_user_can_get_paginated_users_list(): void
@@ -46,7 +65,7 @@ class UserTest extends TestCase
             'seniority'        => 'senior', // <-- Dodaj dozvoljenu vrednost koja prolazi CHECK ogranicenje
         ];
 
-        $response = $this->actingAs($user)->postJson('/api/users', $payload);
+        $response = $this->actingAs($this->authUser)->postJson('/api/users', $payload);
 
         $response->assertStatus(201);
         $this->assertDatabaseHas('users', [

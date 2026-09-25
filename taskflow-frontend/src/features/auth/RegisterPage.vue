@@ -20,16 +20,6 @@
                         />
                     </div>
 
-                    <div>
-                        <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Potvrda lozinke *</label>
-                        <input
-                            v-model="form.password_confirmation"
-                            type="password"
-                            required
-                            class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-indigo-500"
-                        />
-                    </div>
-
                     <!-- Naziv Kluba -->
                     <div>
                         <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Naziv Kluba / Akademije *</label>
@@ -73,6 +63,16 @@
                             type="password"
                             required
                             placeholder="••••••••"
+                            class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-indigo-500"
+                        />
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Potvrda lozinke *</label>
+                        <input
+                            v-model="form.password_confirmation"
+                            type="password"
+                            required
                             class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-indigo-500"
                         />
                     </div>

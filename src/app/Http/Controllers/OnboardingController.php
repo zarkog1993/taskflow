@@ -2,40 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\OnboardingRequest;
+use App\Models\Subscription;
 use App\Services\OnboardingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Models\Subscription;
+use Illuminate\Validation\Rule;
 
 class OnboardingController extends Controller
 {
-    protected OnboardingService $onboardingService;
-
-    public function __construct(OnboardingService $onboardingService)
+    public function __construct(private readonly OnboardingService $onboardingService)
     {
-        $this->onboardingService = $onboardingService;
     }
 
-    /**
-     * Pokretanje/Završavanje onboarding procesa (kreiranje kluba i pretplate).
-     */
-    public function store(OnboardingRequest $request): JsonResponse
+    public function getPlans(): JsonResponse
     {
-        $user = $request->user();
-
-        $club = $this->onboardingService->completeOnboarding($user, $request->validated());
-
         return response()->json([
-            'message' => 'Paket je poslat na odobrenje.',
-            'club' => $club,
-            'subscription' => $club->subscription,
-        ], 202);
-    }
-
-    public function plans(): JsonResponse
-    {
-        return response()->json(['data' => $this->onboardingService->plans()]);
+            'plans' => $this->onboardingService->plans(),
+        ]);
     }
 
     public function show(string $token): JsonResponse
@@ -43,28 +26,47 @@ class OnboardingController extends Controller
         $club = $this->onboardingService->findByToken($token);
 
         return response()->json([
-            'club' => $club->only(['name', 'address', 'city', 'country', 'phone', 'status']),
+            'user' => $club->users->first(),
+            'club' => $club,
             'plans' => $this->onboardingService->plans(),
         ]);
     }
 
-    public function select(string $token, Request $request): JsonResponse
+    public function select(Request $request, string $token): JsonResponse
     {
-        $planType = $request->validate([
-            'plan_type' => ['required', 'string', 'exists:subscription_plans,slug'],
-        ])['plan_type'];
-        $subscription = $this->onboardingService->selectPlan($token, $planType);
+        $validated = $request->validate([
+            'plan_type' => ['required', 'string', Rule::in(array_keys(config('subscriptions.plans', [])))],
+        ]);
+
+        $subscription = $this->onboardingService->selectPlan($token, $validated['plan_type']);
 
         return response()->json([
-            'message' => 'Paket je poslat na odobrenje.',
+            'message' => 'Your package selection is pending administrator approval.',
             'subscription' => $subscription,
+        ], 202);
+    }
+
+    public function store(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'plan_type' => ['required', 'string', Rule::in(array_keys(config('subscriptions.plans', [])))],
+        ]);
+
+        $club = $this->onboardingService->completeOnboarding($request->user(), $validated);
+
+        return response()->json([
+            'message' => 'Your package selection is pending administrator approval.',
+            'club' => $club,
         ], 202);
     }
 
     public function updateSubscription(Request $request, Subscription $subscription): JsonResponse
     {
         abort_unless($request->user()->isSuperAdmin(), 403);
-        $validated = $request->validate(['status' => 'required|string']);
+
+        $validated = $request->validate([
+            'status' => ['required', 'string', 'in:approved,active,rejected,cancelled,expired'],
+        ]);
 
         return response()->json([
             'subscription' => $this->onboardingService->approve(

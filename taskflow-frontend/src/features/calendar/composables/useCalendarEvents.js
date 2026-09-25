@@ -107,28 +107,13 @@ export function useCalendarEvents() {
                     attendees: selectedUserIds
                 })
             } else {
-                const matchRes = await api.post('/matches', {
+                await api.post('/matches', {
                     team_id: eventForm.value.team_id,
                     opponent: eventForm.value.opponent,
                     is_home: eventForm.value.is_home,
                     scheduled_at: eventForm.value.scheduled_at,
-                    location: eventForm.value.location
-                })
-
-                const matchId = matchRes.data.data.id
-
-                const matchPlayers = availablePlayers.value.map((p) => ({
-                    id: p.id,
-                    attended: p.selected,
-                    goals: 0,
-                    assists: 0
-                }))
-
-                await api.put(`/matches/${matchId}/stats`, {
-                    status: 'scheduled',
-                    home_score: null,
-                    away_score: null,
-                    players: matchPlayers
+                    location: eventForm.value.location,
+                    attendees: selectedUserIds
                 })
             }
 

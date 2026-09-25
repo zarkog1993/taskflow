@@ -7,6 +7,7 @@
                 <th class="p-2">Paket</th>
                 <th class="p-2">Status</th>
                 <th class="p-2">Max Timova</th>
+                <th class="p-2">Actions</th>
             </tr>
             </thead>
             <tbody class="divide-y divide-gray-700/50">
@@ -26,6 +27,26 @@
                     </button>
                 </td>
                 <td class="p-2 font-mono text-gray-300">{{ sub.max_teams }}</td>
+                <td class="p-2">
+                    <div class="flex items-center gap-2">
+                        <select
+                            :value="sub.subscription_plan_id"
+                            @change="$emit('changePlan', sub, $event.target.value)"
+                            class="rounded border border-gray-600 bg-gray-900 px-2 py-1 text-gray-200"
+                        >
+                            <option v-for="plan in plans" :key="plan.id" :value="plan.id">
+                                {{ plan.name }}
+                            </option>
+                        </select>
+                        <button
+                            v-if="!['cancelled', 'expired'].includes(sub.status)"
+                            @click="$emit('cancel', sub)"
+                            class="rounded border border-amber-700 bg-amber-950 px-2 py-1 font-bold text-amber-300"
+                        >
+                            Disable
+                        </button>
+                    </div>
+                </td>
             </tr>
             </tbody>
         </table>
@@ -37,8 +58,12 @@ defineProps({
     subscriptions: {
         type: Array,
         default: () => []
+    },
+    plans: {
+        type: Array,
+        default: () => []
     }
 })
 
-defineEmits(['approve'])
+defineEmits(['approve', 'cancel', 'changePlan'])
 </script>

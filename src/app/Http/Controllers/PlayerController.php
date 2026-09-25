@@ -27,6 +27,11 @@ class PlayerController extends Controller
 
     public function store(StorePlayerRequest $request): JsonResponse
     {
+        abort_unless(
+            $request->user()->isSuperAdmin() || $request->user()->isClubAdmin(),
+            403,
+        );
+
         $data = $request->validated();
         $team = $this->resolveAuthorizedTeam($request, $data['team_id'] ?? null);
         $data['team_id'] = $team->id;

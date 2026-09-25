@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class MatchDay extends Model
 {
@@ -39,5 +40,15 @@ class MatchDay extends Model
         return $this->belongsToMany(User::class, 'match_day_user')
                     ->withPivot('attended', 'goals', 'assists')
                     ->withTimestamps();
+    }
+
+    /**
+     * Igrači pozvani na događaj, sa njihovim RSVP odgovorom.
+     */
+    public function invitedPlayers(): MorphToMany
+    {
+        return $this->morphToMany(Player::class, 'invitable', 'event_invitations')
+            ->withPivot('status', 'responded_at')
+            ->withTimestamps();
     }
 }

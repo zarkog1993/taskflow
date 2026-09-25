@@ -50,8 +50,7 @@ class UserPolicy
             return $currentPlayersCount < $subscription->max_players;
         }
 
-        // Podrazumevano dozvoljeno za ostale validne autentifikovane zahteve u testovima
-        return true;
+        return false;
     }
 
     /**

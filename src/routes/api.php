@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AnalyticsController;
+use App\Http\Controllers\EventInvitationController;
 use App\Http\Controllers\MatchDayController;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\PlayerController;
@@ -10,6 +12,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TrainingSessionController;
 use App\Http\Controllers\ClubController;
+use App\Http\Controllers\SuperAdminController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/user', function (Request $request) {
@@ -18,11 +21,17 @@ Route::get('/user', function (Request $request) {
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login'])->name('login');
-Route::get('/subscription-plans', [OnboardingController::class, 'plans']);
+Route::get('/subscription-plans', [OnboardingController::class, 'getPlans']);
 Route::get('/onboarding/{token}', [OnboardingController::class, 'show']);
 Route::post('/onboarding/{token}/select', [OnboardingController::class, 'select']);
 Route::get('/trainings/{session}/rsvp/{user}/{status}', [TrainingSessionController::class, 'handleRsvp'])
     ->name('trainings.rsvp')
+    ->middleware('signed');
+Route::get('/invitations/{type}/{event}/{player}/{status}', [EventInvitationController::class, 'respond'])
+    ->whereIn('type', ['training', 'match'])
+    ->whereNumber('event')
+    ->whereIn('status', ['accepted', 'declined'])
+    ->name('invitations.rsvp')
     ->middleware('signed');
 
 // Zaštićene rute (zahtevaju važeći Bearer token)
@@ -30,11 +39,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/super-admin/dashboard', [UserController::class, 'superAdminDashboard']);
-    Route::get('/club', [ClubController::class, 'show'])->middleware('subscription.feature:club.profile');
-    Route::put('/club', [ClubController::class, 'update'])->middleware('subscription.feature:club.profile');
+    Route::get('/club', [ClubController::class, 'show'])->middleware('subscription.feature:club_profile');
+    Route::put('/club', [ClubController::class, 'update'])->middleware('subscription.feature:club_profile');
 
     // RESTful User CRUD rute
-    Route::apiResource('users', UserController::class)->middleware('subscription.feature:advanced.management');
+    Route::apiResource('users', UserController::class)->middleware('subscription.feature:players');
     // Super Admin pregled svih klubova i vlasnika
     Route::get('/admin/clubs', [UserController::class, 'adminClubsOverview']);
 
@@ -49,6 +58,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/training-sessions/{trainingSession}/status', [TrainingSessionController::class, 'updateStatus'])->middleware('subscription.feature:teams');
     Route::put('/training-sessions/{trainingSession}', [TrainingSessionController::class, 'update'])->middleware('subscription.feature:teams');
     Route::delete('/training-sessions/{trainingSession}', [TrainingSessionController::class, 'destroy'])->middleware('subscription.feature:teams');
+    Route::post('/training-sessions/{trainingSession}/attendance', [TrainingSessionController::class, 'syncAttendance'])->middleware('subscription.feature:teams');
 
     // Upravljanje Timovima / Starosnim Grupadama
     Route::get('/teams', [TeamController::class, 'index'])->middleware('subscription.feature:teams');
@@ -61,11 +71,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/matches', [MatchDayController::class, 'index'])->middleware('subscription.feature:matches');
     Route::post('/matches', [MatchDayController::class, 'store'])->middleware('subscription.feature:matches');
     Route::put('/matches/{match}/status', [MatchDayController::class, 'updateStatus'])->middleware('subscription.feature:matches');
-    Route::put('/matches/{match}/stats', [MatchDayController::class, 'updateStats'])->middleware('subscription.feature:advanced.statistics');
+    Route::put('/matches/{match}/stats', [MatchDayController::class, 'updateStats'])->middleware('subscription.feature:advanced_stats');
     Route::put('/matches/{match}', [MatchDayController::class, 'update'])->middleware('subscription.feature:matches');
     Route::delete('/matches/{match}', [MatchDayController::class, 'destroy'])->middleware('subscription.feature:matches');
 
-    Route::post('/training-sessions/{trainingSession}/attendance', [TrainingSessionController::class, 'syncAttendance'])->middleware('subscription.feature:teams');
     Route::post('/onboarding/complete', [OnboardingController::class, 'store']);
     Route::patch('/subscriptions/{subscription}/status', [OnboardingController::class, 'updateSubscription']);
+    Route::delete('/super-admin/users/{user}', [SuperAdminController::class, 'destroyUser']);
+    Route::delete('/super-admin/clubs/{club}', [SuperAdminController::class, 'destroyClub']);
+    Route::patch('/super-admin/subscriptions/{subscription}/cancel', [SuperAdminController::class, 'cancelSubscription']);
+    Route::patch('/super-admin/subscriptions/{subscription}/plan', [SuperAdminController::class, 'changeSubscriptionPlan']);
+
+    Route::get('/analytics', [AnalyticsController::class, 'index'])
+        ->middleware('subscription.feature:advanced_stats');
 });

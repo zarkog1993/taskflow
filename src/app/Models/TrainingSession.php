@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TrainingSession extends Model
@@ -63,5 +64,15 @@ class TrainingSession extends Model
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);
+    }
+
+    /**
+     * Igrači pozvani na događaj, sa njihovim RSVP odgovorom.
+     */
+    public function invitedPlayers(): MorphToMany
+    {
+        return $this->morphToMany(Player::class, 'invitable', 'event_invitations')
+            ->withPivot('status', 'responded_at')
+            ->withTimestamps();
     }
 }

@@ -9,6 +9,12 @@
                 <span class="px-3 py-1 bg-indigo-950 border border-indigo-800 text-indigo-400 text-xs font-mono font-bold rounded-xl">
                     Paket: {{ club.subscription?.plan_type || 'Basic' }}
                 </span>
+                <button
+                    @click="$emit('delete', club)"
+                    class="rounded-lg border border-red-800 bg-red-950 px-3 py-1 text-xs font-bold text-red-300"
+                >
+                    Delete club
+                </button>
             </div>
             <div class="text-xs text-gray-400 flex gap-4">
                 <span>Broj Timova: <strong class="text-white">{{ club.teams?.length || 0 }}</strong></span>
@@ -24,4 +30,6 @@ defineProps({
         default: () => []
     }
 })
+
+defineEmits(['delete'])
 </script>

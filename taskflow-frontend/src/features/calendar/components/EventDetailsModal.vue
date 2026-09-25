@@ -36,15 +36,15 @@
                             <span class="text-sm font-semibold text-white">{{ player.name }}</span>
                         </div>
 
-                        <!-- Status Bedž na osnovu pivot.attended -->
+                        <!-- Status Bedž na osnovu RSVP odgovora (pivot.status) -->
                         <span
-                            v-if="player.pivot?.attended === 1 || player.pivot?.attended === true"
+                            v-if="player.pivot?.status === 'accepted'"
                             class="text-[11px] font-bold text-emerald-400 bg-emerald-950/80 px-2.5 py-1 rounded-lg border border-emerald-800 flex items-center gap-1"
                         >
                             ✅ Dolazi
                         </span>
                         <span
-                            v-else-if="player.pivot?.attended === 0 || player.pivot?.attended === false"
+                            v-else-if="player.pivot?.status === 'declined'"
                             class="text-[11px] font-bold text-rose-400 bg-rose-950/80 px-2.5 py-1 rounded-lg border border-rose-800 flex items-center gap-1"
                         >
                             ❌ Otkazao
