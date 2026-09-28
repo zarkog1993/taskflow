@@ -21,7 +21,7 @@
                     </router-link>
 
                     <router-link
-                        v-if="hasFeature('matches')"
+                        v-if="hasFeature('matches') && !isSuperAdmin"
                         to="/matches"
                         class="text-xs font-semibold px-3 py-2 rounded-xl transition shrink-0"
                         :class="$route.path === '/matches' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'"
@@ -30,7 +30,7 @@
                     </router-link>
 
                     <router-link
-                        v-if="hasFeature('teams')"
+                        v-if="hasFeature('teams') && !isSuperAdmin"
                         to="/trainings"
                         class="text-xs font-semibold px-3 py-2 rounded-xl transition shrink-0"
                         :class="$route.path === '/trainings' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'"
@@ -39,7 +39,7 @@
                     </router-link>
 
                     <router-link
-                        v-if="hasFeature('tactics')"
+                        v-if="hasFeature('tactics') && !isSuperAdmin"
                         to="/tactics"
                         class="text-xs font-semibold px-3 py-2 rounded-xl transition shrink-0"
                         :class="$route.path === '/tactics' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'"
@@ -48,7 +48,7 @@
                     </router-link>
 
                     <router-link
-                        v-if="hasFeature('advanced_stats')"
+                        v-if="hasFeature('advanced_stats') && !isSuperAdmin"
                         to="/analytics"
                         class="text-xs font-semibold px-3 py-2 rounded-xl transition shrink-0"
                         :class="$route.path === '/analytics' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'"
@@ -57,7 +57,7 @@
                     </router-link>
 
                     <router-link
-                        v-if="hasFeature('teams')"
+                        v-if="hasFeature('teams') && !isSuperAdmin"
                         to="/teams"
                         class="text-xs font-semibold px-3 py-2 rounded-xl transition shrink-0"
                         :class="$route.path === '/teams' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'"
@@ -100,7 +100,7 @@
 
                 <!-- Super Admin Brza Oznaka -->
                 <router-link
-                    v-if="isSuperAdmin"
+                    v-if="isSuperAdmin && authStore.isAuthenticated"
                     to="/super-admin"
                     class="text-[11px] font-bold px-2.5 py-1.5 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500/20 transition flex items-center gap-1.5"
                 >
