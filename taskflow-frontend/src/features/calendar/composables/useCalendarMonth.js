@@ -7,7 +7,7 @@ export function useCalendarMonth(events) {
 
     const currentYear = computed(() => currentDate.value.getFullYear())
     const currentMonthName = computed(() =>
-        currentDate.value.toLocaleString('sr-RS', { month: 'long' })
+        currentDate.value.toLocaleString('sr-Latn-RS', { month: 'long' })
     )
 
     const prevMonth = () => {
