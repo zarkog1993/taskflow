@@ -16,6 +16,7 @@ import Onboarding from "../views/Onboarding.vue"
 import SuperAdminView from "../views/SuperAdminView.vue"
 import SubscriptionPendingView from "../views/SubscriptionPendingView.vue"
 import AnalyticsView from "../views/AnalyticsView.vue";
+import FinancesView from "../views/FinancesView.vue";
 
 const routes = [
     {
@@ -95,6 +96,12 @@ const routes = [
         name: 'calendar',
         component: CalendarView,
         meta: { requiresAuth: true, subscriptionRequired: true }
+    },
+    {
+        path: '/finances',
+        name: 'finances',
+        component: FinancesView,
+        meta: { requiresAuth: true, subscriptionRequired: true, feature: 'teams' }
     },
     {
         path: '/rsvp-confirmation',

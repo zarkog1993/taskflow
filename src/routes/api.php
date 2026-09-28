@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AnalyticsController;
+use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\EventInvitationController;
 use App\Http\Controllers\MatchDayController;
 use App\Http\Controllers\OnboardingController;
@@ -81,6 +82,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/super-admin/clubs/{club}', [SuperAdminController::class, 'destroyClub']);
     Route::patch('/super-admin/subscriptions/{subscription}/cancel', [SuperAdminController::class, 'cancelSubscription']);
     Route::patch('/super-admin/subscriptions/{subscription}/plan', [SuperAdminController::class, 'changeSubscriptionPlan']);
+
+    // Finansije: članarine (akademija) i honorari/isplate (seniori)
+    Route::get('/finances/overview', [PaymentController::class, 'overview']);
+    Route::get('/teams/{team}/payments', [PaymentController::class, 'index']);
+    Route::post('/payments', [PaymentController::class, 'storeOrUpdate']);
+    Route::post('/payments/bulk', [PaymentController::class, 'bulkStoreOrUpdate']);
 
     Route::get('/analytics', [AnalyticsController::class, 'index'])
         ->middleware('subscription.feature:advanced_stats');

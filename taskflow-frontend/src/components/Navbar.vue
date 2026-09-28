@@ -75,7 +75,15 @@
                     </router-link>
 
                     <router-link
-                        v-if="isAdmin"
+                        to="/finances"
+                        class="text-xs font-semibold px-3 py-2 rounded-xl transition shrink-0"
+                        :class="$route.path === '/finances' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'"
+                    >
+                        Finansije
+                    </router-link>
+
+                    <router-link
+                        v-if="isSuperAdmin"
                         to="/users"
                         class="text-xs font-semibold px-3 py-2 rounded-xl transition shrink-0"
                         :class="$route.path === '/users' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'"
