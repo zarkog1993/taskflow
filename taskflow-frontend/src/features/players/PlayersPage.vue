@@ -31,11 +31,10 @@
                 v-model="selectedSeniority"
                 class="bg-gray-900 border border-gray-700 text-white text-xs font-bold rounded-xl px-3 py-2 outline-none focus:border-indigo-500 cursor-pointer"
             >
-                <option value="all">Svi nivoi senioriteta</option>
-                <option value="Seniori">Seniori</option>
-                <option value="U19">U19 (Omladinci)</option>
-                <option value="U17">U17 (Kadeti)</option>
-                <option value="U15">U15 (Pioniri)</option>
+                <option value="all">Sve kategorije</option>
+                <option v-for="option in seniorityOptions" :key="option" :value="option">
+                    {{ option }}
+                </option>
             </select>
         </div>
 
@@ -78,6 +77,7 @@ const {
     isDeleting,
     newPlayer,
     fetchData,
+    seniorityOptions,
     filteredPlayers,
     handleCreatePlayer,
     handleDeletePlayer

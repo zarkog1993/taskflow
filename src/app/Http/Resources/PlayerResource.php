@@ -36,6 +36,7 @@ class PlayerResource extends JsonResource
                 return [
                     'id' => $this->team->id,
                     'name' => $this->team->name,
+                    'age_group' => $this->team->age_group,
                 ];
             }),
             'created_at' => $this->created_at?->toIso8601String(),

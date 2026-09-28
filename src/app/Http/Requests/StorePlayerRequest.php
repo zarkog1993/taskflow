@@ -18,7 +18,6 @@ class StorePlayerRequest extends FormRequest
             'email' => 'nullable|email|max:255',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:500', // Max 500 KB
             'primary_position' => 'required|string|max:10',
-            'seniority' => 'nullable|string|max:50',
             'jersey_number' => 'nullable|integer',
             'height' => 'nullable|integer',
             'weight' => 'nullable|integer',

@@ -4,7 +4,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useTrainingStore } from '../../../stores/training'
 import { useUserStore } from '../../../stores/user'
 import { fetchTeams } from '../../../services/teamsService'
-import { getAttendedCount } from '../utils/trainingFormatters'
+import { getRsvpCounts } from '../utils/trainingFormatters'
 
 export function useTrainingsPage() {
     const trainingStore = useTrainingStore()
@@ -51,16 +51,20 @@ export function useTrainingsPage() {
             .sort((a, b) => new Date(a.scheduled_at) - new Date(b.scheduled_at))[0]
     })
 
+    // Odziv = potvrđeni dolasci u odnosu na broj poslatih pozivnica.
     const averageMonthlyAttendance = computed(() => {
-        if (!monthlySessions.value.length || !userStore.users.length) return 0
-        let totalAttended = 0
-        const totalPossible = monthlySessions.value.length * userStore.users.length
+        let accepted = 0
+        let invited = 0
 
         monthlySessions.value.forEach(s => {
-            totalAttended += getAttendedCount(s)
+            const counts = getRsvpCounts(s)
+            accepted += counts.accepted
+            invited += counts.total
         })
 
-        return Math.round((totalAttended / totalPossible) * 100) || 0
+        if (!invited) return 0
+
+        return Math.round((accepted / invited) * 100)
     })
 
     const changeMonth = (step) => {
@@ -148,6 +152,7 @@ export function useTrainingsPage() {
 
     return {
         userStore,
+        trainingStore,
         teams,
         newSession,
         formDate,

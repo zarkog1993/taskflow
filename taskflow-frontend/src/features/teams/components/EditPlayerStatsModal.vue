@@ -7,13 +7,10 @@
             <form @submit.prevent="$emit('save')" class="space-y-4">
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Senioritet</label>
-                        <select v-model="form.seniority" class="w-full bg-gray-900 border border-gray-700 rounded-xl p-2.5 text-white text-xs outline-none">
-                            <option value="Seniori">Seniori</option>
-                            <option value="U19">U19 (Omladinci)</option>
-                            <option value="U17">U17 (Kadeti)</option>
-                            <option value="U15">U15 (Pioniri)</option>
-                        </select>
+                        <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Kategorija</label>
+                        <div class="w-full bg-gray-950 border border-gray-700 rounded-xl p-2.5 text-emerald-400 text-xs font-bold">
+                            {{ getPlayerCategory(player) }}
+                        </div>
                     </div>
 
                     <div>
@@ -78,6 +75,8 @@
 </template>
 
 <script setup>
+import { getPlayerCategory } from '../../players/utils/playerFormatters'
+
 defineProps({
     player: {
         type: Object,

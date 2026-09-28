@@ -11,7 +11,6 @@ export function usePlayerProfile(playerId) {
         name: '',
         email: '',
         primary_position: 'CM',
-        seniority: 'Seniori',
         height: null,
         weight: null,
         date_of_birth: '',
@@ -41,7 +40,6 @@ export function usePlayerProfile(playerId) {
         editForm.name = player.value.name || ''
         editForm.email = player.value.email || ''
         editForm.primary_position = player.value.primary_position || 'CM'
-        editForm.seniority = player.value.seniority || 'Seniori'
         editForm.height = player.value.height || null
         editForm.weight = player.value.weight || null
         editForm.date_of_birth = player.value.date_of_birth || ''
@@ -60,7 +58,6 @@ export function usePlayerProfile(playerId) {
             formData.append('_method', 'PUT')
             formData.append('name', editForm.name)
             formData.append('primary_position', editForm.primary_position)
-            formData.append('seniority', editForm.seniority)
 
             if (editForm.email) formData.append('email', editForm.email)
             if (editForm.jersey_number) formData.append('jersey_number', editForm.jersey_number)

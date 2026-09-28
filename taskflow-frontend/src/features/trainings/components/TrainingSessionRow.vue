@@ -35,6 +35,25 @@
 
         <!-- Prisustvo i Dugme -->
         <div class="flex items-center justify-between md:justify-end gap-4 border-t md:border-t-0 border-gray-700/60 pt-3 md:pt-0">
+            <!-- Odgovori na pozivnice (RSVP) -->
+            <div class="text-left md:text-right">
+                <div class="text-[10px] font-bold uppercase text-gray-400">Potvrdili dolazak</div>
+                <div class="text-xs font-black text-emerald-400">
+                    {{ rsvp.accepted }} / {{ rsvp.total }} pozvanih
+                </div>
+                <div v-if="rsvp.total > 0" class="flex items-center gap-1 mt-1 md:justify-end">
+                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-md border bg-emerald-500/10 text-emerald-400 border-emerald-500/30">
+                        ✅ {{ rsvp.accepted }}
+                    </span>
+                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-md border bg-rose-500/10 text-rose-400 border-rose-500/30">
+                        ❌ {{ rsvp.declined }}
+                    </span>
+                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-md border bg-amber-500/10 text-amber-400 border-amber-500/30">
+                        ⏳ {{ rsvp.pending }}
+                    </span>
+                </div>
+            </div>
+
             <div class="text-left md:text-right">
                 <div class="text-[10px] font-bold uppercase text-gray-400">Prisustvo</div>
                 <div class="text-xs font-black text-emerald-400">
@@ -63,9 +82,10 @@
 </template>
 
 <script setup>
-import { getDayName, getDayNumber, formatTime, getAttendedCount } from '../utils/trainingFormatters'
+import { computed } from 'vue'
+import { getDayName, getDayNumber, formatTime, getAttendedCount, getRsvpCounts } from '../utils/trainingFormatters'
 
-defineProps({
+const props = defineProps({
     session: {
         type: Object,
         required: true
@@ -73,4 +93,6 @@ defineProps({
 })
 
 defineEmits(['open-attendance', 'delete'])
+
+const rsvp = computed(() => getRsvpCounts(props.session))
 </script>

@@ -36,6 +36,7 @@ class PlayerController extends Controller
         $team = $this->resolveAuthorizedTeam($request, $data['team_id'] ?? null);
         $data['team_id'] = $team->id;
         $data['club_id'] = $team->club_id;
+        $data['seniority'] = $this->seniorityFromAgeGroup($team->age_group);
 
         if ($request->hasFile('photo')) {
             $data['photo_path'] = $request->file('photo')->store('players', 'public');
@@ -67,7 +68,6 @@ class PlayerController extends Controller
             'email' => 'nullable|email',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:500',
             'primary_position' => 'sometimes|string|max:10',
-            'seniority' => 'nullable|string|max:50',
             'jersey_number' => 'nullable|integer',
             'height' => 'nullable|integer',
             'weight' => 'nullable|integer',
@@ -89,6 +89,9 @@ class PlayerController extends Controller
             $team = $this->resolveAuthorizedTeam($request, $validated['team_id']);
             $validated['team_id'] = $team->id;
             $validated['club_id'] = $team->club_id;
+            $validated['seniority'] = $this->seniorityFromAgeGroup($team->age_group);
+        } else {
+            $validated['seniority'] = $this->seniorityFromAgeGroup($player->team?->age_group);
         }
 
         if ($request->hasFile('photo')) {
@@ -119,8 +122,7 @@ class PlayerController extends Controller
     }
 
     private function resolveAuthorizedTeam(Request $request, ?int $teamId): Team
-    {
-        $query = Team::query();
+    {        $query = Team::query();
 
         if (!$request->user()->isSuperAdmin()) {
             $query->where('club_id', $request->user()->club_id);
@@ -138,5 +140,17 @@ class PlayerController extends Controller
             || (int) $player->club_id === (int) $request->user()->club_id,
             403,
         );
+    }
+
+    /**
+     * Kategorija igrača se izvodi iz starosne grupe ekipe (u19 -> U19, senior -> Seniori).
+     */
+    private function seniorityFromAgeGroup(?string $ageGroup): string
+    {
+        if (!$ageGroup || $ageGroup === 'senior') {
+            return 'Seniori';
+        }
+
+        return strtoupper($ageGroup);
     }
 }

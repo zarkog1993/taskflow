@@ -2,6 +2,7 @@
 import { ref, reactive, computed } from 'vue'
 import { fetchTeams } from '../../../services/teamsService'
 import { fetchPlayers, createPlayer, deletePlayer } from '../../../services/playersService'
+import { formatAgeGroup, getPlayerCategory } from '../utils/playerFormatters'
 
 export function usePlayersRegistry() {
     const players = ref([])
@@ -14,7 +15,6 @@ export function usePlayersRegistry() {
     const newPlayer = reactive({
         name: '',
         primary_position: 'CM',
-        seniority: 'Seniori',
         height: null,
         weight: null,
         date_of_birth: '',
@@ -27,7 +27,6 @@ export function usePlayersRegistry() {
     const resetForm = () => {
         newPlayer.name = ''
         newPlayer.primary_position = 'CM'
-        newPlayer.seniority = 'Seniori'
         newPlayer.height = null
         newPlayer.weight = null
         newPlayer.date_of_birth = ''
@@ -53,11 +52,28 @@ export function usePlayersRegistry() {
         }
     }
 
+    // Opcije filtera prate stvarne starosne grupe ekipa u klubu.
+    const seniorityOptions = computed(() => {
+        const labels = new Set()
+
+        teams.value.forEach((team) => {
+            const label = formatAgeGroup(team.age_group)
+            if (label) labels.add(label)
+        })
+
+        players.value.forEach((player) => {
+            labels.add(getPlayerCategory(player))
+        })
+
+        return [...labels].sort()
+    })
+
     const filteredPlayers = computed(() => {
         return players.value.filter((p) => {
             const q = searchQuery.value.toLowerCase()
             const matchesSearch = !q || p.name.toLowerCase().includes(q) || p.primary_position.toLowerCase().includes(q)
-            const matchesSeniority = selectedSeniority.value === 'all' || p.seniority.toLowerCase() === selectedSeniority.value.toLowerCase()
+            const matchesSeniority = selectedSeniority.value === 'all'
+                || getPlayerCategory(p).toLowerCase() === selectedSeniority.value.toLowerCase()
             return matchesSearch && matchesSeniority
         })
     })
@@ -70,7 +86,6 @@ export function usePlayersRegistry() {
             const formData = new FormData()
             formData.append('name', newPlayer.name)
             formData.append('primary_position', newPlayer.primary_position)
-            formData.append('seniority', newPlayer.seniority)
             formData.append('team_id', newPlayer.team_id)
 
             if (newPlayer.jersey_number) formData.append('jersey_number', newPlayer.jersey_number)
@@ -118,6 +133,7 @@ export function usePlayersRegistry() {
         newPlayer,
         resetForm,
         fetchData,
+        seniorityOptions,
         filteredPlayers,
         handleCreatePlayer,
         handleDeletePlayer
