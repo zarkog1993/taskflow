@@ -52,7 +52,7 @@
           {{ player.primary_position }}
         </span>
                         <span class="px-2.5 py-1 rounded-lg text-xs font-black bg-gray-900 text-gray-300 border border-gray-700 uppercase">
-          {{ player.seniority || 'Seniori' }}
+          {{ getPlayerCategory(player) }}
         </span>
                     </div>
                 </div>
@@ -116,6 +116,7 @@ import { useRoute } from 'vue-router'
 import PlayerPositionMap from './components/PlayerPositionMap.vue'
 import EditPlayerModal from './components/EditPlayerModal.vue'
 import { usePlayerProfile } from './composables/usePlayerProfile'
+import { getPlayerCategory } from './utils/playerFormatters'
 
 const route = useRoute()
 

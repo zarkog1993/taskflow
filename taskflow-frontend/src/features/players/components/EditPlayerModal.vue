@@ -41,33 +41,21 @@
                     </div>
                 </div>
 
-                <!-- Pozicija i Senioritet -->
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Pozicija *</label>
-                        <select v-model="form.primary_position" required class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-indigo-500 cursor-pointer">
-                            <option value="GK">GK - Golman</option>
-                            <option value="CB">CB - Štoper</option>
-                            <option value="LB">LB - Levi Bek</option>
-                            <option value="RB">RB - Desni Bek</option>
-                            <option value="CM">CM - Centralni Vezni</option>
-                            <option value="DM">DM - Zadnji Vezni</option>
-                            <option value="AM">AM - Prednji Vezni</option>
-                            <option value="LW">LW - Levo Krilo</option>
-                            <option value="RW">RW - Desno Krilo</option>
-                            <option value="ST">ST - Napadač</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Senioritet</label>
-                        <select v-model="form.seniority" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-indigo-500 cursor-pointer">
-                            <option value="Seniori">Seniori</option>
-                            <option value="U19">U19 (Omladinci)</option>
-                            <option value="U17">U17 (Kadeti)</option>
-                            <option value="U15">U15 (Pioniri)</option>
-                        </select>
-                    </div>
+                <!-- Pozicija -->
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Pozicija *</label>
+                    <select v-model="form.primary_position" required class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-indigo-500 cursor-pointer">
+                        <option value="GK">GK - Golman</option>
+                        <option value="CB">CB - Štoper</option>
+                        <option value="LB">LB - Levi Bek</option>
+                        <option value="RB">RB - Desni Bek</option>
+                        <option value="CM">CM - Centralni Vezni</option>
+                        <option value="DM">DM - Zadnji Vezni</option>
+                        <option value="AM">AM - Prednji Vezni</option>
+                        <option value="LW">LW - Levo Krilo</option>
+                        <option value="RW">RW - Desno Krilo</option>
+                        <option value="ST">ST - Napadač</option>
+                    </select>
                 </div>
 
                 <!-- Visina, Težina i Datum Rođenja -->

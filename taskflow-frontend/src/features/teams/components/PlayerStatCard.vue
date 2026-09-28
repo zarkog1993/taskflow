@@ -32,7 +32,7 @@
                     {{ player.name }}
                 </h3>
                 <p class="text-[11px] text-gray-400 mt-0.5 font-mono">
-                    {{ player.seniority || 'Seniori' }}
+                    {{ getPlayerCategory(player) }}
                 </p>
             </div>
         </div>
@@ -64,6 +64,8 @@
 </template>
 
 <script setup>
+import { getPlayerCategory } from '../../players/utils/playerFormatters'
+
 defineProps({
     player: {
         type: Object,

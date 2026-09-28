@@ -42,7 +42,7 @@
                     </select>
                 </div>
 
-                <!-- Pozicija i Senioritet -->
+                <!-- Pozicija i Kategorija -->
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Pozicija *</label>
@@ -61,13 +61,10 @@
                     </div>
 
                     <div>
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Senioritet</label>
-                        <select v-model="form.seniority" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-indigo-500 cursor-pointer">
-                            <option value="Seniori">Seniori</option>
-                            <option value="U19">U19 (Omladinci)</option>
-                            <option value="U17">U17 (Kadeti)</option>
-                            <option value="U15">U15 (Pioniri)</option>
-                        </select>
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Kategorija</label>
+                        <div class="w-full bg-gray-950 border border-gray-700 rounded-xl px-3 py-2.5 text-xs text-emerald-400 font-bold">
+                            {{ selectedTeamCategory || 'Izaberite ekipu' }}
+                        </div>
                     </div>
                 </div>
 
@@ -126,9 +123,11 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { usePhotoUpload } from '../../../composables/usePhotoUpload'
+import { formatAgeGroup } from '../utils/playerFormatters'
 
-defineProps({
+const props = defineProps({
     form: {
         type: Object,
         required: true
@@ -146,6 +145,11 @@ defineProps({
 const emit = defineEmits(['close', 'submit'])
 
 const { photoPreview, photoError, selectedPhoto, handlePhotoSelect } = usePhotoUpload()
+
+const selectedTeamCategory = computed(() => {
+    const team = props.teams.find((t) => String(t.id) === String(props.form.team_id))
+    return formatAgeGroup(team?.age_group)
+})
 
 const handleSubmit = () => {
     if (photoError.value) return

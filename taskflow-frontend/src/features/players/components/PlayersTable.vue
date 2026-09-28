@@ -7,7 +7,7 @@
                     <th class="p-4">Slika</th>
                     <th class="p-4">Ime i Prezime</th>
                     <th class="p-4">Pozicija</th>
-                    <th class="p-4">Senioritet</th>
+                    <th class="p-4">Kategorija</th>
                     <th class="p-4">Beleška Trenera</th>
                     <th class="p-4 text-right">Akcije</th>
                 </tr>
@@ -33,7 +33,12 @@
               {{ player.primary_position }}
             </span>
                     </td>
-                    <td class="p-4 text-gray-300">{{ player.seniority || 'Seniori' }}</td>
+                    <td class="p-4">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-black bg-emerald-950 text-emerald-400 border border-emerald-800">
+                            {{ getPlayerCategory(player) }}
+                        </span>
+                        <div v-if="player.team?.name" class="text-[10px] text-gray-500 mt-1">{{ player.team.name }}</div>
+                    </td>
                     <td class="p-4 text-gray-400 italic max-w-xs truncate">
                         {{ player.coach_notes || '-' }}
                     </td>
@@ -58,6 +63,8 @@
 </template>
 
 <script setup>
+import { getPlayerCategory } from '../utils/playerFormatters'
+
 defineProps({
     players: {
         type: Array,

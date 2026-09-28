@@ -9,6 +9,15 @@
             </div>
 
             <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                <button
+                    @click="trainingStore.fetchSessions()"
+                    :disabled="trainingStore.loading"
+                    title="Osveži odgovore na pozivnice"
+                    class="p-2.5 bg-gray-900 hover:bg-gray-700 border border-gray-700/80 text-gray-300 hover:text-white rounded-xl transition text-xs cursor-pointer disabled:opacity-50"
+                >
+                    {{ trainingStore.loading ? '⏳' : '↻' }}
+                </button>
+
                 <!-- Izbor meseca -->
                 <div class="flex items-center bg-gray-900 rounded-xl p-1 border border-gray-700/80">
                     <button @click="changeMonth(-1)" class="p-2 text-gray-400 hover:text-white transition cursor-pointer">←</button>
@@ -108,6 +117,7 @@ import { useTrainingsPage } from './composables/useTrainingsPage'
 
 const {
     userStore,
+    trainingStore,
     teams,
     newSession,
     formDate,

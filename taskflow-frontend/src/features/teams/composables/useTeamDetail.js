@@ -14,7 +14,6 @@ export function useTeamDetail(teamId) {
         matches_played: 0,
         goals: 0,
         assists: 0,
-        seniority: 'Seniori',
         preferred_foot: 'right'
     })
 
@@ -65,7 +64,6 @@ export function useTeamDetail(teamId) {
         statsForm.matches_played = getStat(player, 'matches_played')
         statsForm.goals = getStat(player, 'goals')
         statsForm.assists = getStat(player, 'assists')
-        statsForm.seniority = player.seniority || 'Seniori'
         statsForm.preferred_foot = player.preferred_foot || 'right'
         showEditModal.value = true
     }
@@ -79,7 +77,6 @@ export function useTeamDetail(teamId) {
                 trainings_attended: statsForm.trainings_attended,
                 goals: statsForm.goals,
                 assists: statsForm.assists,
-                seniority: statsForm.seniority,
                 preferred_foot: statsForm.preferred_foot
             }
 
