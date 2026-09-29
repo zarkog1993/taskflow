@@ -12,8 +12,23 @@
             </button>
         </div>
 
-        <!-- Tabovi -->
-        <MatchTabs v-model:active-tab="activeTab" :upcoming-count="upcomingMatches.length" :completed-count="completedMatches.length" />
+        <!-- Tabovi + filter po mesecu -->
+        <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+            <MatchTabs v-model:active-tab="activeTab" :upcoming-count="upcomingMatches.length" :completed-count="completedMatches.length" />
+
+            <div class="flex items-center gap-2 pb-2">
+                <label class="text-[10px] font-bold uppercase text-gray-400 tracking-wider">Mesec</label>
+                <select
+                    v-model="selectedMonth"
+                    class="bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-indigo-500 cursor-pointer"
+                >
+                    <option value="all">Svi meseci</option>
+                    <option v-for="option in monthOptions" :key="option.value" :value="option.value">
+                        {{ option.label }}
+                    </option>
+                </select>
+            </div>
+        </div>
 
         <!-- Kartice -->
         <div v-if="filteredMatches.length" class="space-y-4">
@@ -25,8 +40,23 @@
                 @delete="handleDeleteMatch"
             />
         </div>
-        <div v-else class="text-center py-12 bg-gray-800/40 border border-gray-700/50 rounded-2xl">
-            <p class="text-sm text-gray-400 italic">Nema utakmica u ovoj kategoriji.</p>
+        <div v-else class="text-center py-12 bg-gray-800/40 border border-gray-700/50 rounded-2xl space-y-2">
+            <p class="text-sm text-gray-400 italic">
+                <template v-if="selectedMonth !== 'all'">
+                    Nema utakmica u ovoj kategoriji za {{ selectedMonthLabel }}.
+                </template>
+                <template v-else>
+                    Nema utakmica u ovoj kategoriji.
+                </template>
+            </p>
+            <button
+                v-if="selectedMonth !== 'all'"
+                type="button"
+                @click="resetMonthFilter"
+                class="text-[11px] font-bold text-indigo-400 hover:underline cursor-pointer"
+            >
+                Prikaži sve mesece
+            </button>
         </div>
 
         <!-- Modali -->
@@ -71,6 +101,10 @@ const {
     upcomingMatches,
     completedMatches,
     filteredMatches,
+    selectedMonth,
+    monthOptions,
+    selectedMonthLabel,
+    resetMonthFilter,
     matchToDelete,
     isDeleting,
     handleDeleteMatch,
