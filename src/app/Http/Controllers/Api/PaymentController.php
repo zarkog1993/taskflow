@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 class PaymentController extends Controller
 {
-    private const SENIOR_AGE_GROUP = 'senior';
+    private const string SENIOR_AGE_GROUP = 'senior';
 
     /**
      * Objedinjeni finansijski pregled za ceo klub (ili jednu ekipu) za zadati period.

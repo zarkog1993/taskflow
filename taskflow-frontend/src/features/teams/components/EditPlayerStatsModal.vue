@@ -36,10 +36,11 @@
                     <div>
                         <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Odigrane Utakmice</label>
                         <input
-                            v-model.number="form.matches_played"
+                            :value="form.matches_played"
                             type="number"
-                            min="0"
-                            class="w-full bg-gray-900 border border-gray-700 rounded-xl p-2.5 text-white outline-none focus:border-indigo-500 text-xs"
+                            readonly
+                            title="Računa se automatski iz zapisnika odigranih utakmica."
+                            class="w-full bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-gray-400 outline-none text-xs cursor-not-allowed"
                         />
                     </div>
                 </div>
@@ -48,22 +49,29 @@
                     <div>
                         <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Postignuti Golovi</label>
                         <input
-                            v-model.number="form.goals"
+                            :value="form.goals"
                             type="number"
-                            min="0"
-                            class="w-full bg-gray-900 border border-gray-700 rounded-xl p-2.5 text-white outline-none focus:border-indigo-500 text-xs"
+                            readonly
+                            title="Računa se automatski iz zapisnika odigranih utakmica."
+                            class="w-full bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-gray-400 outline-none text-xs cursor-not-allowed"
                         />
                     </div>
                     <div>
                         <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Asistencije</label>
                         <input
-                            v-model.number="form.assists"
+                            :value="form.assists"
                             type="number"
-                            min="0"
-                            class="w-full bg-gray-900 border border-gray-700 rounded-xl p-2.5 text-white outline-none focus:border-indigo-500 text-xs"
+                            readonly
+                            title="Računa se automatski iz zapisnika odigranih utakmica."
+                            class="w-full bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-gray-400 outline-none text-xs cursor-not-allowed"
                         />
                     </div>
                 </div>
+
+                <p class="text-[10px] text-gray-500 italic">
+                    Utakmice, golovi i asistencije se automatski računaju iz zapisnika
+                    odigranih utakmica i ne mogu se menjati ručno.
+                </p>
 
                 <div class="flex justify-end space-x-3 pt-4 border-t border-gray-700">
                     <button type="button" @click="$emit('close')" class="px-4 py-2 text-xs text-gray-400 hover:text-white font-semibold">Odustani</button>

@@ -35,9 +35,12 @@ class MatchDay extends Model
         return $this->belongsTo(Team::class);
     }
 
+    /**
+     * Sastav i učinak igrača na utakmici (zapisnik).
+     */
     public function players(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'match_day_user')
+        return $this->belongsToMany(Player::class, 'match_day_player')
                     ->withPivot('attended', 'goals', 'assists')
                     ->withTimestamps();
     }

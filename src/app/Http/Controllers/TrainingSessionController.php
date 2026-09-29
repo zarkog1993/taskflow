@@ -138,7 +138,13 @@ class TrainingSessionController extends Controller
             ],
         ]);
 
-        $trainingSession->users()->sync($validated['player_ids'] ?? []);
+        // Označeni igrači su prisutni - bez eksplicitnog pivot podatka `attended`
+        // bi ostao na podrazumevanom `false` i evidencija bi bila izgubljena.
+        $attendance = collect($validated['player_ids'] ?? [])
+            ->mapWithKeys(fn ($playerId) => [$playerId => ['attended' => true]])
+            ->all();
+
+        $trainingSession->users()->sync($attendance);
 
         return response()->json([
             'message' => 'Prisustvo uspešno sačuvano.',

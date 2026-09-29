@@ -1,5 +1,5 @@
 // src/composables/useMatchStats.js
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import api from '../services/api'
 
 export function useMatchStats(onSuccessCallback) {
@@ -15,22 +15,33 @@ export function useMatchStats(onSuccessCallback) {
     const openStatsModal = (match) => {
         selectedMatch.value = match
         modalTab.value = "info"
-        const teamUsers = match.team?.users || match.team?.players || []
+
+        // Sastav se gradi od stvarnog roster-a ekipe (tabela `players`).
+        const roster = match.team?.players || []
+
+        // Već sačuvan zapisnik (pivot match_day_player) i RSVP odgovori na pozivnicu.
+        const lineupById = new Map((match.players || []).map((p) => [p.id, p.pivot]))
+        const rsvpById = new Map((match.invited_players || []).map((p) => [p.id, p.pivot?.status]))
 
         statsForm.value = {
             status: match.status || "scheduled",
             home_score: match.home_score ?? 0,
             away_score: match.away_score ?? 0,
-            players: teamUsers.map((user) => {
-                const pivotData = match.players?.find((p) => p.id === user.id)?.pivot
+            players: roster.map((player) => {
+                const pivot = lineupById.get(player.id)
+                const rsvpStatus = rsvpById.get(player.id) ?? null
+
                 return {
-                    id: user.id,
-                    name: user.name,
-                    jersey_number: user.player_profile?.jersey_number,
-                    position: user.player_profile?.primary_position,
-                    attended: pivotData ? Boolean(pivotData.attended) : false,
-                    goals: pivotData ? pivotData.goals : 0,
-                    assists: pivotData ? pivotData.assists : 0,
+                    id: player.id,
+                    name: player.name,
+                    jersey_number: player.jersey_number,
+                    position: player.primary_position,
+                    rsvp_status: rsvpStatus,
+                    // Ako zapisnik još nije sačuvan, igrači koji su potvrdili
+                    // dolazak su unapred štiklirani u sastavu.
+                    attended: pivot ? Boolean(pivot.attended) : rsvpStatus === 'accepted',
+                    goals: pivot?.goals ?? 0,
+                    assists: pivot?.assists ?? 0,
                 }
             }),
         }

@@ -5,18 +5,22 @@ namespace App\Http\Controllers;
 use App\Models\MatchDay;
 use App\Models\Team;
 use App\Services\EventInvitationService;
+use App\Services\PlayerStatsService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
 class MatchDayController extends Controller
 {
-    public function __construct(private EventInvitationService $invitationService) {}
+    public function __construct(
+        private EventInvitationService $invitationService,
+        private PlayerStatsService $playerStats,
+    ) {}
 
     public function index(Request $request): JsonResponse
     {
         $query = MatchDay::with([
-            'team.members.playerProfile',
-            'players.playerProfile',
+            'team.players',
+            'players',
             'invitedPlayers',
         ])->orderBy('scheduled_at', 'desc');
 
@@ -64,8 +68,8 @@ class MatchDayController extends Controller
             'players' => 'array',
             'players.*.id' => [
                 'integer',
-                \Illuminate\Validation\Rule::exists('users', 'id')
-                    ->where('club_id', $match->team->club_id),
+                \Illuminate\Validation\Rule::exists('players', 'id')
+                    ->where('team_id', $match->team_id),
             ],
             'players.*.attended' => 'boolean',
             'players.*.goals' => 'integer|min:0',
@@ -79,22 +83,33 @@ class MatchDayController extends Controller
             'away_score' => $validated['away_score'],
         ]);
 
-        // 2. Ažuriramo igrače u pivot tabeli
+        // 2. Ažuriramo sastav i učinak u pivot tabeli (jedan upit umesto N)
         if (isset($validated['players'])) {
-            foreach ($validated['players'] as $playerData) {
-                $match->players()->syncWithoutDetaching([
+            // Igrači koji su bili u zapisniku pre izmene - i njima se mora
+            // preračunati statistika ako su izbačeni iz sastava.
+            $previousPlayerIds = $match->players()->pluck('players.id')->all();
+
+            $lineup = collect($validated['players'])
+                ->mapWithKeys(fn (array $playerData) => [
                     $playerData['id'] => [
-                        'attended' => $playerData['attended'],
-                        'goals' => $playerData['goals'],
-                        'assists' => $playerData['assists'],
-                    ]
-                ]);
-            }
+                        'attended' => $playerData['attended'] ?? false,
+                        'goals' => $playerData['goals'] ?? 0,
+                        'assists' => $playerData['assists'] ?? 0,
+                    ],
+                ])
+                ->all();
+
+            $match->players()->sync($lineup);
+
+            $this->playerStats->recalculateForMatch($match, $previousPlayerIds);
+        } else {
+            // Promena statusa utakmice menja da li se nastupi uopšte računaju.
+            $this->playerStats->recalculateForMatch($match);
         }
 
         return response()->json([
             'message' => 'Zapisnik je uspešno sačuvan!',
-            'data' => $match->fresh(['team', 'players'])
+            'data' => $match->fresh(['team.players', 'players', 'invitedPlayers']),
         ]);
     }
 
@@ -109,9 +124,12 @@ class MatchDayController extends Controller
             'status' => $validated['status'],
         ]);
 
+        // Status određuje da li se nastupi iz zapisnika računaju u statistiku.
+        $this->playerStats->recalculateForMatch($match);
+
         return response()->json([
             'message' => 'Status meča uspešno ažuriran.',
-            'data' => $match->fresh(['team.members.playerProfile', 'players.playerProfile'])
+            'data' => $match->fresh(['team.players', 'players', 'invitedPlayers'])
         ]);
     }
 
@@ -145,8 +163,14 @@ class MatchDayController extends Controller
     public function destroy(MatchDay $match): JsonResponse
     {
         $this->authorizeClubAccess(request(), $match);
+
+        // Igrači iz obrisanog zapisnika moraju izgubiti te nastupe iz statistike.
+        $affectedPlayerIds = $match->players()->pluck('players.id')->all();
+
         $match->players()->detach(); // Uklanja sve veze u pivot tabeli
         $match->delete();
+
+        $this->playerStats->recalculateFor($affectedPlayerIds);
 
         return response()->json([
             'message' => 'Meč uspešno obrisan.'
