@@ -12,9 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         DB::table('players')
-            ->join('teams', 'players.team_id', '=', 'teams.id')
+            ->whereNotNull('team_id')
             ->update([
-                'players.seniority' => DB::raw("CASE WHEN teams.age_group = 'senior' THEN 'Seniori' ELSE UPPER(teams.age_group) END"),
+                'seniority' => DB::raw("
+                    (SELECT CASE 
+                        WHEN age_group = 'senior' THEN 'Seniori' 
+                        ELSE UPPER(age_group) 
+                    END 
+                    FROM teams 
+                    WHERE teams.id = players.team_id)
+                ")
             ]);
     }
 
