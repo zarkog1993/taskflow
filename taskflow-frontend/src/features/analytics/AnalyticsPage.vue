@@ -9,6 +9,25 @@
 
             <!-- FILTERI -->
             <div class="flex items-center gap-3">
+                <div class="relative">
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-500 pointer-events-none">🔍</span>
+                    <input
+                        v-model="searchQuery"
+                        type="search"
+                        placeholder="Pretraži igrače..."
+                        class="bg-slate-900 border border-slate-700 rounded-xl pl-8 pr-8 py-2 text-xs text-white outline-none focus:border-emerald-500 w-52 placeholder:text-slate-500"
+                    />
+                    <button
+                        v-if="searchQuery"
+                        @click="searchQuery = ''"
+                        type="button"
+                        title="Poništi pretragu"
+                        class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-slate-500 hover:text-white cursor-pointer"
+                    >
+                        ✕
+                    </button>
+                </div>
+
                 <select
                     v-model="selectedTeamId"
                     class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-emerald-500 cursor-pointer"
@@ -73,13 +92,36 @@
                         <h3 class="text-sm font-bold text-white">Rang Lista Igrača po Indeksu Korisnosti</h3>
                         <p class="text-[10px] text-slate-400 mt-0.5">Indeks = (Golovi + Asistencije) / Odigrane Utakmice</p>
                     </div>
-                    <span class="text-[10px] text-emerald-400 font-mono font-bold uppercase bg-emerald-950 border border-emerald-800 px-2.5 py-1 rounded-lg">
-            G = Gol • A = Asistencija
-          </span>
+                    <div class="flex items-center gap-2.5">
+                        <span class="text-[10px] text-slate-400 font-mono">
+                            Prikazano: {{ filteredPlayers.length }} / {{ players.length }}
+                        </span>
+                        <span class="text-[10px] text-emerald-400 font-mono font-bold uppercase bg-emerald-950 border border-emerald-800 px-2.5 py-1 rounded-lg">
+                            G = Gol • A = Asistencija
+                        </span>
+                    </div>
                 </div>
 
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse text-xs">
+                    <div
+                        v-if="!filteredPlayers.length"
+                        class="text-center py-10 bg-slate-900/40 rounded-xl border border-dashed border-slate-700 space-y-2"
+                    >
+                        <div class="text-2xl">🔍</div>
+                        <p class="text-xs text-slate-400">
+                            Nema igrača koji odgovaraju pretrazi
+                            <span v-if="searchQuery" class="text-white font-bold">"{{ searchQuery }}"</span>.
+                        </p>
+                        <button
+                            type="button"
+                            @click="resetFilters"
+                            class="text-[11px] font-bold text-emerald-400 hover:underline cursor-pointer"
+                        >
+                            Poništi filtere
+                        </button>
+                    </div>
+
+                    <table v-else class="w-full text-left border-collapse text-xs">
                         <thead>
                         <tr class="border-b border-slate-700 text-slate-400 font-bold uppercase text-[10px]">
                             <th class="p-3">#</th>
@@ -142,10 +184,12 @@ import {useAnalytics} from "./composables/useAnalytics.js";
 const {
     loading,
     selectedTeamId,
+    searchQuery,
     teams,
     players,
     summary,
     filteredPlayers,
+    resetFilters,
     fetchAnalytics
 } = useAnalytics()
 </script>

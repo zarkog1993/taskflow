@@ -72,11 +72,10 @@ export function useTeamDetail(teamId) {
         if (!selectedPlayer.value) return
 
         try {
+            // Utakmice, golovi i asistencije se izvode iz zapisnika utakmica
+            // i namerno se ne šalju - inače bi ručni unos pravio nesklad.
             const payload = {
-                matches_played: statsForm.matches_played,
                 trainings_attended: statsForm.trainings_attended,
-                goals: statsForm.goals,
-                assists: statsForm.assists,
                 preferred_foot: statsForm.preferred_foot
             }
 

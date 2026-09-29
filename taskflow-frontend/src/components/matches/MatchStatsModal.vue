@@ -159,6 +159,15 @@
 
                 <div class="max-h-[40vh] overflow-y-auto space-y-1.5 pr-1">
                     <div
+                        v-if="!statsForm.players.length"
+                        class="text-center py-8 bg-gray-900/40 rounded-xl border border-gray-800"
+                    >
+                        <p class="text-xs text-gray-500 italic">
+                            Ekipa nema unetih igrača. Dodajte igrače u sastav ekipe.
+                        </p>
+                    </div>
+
+                    <div
                         v-for="player in statsForm.players"
                         :key="player.id"
                         @click="player.attended = !player.attended"
@@ -183,6 +192,13 @@
                                 <p class="text-[10px] text-gray-400">
                                     #{{ player.jersey_number || "-" }} •
                                     {{ player.position || "N/A" }}
+                                    <span
+                                        v-if="player.rsvp_status"
+                                        :class="RSVP_LABELS[player.rsvp_status]?.class"
+                                        class="ml-1 font-bold"
+                                    >
+                                        • {{ RSVP_LABELS[player.rsvp_status]?.label }}
+                                    </span>
                                 </p>
                             </div>
                         </div>
@@ -302,6 +318,12 @@ const props = defineProps({
 });
 
 const currentTab = ref("info");
+
+const RSVP_LABELS = {
+    accepted: { label: "Potvrdio dolazak", class: "text-emerald-400" },
+    declined: { label: "Otkazao", class: "text-red-400" },
+    pending: { label: "Bez odgovora", class: "text-amber-400" },
+};
 
 const attendedPlayers = computed(() => {
     return props.statsForm.players.filter((p) => p.attended);

@@ -78,11 +78,9 @@ class PlayerController extends Controller
             'coach_notes' => 'nullable|string',
             'team_id' => 'nullable|exists:teams,id',
 
-            // STATISTIČKA POLJA (Obavezno za izmenu učinka)
-            'matches_played' => 'nullable|integer|min:0',
+            // Utakmice, golovi i asistencije se izvode iz zapisnika odigranih
+            // utakmica (PlayerStatsService) i ne mogu se menjati ručno.
             'trainings_attended' => 'nullable|integer|min:0',
-            'goals' => 'nullable|integer|min:0',
-            'assists' => 'nullable|integer|min:0',
         ]);
 
         if (array_key_exists('team_id', $validated) && $validated['team_id'] !== null) {
