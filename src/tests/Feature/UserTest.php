@@ -54,10 +54,8 @@ class UserTest extends TestCase
         ]);
     }
 
-    public function test_authenticated_user_can_create_user(): void
+    public function test_authenticated_user_cannot_create_user(): void
     {
-        $user = User::factory()->create();
-
         $payload = [
             'name'             => 'Novi Korisnik',
             'email'            => 'novi2@testmail.com',
@@ -67,8 +65,8 @@ class UserTest extends TestCase
 
         $response = $this->actingAs($this->authUser)->postJson('/api/users', $payload);
 
-        $response->assertStatus(201);
-        $this->assertDatabaseHas('users', [
+        $response->assertStatus(403);
+        $this->assertDatabaseMissing('users', [
             'email' => 'novi2@testmail.com'
         ]);
     }
