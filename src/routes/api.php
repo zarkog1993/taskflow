@@ -25,9 +25,6 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::get('/subscription-plans', [OnboardingController::class, 'getPlans']);
 Route::get('/onboarding/{token}', [OnboardingController::class, 'show']);
 Route::post('/onboarding/{token}/select', [OnboardingController::class, 'select']);
-Route::get('/trainings/{session}/rsvp/{user}/{status}', [TrainingSessionController::class, 'handleRsvp'])
-    ->name('trainings.rsvp')
-    ->middleware('signed');
 Route::get('/invitations/{type}/{event}/{player}/{status}', [EventInvitationController::class, 'respond'])
     ->whereIn('type', ['training', 'match'])
     ->whereNumber('event')
@@ -59,7 +56,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/training-sessions/{trainingSession}/status', [TrainingSessionController::class, 'updateStatus'])->middleware('subscription.feature:teams');
     Route::put('/training-sessions/{trainingSession}', [TrainingSessionController::class, 'update'])->middleware('subscription.feature:teams');
     Route::delete('/training-sessions/{trainingSession}', [TrainingSessionController::class, 'destroy'])->middleware('subscription.feature:teams');
-    Route::post('/training-sessions/{trainingSession}/attendance', [TrainingSessionController::class, 'syncAttendance'])->middleware('subscription.feature:teams');
 
     // Upravljanje Timovima / Starosnim Grupadama
     Route::get('/teams', [TeamController::class, 'index'])->middleware('subscription.feature:teams');

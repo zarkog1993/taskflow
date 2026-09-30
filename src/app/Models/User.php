@@ -92,24 +92,12 @@ class User extends Authenticatable
         return $this->hasMany(TrainingSession::class, 'created_by');
     }
 
-    public function attendances(): HasMany
-    {
-        return $this->hasMany(Attendance::class);
-    }
-
     /**
      * Ekipe kojima korisnik/trener/igrač pripada.
      */
     public function teams(): BelongsToMany
     {
         return $this->belongsToMany(Team::class);
-    }
-
-    public function trainingSessions(): BelongsToMany
-    {
-        return $this->belongsToMany(TrainingSession::class, 'training_user', 'user_id', 'training_session_id')
-            ->withPivot('attended')
-            ->withTimestamps();
     }
 
     /**

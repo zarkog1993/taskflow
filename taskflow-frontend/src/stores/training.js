@@ -56,20 +56,6 @@ export const useTrainingStore = defineStore('training', {
             }
         },
 
-        async saveAttendance(sessionId, playerIds) {
-            try {
-                const res = await api.post(`/training-sessions/${sessionId}/attendance`, { player_ids: playerIds })
-                const session = this.sessions.find(s => s.id === sessionId)
-                if (session) {
-                    session.attendees = res.data.data.attendees
-                }
-                return true
-            } catch (err) {
-                alert('Greška pri čuvanju prisustva')
-                return false
-            }
-        },
-
         async deleteSession(sessionId) {
             try {
                 await api.delete(`/training-sessions/${sessionId}`);

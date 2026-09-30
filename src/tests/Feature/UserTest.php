@@ -28,12 +28,12 @@ class UserTest extends TestCase
             'club_id' => $club->id,
         ]);
 
-        // 3. Stvaramo aktivnu pretplatu s 'advanced.management' mogućnosti
+        // 3. Stvaramo aktivnu pretplatu s 'advanced_management' mogućnosti
         Subscription::factory()->create([
             'club_id' => $club->id,
             'user_id' => $this->authUser->id,
             'status' => 'active',
-            'features' => ['advanced.management', 'players', 'teams', 'matches']
+            'features' => ['advanced_management', 'players', 'teams', 'matches']
         ]);
 
         // Postavljamo korisnika kao ulogiranog za testove

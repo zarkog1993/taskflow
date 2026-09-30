@@ -15,11 +15,6 @@ export function formatTime(dateStr) {
     return new Date(dateStr).toLocaleTimeString('sr-RS', { hour: '2-digit', minute: '2-digit' })
 }
 
-export function getAttendedCount(session) {
-    const list = session.users || session.attendees || []
-    return list.filter(u => u.pivot?.attended === 1 || u.pivot?.attended === true).length
-}
-
 // Laravel serijalizuje relaciju `invitedPlayers` kao `invited_players`.
 export function getInvitedPlayers(session) {
     return session?.invited_players || session?.invitedPlayers || []

@@ -1,234 +1,308 @@
 # TaskFlow
 
-TaskFlow je REST API aplikacija za upravljanje zadacima, izgrađena na Laravel-u i pakovana u Docker okruženje. Autentifikacija se obavlja pomoću Laravel Sanctum bearer tokena.
+TaskFlow je SaaS platforma za upravljanje fudbalskim klubovima — timovi, igrači, treninzi, utakmice, statistika i finansije. Backend je Laravel REST API (Sanctum token autentifikacija), frontend je Vue 3 SPA, a celo okruženje se podiže preko Docker Compose-a.
+
+> Ime „TaskFlow" je nasleđeno iz rane faze projekta kada je aplikacija bila task manager. Domen je u međuvremenu u potpunosti prešao na upravljanje sportskim klubom.
 
 ## Sadržaj
 
-- [Features](#features)
+- [Funkcionalnosti](#funkcionalnosti)
 - [Tech Stack](#tech-stack)
+- [Model podataka](#model-podataka)
 - [Arhitektura](#arhitektura)
-- [Installation](#installation)
+- [Instalacija](#instalacija)
 - [Konfiguracija okruženja](#konfiguracija-okruženja)
 - [Pokretanje](#pokretanje)
+- [Pretplate i kontrola pristupa](#pretplate-i-kontrola-pristupa)
 - [Testiranje](#testiranje)
 - [API](#api)
-- [License](#license)
+- [Poznati problemi](#poznati-problemi)
 
-## Features
+## Funkcionalnosti
 
-Trenutno implementirano:
-
-- **Authentication** — registracija, prijava, odjava i dohvat trenutnog korisnika (Sanctum bearer token)
-
-Planirano (još nije implementirano):
-
-- Users
-- Tasks
-- Roles
-- Comments
-- Notifications
+| Modul | Opis |
+| --- | --- |
+| **Autentifikacija** | Registracija, prijava, odjava, dohvat trenutnog korisnika (Sanctum bearer token) |
+| **Onboarding** | Registracija kluba preko pozivnog tokena i izbor pretplatničkog paketa |
+| **Klub** | Profil kluba, osnovni podaci, akademija i sezone |
+| **Timovi** | Starosne kategorije, roster igrača, članovi stručnog štaba |
+| **Igrači** | Kartoni igrača, pozicije, brojevi dresova, fotografije, statistika |
+| **Treninzi** | Zakazivanje termina, slanje pozivnica, RSVP odgovori igrača |
+| **Utakmice** | Zakazivanje, sastav (lineup), zapisnik utakmice sa golovima i asistencijama |
+| **Statistika** | Automatsko računanje odigranih utakmica, golova i asistencija iz zapisnika |
+| **Analitika** | Prosečna posećenost treninga, top strelci, filteri po timu i periodu, pretraga igrača |
+| **Finansije** | Evidencija uplata igrača, pregled po timu, grupne uplate |
+| **Super admin** | Upravljanje klubovima, korisnicima i pretplatama |
 
 ## Tech Stack
 
-- PHP 8.4
-- Laravel 13
-- Laravel Sanctum (token autentifikacija)
+**Backend**
+
+- PHP 8.3+
+- Laravel 13.8
+- Laravel Sanctum 4 (token autentifikacija)
 - MySQL 8.0
 - Redis 7
+- PHPUnit
+
+**Frontend**
+
+- Vue 3.5 (Composition API, `<script setup>`)
+- Vite 8
+- Pinia 4 (state management)
+- Vue Router 4
+- Tailwind CSS 4
+- Axios
+
+**Infrastruktura**
+
 - Docker / Docker Compose
 - Nginx
-- MailHog (hvatanje e-pošte u razvoju)
-- PHPUnit
+- Mailpit (hvatanje e-pošte u razvoju)
+
+## Model podataka
+
+Ključna stvar za razumevanje projekta: **`users` i `players` su dve odvojene tabele bez veze među sobom.**
+
+- **`users`** — nalozi za prijavu u aplikaciju (administratori kluba, treneri, super admin). Imaju email i lozinku.
+- **`players`** — roster igrača kluba. Nemaju nalog, ne prijavljuju se, i **nemaju `user_id` kolonu**.
+
+Sva evidencija vezana za igrače (pozivnice, prisustvo, sastavi, statistika, uplate) referencira `players`, nikada `users`.
+
+### Glavne tabele
+
+| Tabela | Uloga |
+| --- | --- |
+| `clubs` | Klub — korenski entitet, nosilac izolacije podataka |
+| `users` | Nalozi za prijavu, vezani za klub preko `club_id` |
+| `teams` | Starosne kategorije unutar kluba |
+| `players` | Roster igrača, vezan za tim preko `team_id` |
+| `training_sessions` | Termini treninga |
+| `match_days` | Utakmice |
+| `event_invitations` | Polimorfna tabela pozivnica i RSVP odgovora (`invitable_type` ∈ `training`, `match`), ključana po `player_id` |
+| `match_day_player` | Sastav utakmice — pivot sa `attended`, `goals`, `assists` |
+| `player_payments` | Uplate igrača |
+| `subscriptions`, `subscription_plans` | Pretplata kluba i dostupne funkcionalnosti |
+
+### Prisustvo i RSVP
+
+Prisustvo se vodi **isključivo preko `event_invitations`**. Kada se zakaže trening ili utakmica, igračima se šalju email pozivnice sa potpisanim linkovima (`invitations.rsvp`), a njihov odgovor (`accepted` / `declined`) se upisuje u pivot. Analitika računa posećenost iz ove tabele.
+
+### Statistika igrača
+
+Zapisnik utakmice je **jedini izvor istine** za `matches_played`, `goals` i `assists`. `PlayerStatsService` ponovo izračunava ove vrednosti pri svakoj izmeni zapisnika, promeni statusa utakmice ili brisanju utakmice. Broje se samo utakmice sa statusom `completed` gde je igrač označen kao prisutan u sastavu. Ova polja se zato ne mogu ručno menjati kroz API.
 
 ## Arhitektura
 
-Aplikacija koristi slojevit pristup — kontroleri su tanki i delegiraju logiku servisima:
+Aplikacija koristi slojevit pristup — kontroleri su tanki i delegiraju logiku servisima.
 
-- `app/Http/Controllers/AuthController.php` — HTTP ulazna tačka za autentifikaciju
-- `app/Http/Requests/` — validacija ulaznih podataka (`RegisterRequest`, `LoginRequest`)
-- `app/Http/Resources/AuthResource.php` — oblikovanje JSON odgovora
-- `app/Services/AuthService.php` — poslovna logika (kreiranje korisnika, izdavanje/brisanje tokena)
-- `app/Models/User.php` — Eloquent model korisnika
+```
+src/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/    # HTTP ulazne tačke
+│   │   ├── Requests/       # Validacija ulaznih podataka
+│   │   ├── Resources/      # Oblikovanje JSON odgovora
+│   │   └── Middleware/     # EnsureSubscriptionFeature (kontrola pristupa)
+│   ├── Models/             # Eloquent modeli
+│   ├── Services/           # Poslovna logika
+│   ├── Policies/           # Autorizacija
+│   └── Notifications/      # Email pozivnice
+├── database/migrations/
+├── routes/api.php
+└── tests/
+```
 
-Docker Compose pokreće servise: `app` (PHP-FPM), `nginx`, `mysql`, `redis` i `mailhog`.
+**Servisi:** `AuthService`, `UserService`, `TeamService`, `TrainingSessionService`, `EventInvitationService`, `PlayerStatsService`, `OnboardingService`, `SubscriptionPlanService`.
 
-## Installation
+### Izolacija podataka
+
+Model `Player` ima globalni scope `club_isolation` koji automatski ograničava upite na klub prijavljenog korisnika. U servisnom i CLI kontekstu (gde nema `request()`) ovaj scope se mora eksplicitno zaobići sa `withoutGlobalScopes()` — `PlayerStatsService` to i radi.
+
+### Frontend
+
+```
+taskflow-frontend/src/
+├── features/        # admin, analytics, auth, calendar, dashboard,
+│                    # matches, onboarding, players, tactics, teams,
+│                    # trainings, users
+├── composables/     # deljena logika (npr. useMatchStats)
+├── stores/          # Pinia store-ovi
+├── components/      # deljene komponente
+└── router/
+```
+
+Svaki `feature` direktorijum sadrži stranicu (`*Page.vue`), svoje `components/`, `composables/` i po potrebi `utils/`.
+
+## Instalacija
 
 Preduslovi: Docker i Docker Compose.
 
-1. Kloniraj repozitorijum i uđi u direktorijum projekta:
+1. Kloniraj repozitorijum:
 
    ```bash
    git clone <repo-url> taskflow
    cd taskflow
    ```
 
-2. Podigni Docker kontejnere:
+2. Podigni kontejnere:
 
    ```bash
    docker compose up -d --build
    ```
 
-3. Instaliraj PHP zavisnosti unutar `app` kontejnera:
+3. Instaliraj PHP zavisnosti:
 
    ```bash
-   docker compose exec app composer install
+   docker compose exec -w /var/www/html/src app composer install
    ```
 
-4. Kreiraj `.env` fajl i generiši aplikacijski ključ:
+4. Kreiraj `.env` i generiši aplikacijski ključ:
 
    ```bash
-   docker compose exec app cp .env.example .env
-   docker compose exec app php artisan key:generate
+   docker compose exec -w /var/www/html/src app cp .env.example .env
+   docker compose exec -w /var/www/html/src app php artisan key:generate
    ```
 
-5. Pokreni migracije baze:
+5. Pokreni migracije:
 
    ```bash
-   docker compose exec app php artisan migrate
+   docker compose exec -w /var/www/html/src app php artisan migrate
    ```
+
+6. Po potrebi pokreni seed-ere (nisu povezani u `DatabaseSeeder`, pozivaju se pojedinačno):
+
+   ```bash
+   docker compose exec -w /var/www/html/src app php artisan db:seed --class=RoleAndPermissionSeeder
+   docker compose exec -w /var/www/html/src app php artisan db:seed --class=TeamPlayersSeeder
+   ```
+
+> **Napomena:** kod aplikacije se unutar `app` kontejnera nalazi na putanji `/var/www/html/src`, pa svaka `artisan` i `composer` komanda zahteva `-w /var/www/html/src`.
 
 ## Konfiguracija okruženja
 
-Podrazumevane vrednosti baze (iz `docker-compose.yml`) — uskladi ih sa `.env`:
+Podrazumevane vrednosti (iz `docker-compose.yml`) — uskladi ih sa `.env`:
 
-| Ključ           | Vrednost        |
-| --------------- | --------------- |
-| `DB_CONNECTION` | `mysql`         |
-| `DB_HOST`       | `mysql`         |
-| `DB_PORT`       | `3306`          |
-| `DB_DATABASE`   | `taskflow_app`  |
-| `DB_USERNAME`   | `taskflow`      |
-| `DB_PASSWORD`   | `secret`        |
-| `REDIS_HOST`    | `redis`         |
-| `REDIS_PORT`    | `6379`          |
-| `MAIL_HOST`     | `mailhog`       |
-| `MAIL_PORT`     | `1025`          |
+| Ključ | Vrednost |
+| --- | --- |
+| `DB_CONNECTION` | `mysql` |
+| `DB_HOST` | `mysql` |
+| `DB_PORT` | `3306` |
+| `DB_DATABASE` | `taskflow_app` |
+| `DB_USERNAME` | `taskflow` |
+| `DB_PASSWORD` | `secret` |
+| `REDIS_HOST` | `redis` |
+| `REDIS_PORT` | `6379` |
+| `MAIL_HOST` | `mailpit` |
+| `MAIL_PORT` | `1025` |
+| `FRONTEND_URL` | `http://localhost:5173` |
 
-Napomena: `DB_HOST`, `REDIS_HOST` i `MAIL_HOST` koriste imena Docker servisa, a ne `localhost`.
+`DB_HOST`, `REDIS_HOST` i `MAIL_HOST` koriste imena Docker servisa, a ne `localhost`.
+
+`FRONTEND_URL` se koristi za preusmeravanje nakon RSVP odgovora iz email pozivnice.
 
 ## Pokretanje
 
-Nakon što su kontejneri pokrenuti, servisi su dostupni na:
+| Servis | URL / Port |
+| --- | --- |
+| API (Nginx) | http://localhost:8080 |
+| Frontend (Vite) | http://localhost:5173 |
+| MySQL | `localhost:3306` |
+| Redis | `localhost:6379` |
+| Mailpit (SMTP) | `localhost:1025` |
+| Mailpit (Web UI) | http://localhost:8025 |
 
-| Servis           | URL / Port             |
-| ---------------- | ---------------------- |
-| API (Nginx)      | http://localhost:8080  |
-| MySQL            | `localhost:3306`       |
-| Redis            | `localhost:6379`       |
-| MailHog (SMTP)   | `localhost:1025`       |
-| MailHog (Web UI) | http://localhost:8025  |
+Produkcijski build frontenda:
+
+```bash
+cd taskflow-frontend
+npm run build
+```
+
+## Pretplate i kontrola pristupa
+
+Svaki klub ima pretplatu koja nosi listu dozvoljenih funkcionalnosti. Middleware `subscription.feature:<slug>` (klasa `EnsureSubscriptionFeature`) štiti rute i vraća `403` ako paket ne sadrži traženu funkcionalnost.
+
+| Paket | Cena | Funkcionalnosti |
+| --- | --- | --- |
+| `basic` | 10 | `club_profile`, `players`, `teams` |
+| `standard` | 20 | `club_profile`, `players`, `teams`, `matches`, `news` |
+| `premium` | 50 | `standard` + `advanced_stats`, `tactics` |
+| `pro` | 50 | `standard` + `club_basic_information` |
+| `unlimited` | 100 | `premium` + `club_basic_information`, `advanced_management`, `additional_content` |
+
+Slug `teams` otključava i timove i treninge — rute `/training-sessions` su gate-ovane istim slugom. Utakmice (`matches`) su prva razlika između `basic` i `standard` paketa.
+
+Slugovi koriste notaciju sa donjom crtom (`club_profile`, `advanced_stats`). Od slugova se u kodu stvarno proveravaju `club_profile`, `players`, `teams`, `matches` i `advanced_stats` (backend rute) te `tactics` i `advanced_management` (frontend ruter); `news`, `club_basic_information` i `additional_content` su trenutno samo opisne oznake.
+
+**Važno:** `subscriptions` tabela nosi sopstvenu kopiju liste funkcionalnosti — `Subscription::hasFeature()` čita `subscriptions.features`, a ne plan. Izmena paketa se zato ne odražava na postojeće pretplatnike dok im se lista ponovo ne prepiše iz plana.
 
 ## Testiranje
 
-Pokreni test skup (PHPUnit) unutar `app` kontejnera:
-
 ```bash
-docker compose exec app php artisan test
+docker compose exec -T -w /var/www/html/src app php artisan test
 ```
+
+Trenutno stanje: **32 testa, 100 asercija — sve prolazi.**
 
 ## API
 
 Osnovni URL: `http://localhost:8080/api`
 
-Svi odgovori su u JSON formatu. Zaštićene rute zahtevaju zaglavlje:
+Svi odgovori su u JSON formatu. Zaštićene rute zahtevaju zaglavlje `Authorization: Bearer <token>`.
 
-```
-Authorization: Bearer <access_token>
-```
+### Javne rute
 
-### `POST /api/register`
+| Metoda | Ruta | Opis |
+| --- | --- | --- |
+| `POST` | `/register` | Registracija korisnika, vraća bearer token |
+| `POST` | `/login` | Prijava, vraća bearer token |
+| `GET` | `/subscription-plans` | Lista dostupnih paketa |
+| `GET` | `/onboarding/{token}` | Podaci o pozivnici za registraciju kluba |
+| `POST` | `/onboarding/{token}/select` | Izbor paketa |
+| `GET` | `/invitations/{type}/{event}/{player}/{status}` | RSVP odgovor iz email pozivnice (potpisana ruta) |
 
-Registruje novog korisnika i vraća bearer token.
+### Zaštićene rute
 
-**Telo zahteva:**
+| Metoda | Ruta | Opis |
+| --- | --- | --- |
+| `GET` | `/me` | Trenutni korisnik |
+| `POST` | `/logout` | Poništavanje tokena |
+| `GET` `POST` | `/teams` | Lista i kreiranje timova |
+| `GET` `PUT` `DELETE` | `/teams/{team}` | Detalji, izmena, brisanje tima |
+| `GET` | `/teams/{team}/members` | Članovi tima |
+| `GET` `POST` | `/players` | Lista i kreiranje igrača |
+| `GET` `PUT` `DELETE` | `/players/{player}` | Detalji, izmena, brisanje igrača |
+| `GET` `POST` | `/training-sessions` | Lista i zakazivanje treninga |
+| `PUT` `DELETE` | `/training-sessions/{trainingSession}` | Izmena i brisanje treninga |
+| `PATCH` | `/training-sessions/{trainingSession}/status` | Promena statusa treninga |
+| `GET` `POST` | `/matches` | Lista i zakazivanje utakmica |
+| `PUT` `DELETE` | `/matches/{match}` | Izmena i brisanje utakmice |
+| `POST` | `/matches/{match}/stats` | Čuvanje zapisnika utakmice (sastav, golovi, asistencije) |
+| `PATCH` | `/matches/{match}/status` | Promena statusa utakmice |
+| `GET` | `/analytics` | Analitika (podržava `team_id`, `date_from`, `date_to`) |
+| `GET` | `/finances/overview` | Pregled finansija |
+| `GET` `POST` | `/payments` | Uplate igrača |
+| `POST` | `/payments/bulk` | Grupno evidentiranje uplata |
+| `GET` `PUT` | `/club` | Profil kluba |
+| `GET` `POST` | `/users` | Korisnički nalozi kluba |
+| `GET` `PUT` `DELETE` | `/users/{user}` | Detalji, izmena, brisanje korisnika |
+| `GET` | `/roles` | Lista uloga |
+| `GET` | `/super-admin/dashboard` | Super admin pregled |
 
-```json
-{
-  "name": "Djura",
-  "email": "djura@example.com",
-  "password": "TajnaLozinka123",
-  "password_confirmation": "TajnaLozinka123"
-}
-```
+Kompletnu listu ruta ispisuje:
 
-Validaciona pravila:
-
-- `name` — obavezno, string, maks. 255 znakova
-- `email` — obavezno, validan email, jedinstven u `users`
-- `password` — obavezno, potvrđeno (`password_confirmation`), podrazumevana Laravel pravila jačine
-
-**Odgovor `201 Created`:**
-
-```json
-{
-  "data": {
-    "user": {
-      "id": 1,
-      "name": "Djura",
-      "email": "djura@example.com"
-    },
-    "access_token": "1|abcdef...",
-    "token_type": "Bearer"
-  }
-}
-```
-
-Greška `422` ako email već postoji ili validacija ne prođe.
-
-### `POST /api/login`
-
-Prijavljuje korisnika i vraća novi bearer token.
-
-**Telo zahteva:**
-
-```json
-{
-  "email": "djura@example.com",
-  "password": "TajnaLozinka123"
-}
+```bash
+docker compose exec -w /var/www/html/src app php artisan route:list --path=api
 ```
 
-**Odgovor `200 OK`:** identična struktura kao kod registracije (`data.user`, `data.access_token`, `data.token_type`).
+## Poznati problemi
 
-Greška `422` sa porukom `Podaci za prijavu nisu ispravni.` ako kredencijali nisu tačni.
+- **Cene paketa se razlikuju između migracije i baze.** Migracija `create_subscription_plans_table` seed-uje `basic=20`, `standard=50`, `premium=100`, dok su u razvojnoj bazi vrednosti `10`, `20`, `50` (naknadno ručno izmenjene). Sveža instalacija zato dobija drugačiji cenovnik od onog u tabeli iznad.
+- **Utakmice sa statusom `canceled`** se ne prikazuju ni u jednom tabu na stranici `/matches`.
+- **Middleware `CheckSubscriptionFeature`** postoji u kodu ali nije registrovan u `bootstrap/app.php` — koristi se samo `EnsureSubscriptionFeature`.
+- **Keširanje nije implementirano** nigde u `src/app/`.
 
-### `GET /api/me`
+## Licenca
 
-Vraća trenutno autentifikovanog korisnika. **Zahteva token.**
-
-**Odgovor `200 OK`:**
-
-```json
-{
-  "data": {
-    "user": {
-      "id": 1,
-      "name": "Djura",
-      "email": "djura@example.com"
-    },
-    "access_token": null,
-    "token_type": "Bearer"
-  }
-}
-```
-
-### `POST /api/logout`
-
-Poništava (briše) token korišćen u trenutnom zahtevu. **Zahteva token.**
-
-**Odgovor `200 OK`:**
-
-```json
-{
-  "message": "Uspešno ste se odjavili."
-}
-```
-
-### `GET /api/user`
-
-Vraća sirovi model autentifikovanog korisnika (Sanctum). **Zahteva token.**
-
-## License
-
-MIT
+Projekat nema definisanu licencu.

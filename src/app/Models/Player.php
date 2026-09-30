@@ -6,7 +6,6 @@ use Auth;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
 
@@ -74,13 +73,6 @@ class Player extends Model
     public function getPhotoUrlAttribute(): ?string
     {
         return $this->photo_path ? asset('storage/' . $this->photo_path) : null;
-    }
-
-    public function matches(): BelongsToMany
-    {
-        return $this->belongsToMany(GameMatch::class, 'match_player')
-            ->withPivot(['attended', 'goals', 'assists'])
-            ->withTimestamps();
     }
 
     public function payments(): HasMany

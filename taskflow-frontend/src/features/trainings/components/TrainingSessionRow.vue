@@ -54,19 +54,6 @@
                 </div>
             </div>
 
-            <div class="text-left md:text-right">
-                <div class="text-[10px] font-bold uppercase text-gray-400">Prisustvo</div>
-                <div class="text-xs font-black text-emerald-400">
-                    {{ getAttendedCount(session) }} / {{ session.users?.length || session.attendees?.length || 0 }} igrača
-                </div>
-            </div>
-
-            <button
-                @click="$emit('open-attendance', session)"
-                class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl transition shadow-md flex items-center gap-1.5 cursor-pointer"
-            >
-                <span>👥</span> Evidencija
-            </button>
             <!-- Dugme za Brisanje Treninga -->
             <button
                 @click="$emit('delete', session)"
@@ -83,7 +70,7 @@
 
 <script setup>
 import { computed } from 'vue'
-import { getDayName, getDayNumber, formatTime, getAttendedCount, getRsvpCounts } from '../utils/trainingFormatters'
+import { getDayName, getDayNumber, formatTime, getRsvpCounts } from '../utils/trainingFormatters'
 
 const props = defineProps({
     session: {
@@ -92,7 +79,7 @@ const props = defineProps({
     }
 })
 
-defineEmits(['open-attendance', 'delete'])
+defineEmits(['delete'])
 
 const rsvp = computed(() => getRsvpCounts(props.session))
 </script>
