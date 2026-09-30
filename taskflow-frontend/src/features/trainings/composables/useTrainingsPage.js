@@ -2,13 +2,11 @@
 // navigaciju kroz mesece, kreiranje treninga, evidenciju prisustva i brisanje.
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useTrainingStore } from '../../../stores/training'
-import { useUserStore } from '../../../stores/user'
 import { fetchTeams } from '../../../services/teamsService'
 import { getRsvpCounts } from '../utils/trainingFormatters'
 
 export function useTrainingsPage() {
     const trainingStore = useTrainingStore()
-    const userStore = useUserStore()
 
     const currentDate = ref(new Date())
     const teams = ref([])
@@ -82,43 +80,6 @@ export function useTrainingsPage() {
         }
     }
 
-    // Evidencija prisustva
-    const showAttendanceModal = ref(false)
-    const activeSession = ref(null)
-    const selectedAttendeeIds = ref([])
-
-    const openAttendanceModal = (session) => {
-        activeSession.value = session
-        const attendeesList = session.users || session.attendees || []
-        selectedAttendeeIds.value = attendeesList.map(a => a.id)
-        showAttendanceModal.value = true
-    }
-
-    const togglePlayerAttendance = (userId) => {
-        const idx = selectedAttendeeIds.value.indexOf(userId)
-        if (idx > -1) {
-            selectedAttendeeIds.value.splice(idx, 1)
-        } else {
-            selectedAttendeeIds.value.push(userId)
-        }
-    }
-
-    const selectAllPlayers = () => {
-        selectedAttendeeIds.value = userStore.users.map(u => u.id)
-    }
-
-    const clearAllPlayers = () => {
-        selectedAttendeeIds.value = []
-    }
-
-    const handleSaveAttendance = async () => {
-        if (!activeSession.value) return
-        const success = await trainingStore.saveAttendance(activeSession.value.id, selectedAttendeeIds.value)
-        if (success) {
-            showAttendanceModal.value = false
-        }
-    }
-
     // Brisanje treninga
     const sessionToDelete = ref(null)
     const isDeleting = ref(false)
@@ -141,7 +102,6 @@ export function useTrainingsPage() {
 
     onMounted(() => {
         trainingStore.fetchSessions()
-        userStore.fetchUsers()
         fetchTeams().then((list) => {
             teams.value = list
             if (teams.value.length) {
@@ -151,7 +111,6 @@ export function useTrainingsPage() {
     })
 
     return {
-        userStore,
         trainingStore,
         teams,
         newSession,
@@ -166,14 +125,6 @@ export function useTrainingsPage() {
         averageMonthlyAttendance,
         changeMonth,
         handleCreateSession,
-        showAttendanceModal,
-        activeSession,
-        selectedAttendeeIds,
-        openAttendanceModal,
-        togglePlayerAttendance,
-        selectAllPlayers,
-        clearAllPlayers,
-        handleSaveAttendance,
         sessionToDelete,
         isDeleting,
         handleDeleteSession,

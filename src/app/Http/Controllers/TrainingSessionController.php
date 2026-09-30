@@ -3,12 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\TrainingSession;
-use App\Models\User;
 use App\Models\Team;
 use App\Services\EventInvitationService;
 use App\Services\TrainingSessionService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
@@ -125,49 +123,6 @@ class TrainingSessionController extends Controller
         return response()->json(['data' => $trainingSession->fresh(['team', 'creator'])]);
     }
 
-    public function syncAttendance(Request $request, TrainingSession $trainingSession): JsonResponse
-    {
-        Gate::authorize('update', $trainingSession);
-
-        $validated = $request->validate([
-            'player_ids' => 'nullable|array',
-            'player_ids.*' => [
-                'integer',
-                \Illuminate\Validation\Rule::exists('users', 'id')
-                    ->where('club_id', $trainingSession->club_id),
-            ],
-        ]);
-
-        // Označeni igrači su prisutni - bez eksplicitnog pivot podatka `attended`
-        // bi ostao na podrazumevanom `false` i evidencija bi bila izgubljena.
-        $attendance = collect($validated['player_ids'] ?? [])
-            ->mapWithKeys(fn ($playerId) => [$playerId => ['attended' => true]])
-            ->all();
-
-        $trainingSession->users()->sync($attendance);
-
-        return response()->json([
-            'message' => 'Prisustvo uspešno sačuvano.',
-            'data' => $trainingSession->fresh(['users.playerProfile'])
-        ]);
-    }
-
-    public function handleRsvp(TrainingSession $session, User $user, string $status): RedirectResponse
-    {
-        $isAttending = ($status === 'attended');
-
-        // Ažuriranje prisustva u pivot tabeli
-        $session->users()->syncWithoutDetaching([
-            $user->id => ['attended' => $isAttending]
-        ]);
-
-        // Preusmeravanje na Vue frontend potvrdu
-        $frontendUrl = config('app.frontend_url', 'http://localhost:5173');
-        $encodedTitle = urlencode($session->title);
-
-        return redirect()->away("{$frontendUrl}/rsvp-confirmation?status={$status}&event={$encodedTitle}");
-    }
-
     /**
      * Delete a training session.
      * @param TrainingSession $trainingSession
@@ -177,8 +132,6 @@ class TrainingSessionController extends Controller
     {
         Gate::authorize('delete', $trainingSession);
 
-        // Brisanje zavisnosti u pivot tabeli i samog treninga
-        $trainingSession->users()->detach();
         $trainingSession->delete();
 
         return response()->json(['message' => 'Trening je uspešno obrisan.']);

@@ -53,7 +53,7 @@ const routes = [
         path: '/users',
         name: 'users',
         component: UsersView,
-        meta: { requiresAuth: true, subscriptionRequired: true, feature: 'advanced.management' }
+        meta: { requiresAuth: true, subscriptionRequired: true, feature: 'advanced_management' }
     },
     {
         path: '/players',

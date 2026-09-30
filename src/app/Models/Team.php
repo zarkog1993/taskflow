@@ -21,20 +21,6 @@ class Team extends Model
     }
 
     /**
-     * Get the upcoming matches for the team.
-     *
-     * @return HasMany
-     */
-    public function upcomingMatches(): HasMany
-    {
-        return $this->hasMany(TrainingSession::class)
-            ->where('type', 'match') // Pretpostavka da je tip događaja 'match'
-            ->where('scheduled_at', '>=', now())
-            ->orderBy('scheduled_at', 'asc')
-            ->with(['attendees.playerProfile']);
-    }
-
-    /**
      * Relacija ka novom Player modelu
      */
     public function players(): HasMany

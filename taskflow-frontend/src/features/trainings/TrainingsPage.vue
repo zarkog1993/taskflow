@@ -60,7 +60,6 @@
                 v-for="session in monthlySessions"
                 :key="session.id"
                 :session="session"
-                @open-attendance="openAttendanceModal"
                 @delete="handleDeleteSession"
             />
         </div>
@@ -84,20 +83,7 @@
             @submit="handleCreateSession"
         />
 
-        <!-- MODAL 2: Evidencija Prisustva -->
-        <AttendanceModal
-            v-if="showAttendanceModal && activeSession"
-            :session="activeSession"
-            :users="userStore.users"
-            :selected-ids="selectedAttendeeIds"
-            @close="showAttendanceModal = false"
-            @toggle="togglePlayerAttendance"
-            @select-all="selectAllPlayers"
-            @clear-all="clearAllPlayers"
-            @save="handleSaveAttendance"
-        />
-
-        <!-- MODAL 3: Potvrda Brisanja Treninga -->
+        <!-- MODAL 2: Potvrda Brisanja Treninga -->
         <DeleteSessionModal
             v-if="sessionToDelete"
             :session-title="sessionToDelete.title"
@@ -111,12 +97,10 @@
 <script setup>
 import TrainingSessionRow from './components/TrainingSessionRow.vue'
 import CreateSessionModal from './components/CreateSessionModal.vue'
-import AttendanceModal from './components/AttendanceModal.vue'
 import DeleteSessionModal from './components/DeleteSessionModal.vue'
 import { useTrainingsPage } from './composables/useTrainingsPage'
 
 const {
-    userStore,
     trainingStore,
     teams,
     newSession,
@@ -131,14 +115,6 @@ const {
     averageMonthlyAttendance,
     changeMonth,
     handleCreateSession,
-    showAttendanceModal,
-    activeSession,
-    selectedAttendeeIds,
-    openAttendanceModal,
-    togglePlayerAttendance,
-    selectAllPlayers,
-    clearAllPlayers,
-    handleSaveAttendance,
     sessionToDelete,
     isDeleting,
     handleDeleteSession,

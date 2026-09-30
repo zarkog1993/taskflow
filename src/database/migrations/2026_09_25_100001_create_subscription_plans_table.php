@@ -29,7 +29,7 @@ return new class extends Migration
                 'price' => 20,
                 'max_teams' => 1,
                 'max_players' => 25,
-                'features' => json_encode(['club.profile', 'club.basic_information']),
+                'features' => json_encode(['club_profile', 'players', 'teams']),
                 'is_active' => true,
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -41,7 +41,7 @@ return new class extends Migration
                 'max_teams' => 5,
                 'max_players' => 150,
                 'features' => json_encode([
-                    'club.profile', 'club.basic_information', 'players', 'teams', 'matches', 'news',
+                    'club_profile', 'players', 'teams', 'matches', 'news',
                 ]),
                 'is_active' => true,
                 'created_at' => $now,
@@ -54,8 +54,8 @@ return new class extends Migration
                 'max_teams' => 999,
                 'max_players' => 9999,
                 'features' => json_encode([
-                    'club.profile', 'club.basic_information', 'players', 'teams', 'matches', 'news',
-                    'advanced.statistics', 'advanced.management', 'additional.content',
+                    'club_profile', 'players', 'teams', 'matches', 'news',
+                    'advanced_stats', 'tactics',
                 ]),
                 'is_active' => true,
                 'created_at' => $now,
@@ -68,7 +68,7 @@ return new class extends Migration
                 'max_teams' => 5,
                 'max_players' => 150,
                 'features' => json_encode([
-                    'club.profile', 'club.basic_information', 'players', 'teams', 'matches', 'news',
+                    'club_profile', 'club_basic_information', 'players', 'teams', 'matches', 'news',
                 ]),
                 'is_active' => true,
                 'created_at' => $now,
@@ -81,8 +81,8 @@ return new class extends Migration
                 'max_teams' => 999,
                 'max_players' => 9999,
                 'features' => json_encode([
-                    'club.profile', 'club.basic_information', 'players', 'teams', 'matches', 'news',
-                    'advanced.statistics', 'advanced.management', 'additional.content',
+                    'club_profile', 'club_basic_information', 'players', 'teams', 'matches', 'news',
+                    'advanced_stats', 'tactics', 'advanced_management', 'additional_content',
                 ]),
                 'is_active' => true,
                 'created_at' => $now,
