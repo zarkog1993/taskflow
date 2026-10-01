@@ -54,11 +54,7 @@
                     class="flex items-center gap-2 text-xs w-full sm:w-auto justify-end"
                 >
                     <span class="text-gray-400 font-medium">Mesec:</span>
-                    <input
-                        type="month"
-                        v-model="selectedPeriod"
-                        class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-1.5 text-white font-mono focus:outline-none focus:border-indigo-500"
-                    />
+                    <MonthPicker v-model="selectedPeriod" />
                 </div>
             </div>
         </div>
@@ -208,6 +204,7 @@
 
 <script setup>
 import { computed, onMounted } from "vue";
+import MonthPicker from "../MonthPicker.vue";
 import { useTeamFinances } from "../composables/useTeamFinances";
 
 const props = defineProps({

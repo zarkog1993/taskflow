@@ -50,34 +50,43 @@
         </div>
 
         <!-- Pregled Učinka -->
-        <div v-if="match.status === 'completed'" class="pt-3 border-t border-gray-700/50 flex flex-wrap gap-6 text-xs">
-            <div>
+        <div v-if="match.status === 'completed' && hasContributions" class="pt-3 border-t border-gray-700/50 flex flex-wrap gap-6 text-xs">
+            <div v-if="scorersText">
                 <span class="text-gray-400 font-bold">⚽ Strelci:</span>
-                <span class="text-white ml-1.5 font-medium">{{ getScorersText(match) || "Nema upisanih golova" }}</span>
+                <span class="text-white ml-1.5 font-medium">{{ scorersText }}</span>
             </div>
-            <div>
+            <div v-if="assistersText">
                 <span class="text-gray-400 font-bold">🎯 Asistenti:</span>
-                <span class="text-white ml-1.5 font-medium">{{ getAssistersText(match) || "Nema upisanih asistencija" }}</span>
+                <span class="text-white ml-1.5 font-medium">{{ assistersText }}</span>
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
-defineProps({
-    match: { type: Object, required: true }
-})
+import { computed } from "vue"
+
 defineEmits(['open-stats', 'delete'])
 
-const getScorersText = (match) => {
-    if (!match.players) return ""
-    return match.players.filter((p) => p.pivot?.goals > 0).map((p) => `${p.name} (${p.pivot.goals})`).join(", ")
-}
+const props = defineProps({
+    match: { type: Object, required: true }
+})
 
-const getAssistersText = (match) => {
-    if (!match.players) return ""
-    return match.players.filter((p) => p.pivot?.assists > 0).map((p) => `${p.name} (${p.pivot.assists})`).join(", ")
-}
+const scorersText = computed(() =>
+    (props.match.players || [])
+        .filter((player) => player.pivot?.goals > 0)
+        .map((player) => `${player.name} (${player.pivot.goals})`)
+        .join(", "),
+)
+
+const assistersText = computed(() =>
+    (props.match.players || [])
+        .filter((player) => player.pivot?.assists > 0)
+        .map((player) => `${player.name} (${player.pivot.assists})`)
+        .join(", "),
+)
+
+const hasContributions = computed(() => Boolean(scorersText.value || assistersText.value))
 
 const formatDate = (dateStr) => {
     if (!dateStr) return ""
