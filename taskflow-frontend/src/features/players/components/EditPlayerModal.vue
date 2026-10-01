@@ -59,7 +59,7 @@
                 </div>
 
                 <!-- Visina, Težina i Datum Rođenja -->
-                <div class="grid grid-cols-3 gap-3">
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     <div>
                         <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Visina (cm)</label>
                         <input v-model.number="form.height" type="number" placeholder="185" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none text-center font-mono" />
@@ -70,9 +70,9 @@
                         <input v-model.number="form.weight" type="number" placeholder="78" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none text-center font-mono" />
                     </div>
 
-                    <div>
+                    <div class="col-span-2 sm:col-span-1 min-w-0">
                         <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Datum Rođenja</label>
-                        <input v-model="form.date_of_birth" type="date" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-2 py-2.5 text-xs text-white outline-none font-mono" />
+                        <CustomDatePicker v-model="form.date_of_birth" />
                     </div>
                 </div>
 
@@ -113,6 +113,7 @@
 </template>
 
 <script setup>
+import CustomDatePicker from '../../../components/CustomDatePicker.vue'
 import { usePhotoUpload } from '../../../composables/usePhotoUpload'
 
 defineProps({

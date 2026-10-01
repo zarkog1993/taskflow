@@ -7,7 +7,7 @@
                 <h3 class="text-2xl font-black text-white">Zakaži Novi Trening</h3>
             </div>
 
-            <form @submit.prevent="$emit('submit')" class="p-6 space-y-4">
+            <form @submit.prevent="handleSubmit" class="p-6 space-y-4">
                 <div>
                     <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Ekipa</label>
                     <select v-model="form.team_id" required class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2.5 text-xs text-white">
@@ -37,7 +37,7 @@
                 <div>
                     <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Datum i Vreme</label>
                     <div class="grid grid-cols-3 gap-2">
-                        <input v-model="formDate" type="date" required class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white" />
+                        <CustomDatePicker v-model="formDate" />
                         <select v-model="formHours" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-2 py-2 text-xs text-white">
                             <option v-for="h in 24" :key="h-1" :value="String(h-1).padStart(2,'0')">{{ String(h-1).padStart(2,'0') }}h</option>
                         </select>
@@ -48,6 +48,7 @@
                             <option value="45">45 min</option>
                         </select>
                     </div>
+                    <p v-if="dateMissing && !formDate" class="mt-1 text-xs text-rose-400">Izaberite datum.</p>
                 </div>
 
                 <div>
@@ -65,6 +66,9 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
+import CustomDatePicker from '../../../components/CustomDatePicker.vue'
+
 defineProps({
     form: {
         type: Object,
@@ -76,10 +80,16 @@ defineProps({
     }
 })
 
-defineEmits(['close', 'submit'])
+const emit = defineEmits(['close', 'submit'])
 
 // Datum/vreme se sastavljaju odvojeno (datum + sat + minuti) i spajaju u `scheduled_at` u roditeljskoj komponenti.
 const formDate = defineModel('formDate', { default: '' })
 const formHours = defineModel('formHours', { default: '18' })
 const formMinutes = defineModel('formMinutes', { default: '00' })
+const dateMissing = ref(false)
+
+const handleSubmit = () => {
+    dateMissing.value = !formDate.value
+    if (!dateMissing.value) emit('submit')
+}
 </script>

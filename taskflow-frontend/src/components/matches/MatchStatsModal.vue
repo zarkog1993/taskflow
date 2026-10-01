@@ -218,35 +218,96 @@
 
             <!-- TAB 3: STRELCI I ASISTENTI -->
             <div v-if="currentTab === 'stats'" class="space-y-3">
-                <p class="text-xs text-gray-400 px-1">
-                    Unos pojedinačnog učinka (prikazani su samo igrači koji su
-                    igrali):
-                </p>
+                <div class="flex items-center justify-between px-1">
+                    <div>
+                        <p class="text-sm font-bold text-white">Ucinak Na Utakmici</p>
+                        <p class="text-[11px] text-gray-400">Igrači koji su postigli gol ili asistirali</p>
+                    </div>
+                    <button
+                        type="button"
+                        @click="isEditingStats = !isEditingStats"
+                        class="flex items-center gap-1.5 rounded-lg border border-indigo-500/30 bg-indigo-500/10 px-3 py-2 text-[11px] font-bold text-indigo-300 transition hover:border-indigo-400/50 hover:bg-indigo-500/20 cursor-pointer"
+                    >
+                        <span aria-hidden="true">{{ isEditingStats ? "✓" : "✎" }}</span>
+                        {{ isEditingStats ? "Prikaži učinak" : "Izmeni učinak" }}
+                    </button>
+                </div>
 
                 <div
-                    v-if="attendedPlayers.length"
-                    class="max-h-[40vh] overflow-y-auto space-y-2 pr-1"
+                    v-if="!isEditingStats"
+                    class="grid max-h-[40vh] grid-cols-1 gap-3 overflow-y-auto pr-1 sm:grid-cols-2"
                 >
+                    <div v-if="scorers.length" class="overflow-hidden rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/[0.08] to-gray-900/80 shadow-lg shadow-black/10">
+                        <div class="flex items-center justify-between border-b border-emerald-500/15 px-4 py-3">
+                            <div class="flex items-center gap-2.5">
+                                <span class="flex h-9 w-9 items-center justify-center rounded-xl border border-emerald-400/20 bg-emerald-400/10 text-lg">⚽</span>
+                                <div>
+                                    <h4 class="text-sm font-bold text-white">Golovi</h4>
+                                    <p class="text-[10px] uppercase tracking-wider text-emerald-300/70">{{ scorers.length }} gol{{ scorers.length === 1 ? "" : "ova" }}</p>
+                                </div>
+                            </div>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-300/70">Postignuto</span>
+                        </div>
+                        <div class="divide-y divide-white/[0.06] px-4">
+                            <div
+                                v-for="player in scorers"
+                                :key="player.id"
+                                class="flex items-center justify-between gap-3 py-3"
+                            >
+                                <span class="truncate text-sm font-medium text-gray-100">{{ player.name }}</span>
+                                <span class="shrink-0 rounded-lg border border-emerald-400/20 bg-emerald-400/10 px-2.5 py-1 text-xs font-bold tabular-nums text-emerald-300">
+                                    {{ player.goals }} {{ player.goals === 1 ? "gol" : "golova" }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-if="assisters.length" class="overflow-hidden rounded-2xl border border-sky-500/20 bg-gradient-to-br from-sky-500/[0.08] to-gray-900/80 shadow-lg shadow-black/10">
+                        <div class="flex items-center justify-between border-b border-sky-500/15 px-4 py-3">
+                            <div class="flex items-center gap-2.5">
+                                <span class="flex h-9 w-9 items-center justify-center rounded-xl border border-sky-400/20 bg-sky-400/10 text-lg">🎯</span>
+                                <div>
+                                    <h4 class="text-sm font-bold text-white">Asistencije</h4>
+                                    <p class="text-[10px] uppercase tracking-wider text-sky-300/70">{{ assisters.length }} asistencij{{ assisters.length === 1 ? "a" : "e" }}</p>
+                                </div>
+                            </div>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-sky-300/70">Kreirano</span>
+                        </div>
+                        <div class="divide-y divide-white/[0.06] px-4">
+                            <div
+                                v-for="player in assisters"
+                                :key="player.id"
+                                class="flex items-center justify-between gap-3 py-3"
+                            >
+                                <span class="truncate text-sm font-medium text-gray-100">{{ player.name }}</span>
+                                <span class="shrink-0 rounded-lg border border-sky-400/20 bg-sky-400/10 px-2.5 py-1 text-xs font-bold tabular-nums text-sky-300">
+                                    {{ player.assists }} {{ player.assists === 1 ? "asistencija" : "asistencije" }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-if="!contributingPlayers.length" class="col-span-full rounded-2xl border border-dashed border-gray-700 bg-gray-900/50 px-6 py-10 text-center">
+                        <span class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl border border-gray-700 bg-gray-800 text-xl">⚽</span>
+                        <p class="text-sm font-semibold text-gray-300">No contributions yet</p>
+                        <p class="mt-1 text-xs text-gray-500">Add goals or assists to see players listed here.</p>
+                    </div>
+                </div>
+
+                <div v-else-if="attendedPlayers.length" class="max-h-[40vh] overflow-y-auto space-y-2 pr-1">
                     <div
                         v-for="player in attendedPlayers"
                         :key="player.id"
                         class="flex items-center justify-between bg-gray-900/80 p-3 rounded-xl border border-gray-700/60"
                     >
                         <div>
-                            <p class="text-xs font-bold text-white">
-                                {{ player.name }}
-                            </p>
-                            <p class="text-[10px] text-gray-400">
-                                #{{ player.jersey_number || "-" }}
-                            </p>
+                            <p class="text-xs font-bold text-white">{{ player.name }}</p>
+                            <p class="text-[10px] text-gray-400">#{{ player.jersey_number || "-" }}</p>
                         </div>
 
                         <div class="flex items-center gap-4">
-                            <!-- Golovi -->
                             <div class="flex items-center gap-1.5">
-                                <span class="text-xs" title="Postignuti Golovi"
-                                >⚽</span
-                                >
+                                <span class="text-xs" title="Postignuti Golovi">⚽</span>
                                 <input
                                     type="number"
                                     min="0"
@@ -254,12 +315,8 @@
                                     class="w-12 bg-gray-800 border border-gray-700 rounded-lg text-center text-xs py-1.5 text-white font-mono font-bold"
                                 />
                             </div>
-
-                            <!-- Asistencije -->
                             <div class="flex items-center gap-1.5">
-                                <span class="text-xs" title="Asistencije"
-                                >🎯</span
-                                >
+                                <span class="text-xs" title="Asistencije">🎯</span>
                                 <input
                                     type="number"
                                     min="0"
@@ -270,14 +327,9 @@
                         </div>
                     </div>
                 </div>
-
-                <div
-                    v-else
-                    class="text-center py-8 bg-gray-900/40 rounded-xl border border-gray-800"
-                >
+                <div v-else-if="isEditingStats" class="text-center py-8 bg-gray-900/40 rounded-xl border border-gray-800">
                     <p class="text-xs text-gray-500 italic">
-                        Nijedan igrač nije označen kao prisutan. Prvo označite
-                        sastav u tabu "Sastav".
+                        Nijedan igrač nije označen kao prisutan. Prvo označite sastav u tabu "Sastav".
                     </p>
                 </div>
             </div>
@@ -318,6 +370,7 @@ const props = defineProps({
 });
 
 const currentTab = ref("info");
+const isEditingStats = ref(false);
 
 const RSVP_LABELS = {
     accepted: { label: "Potvrdio dolazak", class: "text-emerald-400" },
@@ -328,6 +381,18 @@ const RSVP_LABELS = {
 const attendedPlayers = computed(() => {
     return props.statsForm.players.filter((p) => p.attended);
 });
+
+const contributingPlayers = computed(() =>
+    attendedPlayers.value.filter((player) => player.goals > 0 || player.assists > 0),
+);
+
+const scorers = computed(() =>
+    contributingPlayers.value.filter((player) => player.goals > 0),
+);
+
+const assisters = computed(() =>
+    contributingPlayers.value.filter((player) => player.assists > 0),
+);
 
 const attendedCount = computed(() => attendedPlayers.value.length);
 

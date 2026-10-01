@@ -26,7 +26,7 @@ return new class extends Migration
             [
                 'slug' => 'basic',
                 'name' => 'Basic',
-                'price' => 20,
+                'price' => 10,
                 'max_teams' => 1,
                 'max_players' => 25,
                 'features' => json_encode(['club_profile', 'players', 'teams']),
@@ -37,7 +37,7 @@ return new class extends Migration
             [
                 'slug' => 'standard',
                 'name' => 'Standard',
-                'price' => 50,
+                'price' => 20,
                 'max_teams' => 5,
                 'max_players' => 150,
                 'features' => json_encode([
@@ -50,7 +50,7 @@ return new class extends Migration
             [
                 'slug' => 'premium',
                 'name' => 'Premium',
-                'price' => 100,
+                'price' => 50,
                 'max_teams' => 999,
                 'max_players' => 9999,
                 'features' => json_encode([
@@ -64,7 +64,7 @@ return new class extends Migration
             [
                 'slug' => 'pro',
                 'name' => 'Pro Academy',
-                'price' => 50,
+                'price' => 30,
                 'max_teams' => 5,
                 'max_players' => 150,
                 'features' => json_encode([
@@ -77,7 +77,7 @@ return new class extends Migration
             [
                 'slug' => 'unlimited',
                 'name' => 'Unlimited',
-                'price' => 100,
+                'price' => 70,
                 'max_teams' => 999,
                 'max_players' => 9999,
                 'features' => json_encode([

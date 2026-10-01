@@ -26,14 +26,10 @@
                         </select>
                     </label>
 
-                    <label class="flex items-center gap-2 text-xs">
+                    <div class="flex items-center gap-2 text-xs">
                         <span class="text-gray-400 font-medium whitespace-nowrap">Mesec:</span>
-                        <input
-                            type="month"
-                            v-model="selectedPeriod"
-                            class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-white text-xs font-mono focus:outline-none focus:border-indigo-500 w-full sm:w-auto"
-                        />
-                    </label>
+                        <MonthPicker v-model="selectedPeriod" />
+                    </div>
                 </div>
             </div>
 
@@ -193,6 +189,7 @@
 
 <script setup>
 import { computed, onMounted, reactive, ref, watch } from 'vue'
+import MonthPicker from '../components/MonthPicker.vue'
 import { fetchTeams } from '../services/teamsService'
 import { bulkSavePayments, fetchFinancesOverview, savePayment } from '../services/paymentsService'
 
