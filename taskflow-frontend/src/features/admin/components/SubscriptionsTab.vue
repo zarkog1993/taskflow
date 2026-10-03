@@ -29,7 +29,7 @@
                 <td class="p-2 font-mono text-gray-300">{{ sub.max_teams }}</td>
                 <td class="p-2">
                     <div class="flex items-center gap-2">
-                        <select
+                        <AppSelect
                             :value="sub.subscription_plan_id"
                             @change="$emit('changePlan', sub, $event.target.value)"
                             class="rounded border border-gray-600 bg-gray-900 px-2 py-1 text-gray-200"
@@ -37,7 +37,7 @@
                             <option v-for="plan in plans" :key="plan.id" :value="plan.id">
                                 {{ plan.name }}
                             </option>
-                        </select>
+                        </AppSelect>
                         <button
                             v-if="!['cancelled', 'expired'].includes(sub.status)"
                             @click="$emit('cancel', sub)"

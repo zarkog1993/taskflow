@@ -14,24 +14,24 @@
         <!-- Statistički Sažetak na Vrhu -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <div class="bg-gray-800/80 border border-gray-700/80 rounded-2xl p-4 text-center shadow-lg">
-                <div class="text-2xl font-black text-indigo-400 font-mono">{{ getStat('trainings_attended') }}</div>
                 <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mt-1">Treninga</div>
+                <div class="text-2xl font-black text-indigo-400 font-mono">{{ getStat('trainings_attended') }}</div>
             </div>
             <div class="bg-gray-800/80 border border-gray-700/80 rounded-2xl p-4 text-center shadow-lg">
-                <div class="text-2xl font-black text-emerald-400 font-mono">{{ getStat('matches_played') }}</div>
                 <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mt-1">Utakmica</div>
+                <div class="text-2xl font-black text-emerald-400 font-mono">{{ getStat('matches_played') }}</div>
             </div>
             <div class="bg-gray-800/80 border border-gray-700/80 rounded-2xl p-4 text-center shadow-lg">
-                <div class="text-2xl font-black text-amber-400 font-mono">{{ getStat('goals') }}</div>
                 <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mt-1">Golova</div>
+                <div class="text-2xl font-black text-amber-400 font-mono">{{ getStat('goals') }}</div>
             </div>
             <div class="bg-gray-800/80 border border-gray-700/80 rounded-2xl p-4 text-center shadow-lg">
-                <div class="text-2xl font-black text-sky-400 font-mono">{{ getStat('assists') }}</div>
                 <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mt-1">Asistencija</div>
+                <div class="text-2xl font-black text-sky-400 font-mono">{{ getStat('assists') }}</div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- LEVA KOLONA: Osnovne Kartice Igrača -->
             <div class="bg-gray-800/80 border border-gray-700/80 rounded-3xl p-6 shadow-xl space-y-6">
                 <div class="flex flex-col items-center text-center">
@@ -52,8 +52,8 @@
           {{ player.primary_position }}
         </span>
                         <span class="px-2.5 py-1 rounded-lg text-xs font-black bg-gray-900 text-gray-300 border border-gray-700 uppercase">
-          {{ getPlayerCategory(player) }}
-        </span>
+                          {{ getPlayerCategory(player) }}
+                        </span>
                     </div>
                 </div>
 

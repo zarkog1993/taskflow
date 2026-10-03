@@ -10,10 +10,10 @@
             <form @submit.prevent="handleSubmit" class="p-6 space-y-4">
                 <div>
                     <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Ekipa</label>
-                    <select v-model="form.team_id" required class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2.5 text-xs text-white">
+                    <AppSelect v-model="form.team_id" required class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2.5 text-xs text-white">
                         <option disabled value="">Izaberite ekipu</option>
                         <option v-for="team in teams" :key="team.id" :value="team.id">{{ team.name }}</option>
-                    </select>
+                    </AppSelect>
                 </div>
                 <div>
                     <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Naslov / Tema</label>
@@ -23,10 +23,10 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Tip Događaja</label>
-                        <select v-model="form.type" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2.5 text-xs text-white">
+                        <AppSelect v-model="form.type" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2.5 text-xs text-white">
                             <option value="training">🏃‍♂️ Trening</option>
                             <option value="match">⚽ Utakmica</option>
-                        </select>
+                        </AppSelect>
                     </div>
                     <div>
                         <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Lokacija</label>
@@ -38,15 +38,15 @@
                     <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Datum i Vreme</label>
                     <div class="grid grid-cols-3 gap-2">
                         <CustomDatePicker v-model="formDate" />
-                        <select v-model="formHours" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-2 py-2 text-xs text-white">
+                        <AppSelect v-model="formHours" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-2 py-2 text-xs text-white">
                             <option v-for="h in 24" :key="h-1" :value="String(h-1).padStart(2,'0')">{{ String(h-1).padStart(2,'0') }}h</option>
-                        </select>
-                        <select v-model="formMinutes" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-2 py-2 text-xs text-white">
+                        </AppSelect>
+                        <AppSelect v-model="formMinutes" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-2 py-2 text-xs text-white">
                             <option value="00">00 min</option>
                             <option value="15">15 min</option>
                             <option value="30">30 min</option>
                             <option value="45">45 min</option>
-                        </select>
+                        </AppSelect>
                     </div>
                     <p v-if="dateMissing && !formDate" class="mt-1 text-xs text-rose-400">Izaberite datum.</p>
                 </div>

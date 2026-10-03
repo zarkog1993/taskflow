@@ -18,7 +18,7 @@
 
             <div class="flex items-center gap-2 pb-2">
                 <label class="text-[10px] font-bold uppercase text-gray-400 tracking-wider">Mesec</label>
-                <select
+                <AppSelect
                     v-model="selectedMonth"
                     class="bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-indigo-500 cursor-pointer"
                 >
@@ -26,7 +26,7 @@
                     <option v-for="option in monthOptions" :key="option.value" :value="option.value">
                         {{ option.label }}
                     </option>
-                </select>
+                </AppSelect>
             </div>
         </div>
 

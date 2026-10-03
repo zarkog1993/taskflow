@@ -14,12 +14,12 @@
                 <div>
                     <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1.5">Dodaj Slobodnog Igrača u Ekipu:</label>
                     <div class="flex gap-2">
-                        <select v-model="selectedPlayerId" class="flex-1 bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-indigo-500 cursor-pointer">
+                        <AppSelect v-model="selectedPlayerId" class="flex-1 bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-indigo-500 cursor-pointer">
                             <option :value="null" disabled>Izaberite igratča bez ekipe...</option>
                             <option v-for="p in unassignedPlayers" :key="p.id" :value="p.id">
                                 {{ p.name }} (#{{ p.jersey_number || '-' }} - {{ p.primary_position }})
                             </option>
-                        </select>
+                        </AppSelect>
                         <button @click="$emit('assign')" :disabled="!selectedPlayerId" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-2 rounded-xl transition disabled:opacity-50 cursor-pointer">
                             + Dodaj
                         </button>

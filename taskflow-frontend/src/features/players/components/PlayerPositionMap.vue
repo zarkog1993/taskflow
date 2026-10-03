@@ -1,5 +1,5 @@
 <template>
-    <div class="lg:col-span-2 bg-gray-800/80 border border-gray-700/80 rounded-3xl p-6 shadow-xl flex flex-col justify-between">
+    <div class="lg:col-span-1 bg-gray-800/80 border border-gray-700/80 rounded-3xl p-6 shadow-xl flex flex-col justify-between">
         <div>
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-sm font-bold uppercase text-gray-400 tracking-wider">Pozicija na Terenu</h3>

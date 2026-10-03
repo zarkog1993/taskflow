@@ -14,14 +14,14 @@
 
                 <div>
                     <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Kategorija</label>
-                    <select v-model="form.age_group" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-indigo-500 cursor-pointer">
+                    <AppSelect v-model="form.age_group" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-indigo-500 cursor-pointer">
                         <option value="senior">Seniori</option>
                         <option value="u19">U19 (Omladinci)</option>
                         <option value="u17">U17 (Kadeti)</option>
                         <option value="u15">U15 (Pioniri)</option>
                         <option value="u13">U13 (Mlađi pioniri)</option>
                         <option value="u11">U11 (Petlići)</option>
-                    </select>
+                    </AppSelect>
                 </div>
 
                 <div class="flex justify-end gap-3 pt-3 border-t border-gray-700">

@@ -15,11 +15,11 @@
 
                     <div>
                         <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Jača Noga</label>
-                        <select v-model="form.preferred_foot" class="w-full bg-gray-900 border border-gray-700 rounded-xl p-2.5 text-white text-xs outline-none">
+                        <AppSelect v-model="form.preferred_foot" class="w-full bg-gray-900 border border-gray-700 rounded-xl p-2.5 text-white text-xs outline-none">
                             <option value="right">Desna</option>
                             <option value="left">Leva</option>
                             <option value="both">Obe</option>
-                        </select>
+                        </AppSelect>
                     </div>
                 </div>
 

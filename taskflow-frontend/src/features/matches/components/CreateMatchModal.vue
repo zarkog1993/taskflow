@@ -8,10 +8,10 @@
             </div>
             <div>
                 <label class="mb-1 block text-xs font-bold uppercase text-gray-400">Ekipa</label>
-                <select v-model="form.team_id" required class="w-full rounded-xl border border-gray-700 bg-gray-900 px-3 py-2.5 text-xs text-white">
+                <AppSelect v-model="form.team_id" required class="w-full rounded-xl border border-gray-700 bg-gray-900 px-3 py-2.5 text-xs text-white">
                     <option disabled value="">Izaberite ekipu</option>
                     <option v-for="team in teams" :key="team.id" :value="team.id">{{ team.name }}</option>
-                </select>
+                </AppSelect>
             </div>
             <div>
                 <label class="mb-1 block text-xs font-bold uppercase text-gray-400">Protivnik</label>
@@ -22,10 +22,10 @@
                     <label class="mb-1 block text-xs font-bold uppercase text-gray-400">Datum i vreme</label>
                     <div class="flex flex-col gap-2">
                         <CustomDatePicker v-model="matchDate" />
-                        <select v-model="matchTime" class="w-full rounded-xl border border-gray-700 bg-gray-900 px-3 py-2.5 text-xs text-white">
+                        <AppSelect v-model="matchTime" class="w-full rounded-xl border border-gray-700 bg-gray-900 px-3 py-2.5 text-xs text-white">
                             <option v-if="!timeSlots.includes(matchTime)" :value="matchTime">{{ matchTime }}</option>
                             <option v-for="time in timeSlots" :key="time" :value="time">{{ time }}</option>
-                        </select>
+                        </AppSelect>
                     </div>
                     <p v-if="dateMissing && !matchDate" class="mt-1 text-xs text-rose-400">Izaberite datum.</p>
                 </div>

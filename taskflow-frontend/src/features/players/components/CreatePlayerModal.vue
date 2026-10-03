@@ -36,17 +36,17 @@
 
                 <div>
                     <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Ekipa *</label>
-                    <select v-model="form.team_id" required class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-indigo-500">
+                    <AppSelect v-model="form.team_id" required class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-indigo-500">
                         <option disabled value="">Izaberite ekipu</option>
                         <option v-for="team in teams" :key="team.id" :value="team.id">{{ team.name }}</option>
-                    </select>
+                    </AppSelect>
                 </div>
 
                 <!-- Pozicija i Kategorija -->
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Pozicija *</label>
-                        <select v-model="form.primary_position" required class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-indigo-500 cursor-pointer">
+                        <AppSelect v-model="form.primary_position" required class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-indigo-500 cursor-pointer">
                             <option value="GK">GK - Golman</option>
                             <option value="CB">CB - Štoper</option>
                             <option value="LB">LB - Levi Bek</option>
@@ -57,7 +57,7 @@
                             <option value="LW">LW - Levo Krilo</option>
                             <option value="RW">RW - Desno Krilo</option>
                             <option value="ST">ST - Napadač</option>
-                        </select>
+                        </AppSelect>
                     </div>
 
                     <div>
@@ -90,11 +90,11 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Jača Noga</label>
-                        <select v-model="form.preferred_foot" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none cursor-pointer">
+                        <AppSelect v-model="form.preferred_foot" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none cursor-pointer">
                             <option value="right">Desna</option>
                             <option value="left">Leva</option>
                             <option value="both">Obe</option>
-                        </select>
+                        </AppSelect>
                     </div>
 
                     <div>

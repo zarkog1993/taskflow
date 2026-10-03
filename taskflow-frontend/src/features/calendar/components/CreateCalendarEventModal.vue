@@ -63,7 +63,7 @@
                         class="block text-xs font-bold uppercase text-slate-400 mb-1.5"
                         >Ekipa</label
                     >
-                    <select
+                    <AppSelect
                         v-model="form.team_id"
                         @change="$emit('team-change')"
                         required
@@ -77,7 +77,7 @@
                         >
                             {{ team.name }}
                         </option>
-                    </select>
+                    </AppSelect>
                 </div>
 
                 <!-- Dinamička Polja za Utakmicu -->
@@ -100,13 +100,13 @@
                             class="block text-xs font-bold uppercase text-slate-400 mb-1.5"
                             >Teren</label
                         >
-                        <select
+                        <AppSelect
                             v-model="form.is_home"
                             class="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500 transition cursor-pointer"
                         >
                             <option :value="true">Domaćin</option>
                             <option :value="false">Gost</option>
-                        </select>
+                        </AppSelect>
                     </div>
                 </template>
 
@@ -143,7 +143,7 @@
 
                         <!-- Izbor Vremena u 24h Format (svakih 15 min) -->
                         <div class="relative">
-                            <select
+                            <AppSelect
                                 v-model="form.time"
                                 class="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-xs font-medium text-white focus:outline-none focus:border-indigo-500 transition appearance-none cursor-pointer"
                                 required
@@ -158,7 +158,7 @@
                                 >
                                     🕒 {{ timeSlot }} h
                                 </option>
-                            </select>
+                            </AppSelect>
                             <div
                                 class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-[10px]"
                             >

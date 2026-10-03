@@ -27,7 +27,7 @@
                 />
             </div>
 
-            <select
+            <AppSelect
                 v-model="selectedSeniority"
                 class="bg-gray-900 border border-gray-700 text-white text-xs font-bold rounded-xl px-3 py-2 outline-none focus:border-indigo-500 cursor-pointer"
             >
@@ -35,7 +35,7 @@
                 <option v-for="option in seniorityOptions" :key="option" :value="option">
                     {{ option }}
                 </option>
-            </select>
+            </AppSelect>
         </div>
 
         <!-- Tabela Igrača -->

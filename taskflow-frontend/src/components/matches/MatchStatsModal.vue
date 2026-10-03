@@ -77,7 +77,7 @@
                             class="block text-[10px] font-bold uppercase text-gray-400 mb-1"
                         >Status Utakmice</label
                         >
-                        <select
+                        <AppSelect
                             v-model="statsForm.status"
                             class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-indigo-500"
                         >
@@ -86,7 +86,7 @@
                                 Odigrana (Završena)
                             </option>
                             <option value="canceled">Otkazana</option>
-                        </select>
+                        </AppSelect>
                     </div>
 
                     <div>

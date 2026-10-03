@@ -28,7 +28,7 @@
                     </button>
                 </div>
 
-                <select
+                <AppSelect
                     v-model="selectedTeamId"
                     class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-emerald-500 cursor-pointer"
                 >
@@ -36,7 +36,7 @@
                     <option v-for="team in teams" :key="team.id" :value="team.id">
                         {{ team.name }}
                     </option>
-                </select>
+                </AppSelect>
             </div>
         </div>
 

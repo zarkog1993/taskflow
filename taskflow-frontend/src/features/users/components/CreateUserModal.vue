@@ -42,7 +42,7 @@
 
                 <div>
                     <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Dodeljeni Klub *</label>
-                    <select
+                    <AppSelect
                         v-model="form.club_id"
                         required
                         class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-indigo-500 cursor-pointer"
@@ -51,19 +51,19 @@
                         <option v-for="club in clubs" :key="club.id" :value="club.id">
                             {{ club.name }}
                         </option>
-                    </select>
+                    </AppSelect>
                 </div>
 
                 <div>
                     <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Uloga Korisnika *</label>
-                    <select
+                    <AppSelect
                         v-model="form.role"
                         required
                         class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-indigo-500 cursor-pointer"
                     >
                         <option value="player">Igrač</option>
                         <option value="club-admin">Klupski Admin</option>
-                    </select>
+                    </AppSelect>
                 </div>
 
                 <div class="flex justify-end gap-3 pt-3 border-t border-gray-700">
