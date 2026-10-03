@@ -1,12 +1,12 @@
 <template>
     <main class="mx-auto max-w-[1280px] space-y-5 px-4 py-4 sm:px-6 sm:py-5">
         <div class="flex items-center justify-between">
-            <router-link to="/players" class="text-xs font-medium text-slate-400 transition hover:text-white">
+            <router-link to="/players" class="text-xs font-medium text-slate-600 dark:text-slate-400 transition hover:text-gray-900 dark:hover:text-white">
                 ← Nazad na igrače
             </router-link>
         </div>
 
-        <div v-if="!player" class="py-20 text-center text-sm text-slate-400">
+        <div v-if="!player" class="py-20 text-center text-sm text-slate-600 dark:text-slate-400">
             <span class="mb-2 block animate-spin text-2xl">⏳</span>
             Učitavanje profila igrača...
         </div>
@@ -24,7 +24,6 @@
 
                 <aside class="min-w-0 space-y-4">
                     <PlayerPositions :player="player" />
-                    <PlayerInformation :player="player" />
                 </aside>
             </div>
         </template>

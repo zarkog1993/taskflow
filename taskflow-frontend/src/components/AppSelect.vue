@@ -46,7 +46,7 @@
                 :id="listboxId"
                 role="listbox"
                 :aria-label="attrs['aria-label'] || selectedLabel || placeholder"
-                class="z-[100] overflow-y-auto rounded-xl border border-gray-700 bg-gray-900 py-1 text-white shadow-2xl"
+                class="z-[100] overflow-y-auto rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 py-1 text-gray-900 dark:text-white shadow-2xl"
                 :style="menuStyle"
             >
                 <button
@@ -58,8 +58,8 @@
                     :aria-selected="isSelected(option)"
                     :aria-disabled="option.disabled"
                     :disabled="option.disabled"
-                    class="block w-full px-3 py-2 text-left text-xs hover:bg-gray-700 focus:bg-gray-700 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-                    :class="isSelected(option) ? 'bg-indigo-900/70 text-white' : 'text-gray-200'"
+                    class="block w-full px-3 py-2 text-left text-xs hover:bg-gray-200 dark:hover:bg-gray-700 focus:bg-gray-200 dark:focus:bg-gray-700 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                    :class="isSelected(option) ? 'bg-indigo-100/70 dark:bg-indigo-900/70 text-gray-900 dark:text-white' : 'text-gray-800 dark:text-gray-200'"
                     @click="selectOption(option)"
                 >
                     <span class="block truncate">{{ option.label }}</span>

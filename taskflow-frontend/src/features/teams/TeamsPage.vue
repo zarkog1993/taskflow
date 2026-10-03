@@ -1,10 +1,10 @@
 <template>
     <div class="max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
         <!-- ZAGLAVLJE I DUGME -->
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gray-800/80 p-5 rounded-2xl border border-gray-700/80 shadow-xl">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gray-100/80 dark:bg-gray-800/80 p-5 rounded-2xl border border-gray-200/80 dark:border-gray-700/80 shadow-xl">
             <div>
-                <h1 class="text-2xl font-black text-white tracking-tight">Upravljanje Ekipama</h1>
-                <p class="text-xs text-gray-400 mt-0.5">Pregled svih timova, starosnih kategorija i sastava ekipa</p>
+                <h1 class="text-2xl font-black text-gray-900 dark:text-white tracking-tight">Upravljanje Ekipama</h1>
+                <p class="text-xs text-gray-600 dark:text-gray-400 mt-0.5">Pregled svih timova, starosnih kategorija i sastava ekipa</p>
             </div>
 
             <button
@@ -18,30 +18,30 @@
         <!-- STATISTIČKE KARTICE NA VRHU -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <!-- Ukupno Ekipa -->
-            <div class="bg-gray-800/80 border border-gray-700/80 p-5 rounded-2xl flex justify-between items-center shadow-lg">
+            <div class="bg-gray-100/80 dark:bg-gray-800/80 border border-gray-200/80 dark:border-gray-700/80 p-5 rounded-2xl flex justify-between items-center shadow-lg">
                 <div>
-                    <span class="text-[10px] font-bold uppercase text-gray-400 tracking-wider">UKUPNO EKIPA</span>
-                    <div class="text-2xl font-black text-white mt-1 font-mono">{{ teams.length }}</div>
+                    <span class="text-[10px] font-bold uppercase text-gray-600 dark:text-gray-400 tracking-wider">UKUPNO EKIPA</span>
+                    <div class="text-2xl font-black text-gray-900 dark:text-white mt-1 font-mono">{{ teams.length }}</div>
                 </div>
-                <div class="w-10 h-10 rounded-xl bg-indigo-950 border border-indigo-800 text-indigo-400 flex items-center justify-center text-lg">🛡️</div>
+                <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950 border border-indigo-200 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-lg">🛡️</div>
             </div>
 
             <!-- Registrovani Igrači -->
-            <div class="bg-gray-800/80 border border-gray-700/80 p-5 rounded-2xl flex justify-between items-center shadow-lg">
+            <div class="bg-gray-100/80 dark:bg-gray-800/80 border border-gray-200/80 dark:border-gray-700/80 p-5 rounded-2xl flex justify-between items-center shadow-lg">
                 <div>
-                    <span class="text-[10px] font-bold uppercase text-gray-400 tracking-wider">REGISTROVANI IGRAČI</span>
-                    <div class="text-2xl font-black text-emerald-400 mt-1 font-mono">{{ totalPlayersCount }}</div>
+                    <span class="text-[10px] font-bold uppercase text-gray-600 dark:text-gray-400 tracking-wider">REGISTROVANI IGRAČI</span>
+                    <div class="text-2xl font-black text-emerald-700 dark:text-emerald-400 mt-1 font-mono">{{ totalPlayersCount }}</div>
                 </div>
-                <div class="w-10 h-10 rounded-xl bg-emerald-950 border border-emerald-800 text-emerald-400 flex items-center justify-center text-lg">🏃</div>
+                <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 flex items-center justify-center text-lg">🏃</div>
             </div>
 
             <!-- Slobodni Igrači -->
-            <div class="bg-gray-800/80 border border-gray-700/80 p-5 rounded-2xl flex justify-between items-center shadow-lg">
+            <div class="bg-gray-100/80 dark:bg-gray-800/80 border border-gray-200/80 dark:border-gray-700/80 p-5 rounded-2xl flex justify-between items-center shadow-lg">
                 <div>
-                    <span class="text-[10px] font-bold uppercase text-gray-400 tracking-wider">SLOBODNI IGRAČI</span>
-                    <div class="text-2xl font-black text-amber-400 mt-1 font-mono">{{ freePlayersCount }}</div>
+                    <span class="text-[10px] font-bold uppercase text-gray-600 dark:text-gray-400 tracking-wider">SLOBODNI IGRAČI</span>
+                    <div class="text-2xl font-black text-amber-700 dark:text-amber-400 mt-1 font-mono">{{ freePlayersCount }}</div>
                 </div>
-                <div class="w-10 h-10 rounded-xl bg-amber-950 border border-amber-800 text-amber-400 flex items-center justify-center text-lg">📋</div>
+                <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-400 flex items-center justify-center text-lg">📋</div>
             </div>
         </div>
 
@@ -56,8 +56,8 @@
             />
         </div>
 
-        <div v-else class="text-center py-16 bg-gray-800/40 border border-gray-700/50 rounded-2xl">
-            <p class="text-sm text-gray-400 italic">Nema definisanih ekipa. Kliknite na "NOVA EKIPA" da biste je kreirali.</p>
+        <div v-else class="text-center py-16 bg-gray-100/40 dark:bg-gray-800/40 border border-gray-200/50 dark:border-gray-700/50 rounded-2xl">
+            <p class="text-sm text-gray-600 dark:text-gray-400 italic">Nema definisanih ekipa. Kliknite na "NOVA EKIPA" da biste je kreirali.</p>
         </div>
 
         <!-- MODAL 1: Nova Ekipa -->

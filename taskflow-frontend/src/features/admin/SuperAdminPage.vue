@@ -1,12 +1,12 @@
 <template>
-    <div class="max-w-7xl mx-auto p-4 sm:p-6 space-y-6 text-white">
+    <div class="max-w-7xl mx-auto p-4 sm:p-6 space-y-6 text-gray-900 dark:text-white">
         <!-- ZAGLAVLJE -->
-        <div class="bg-gray-800/80 p-5 rounded-2xl border border-gray-700/80 shadow-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div class="bg-gray-100/80 dark:bg-gray-800/80 p-5 rounded-2xl border border-gray-200/80 dark:border-gray-700/80 shadow-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-                <h1 class="text-2xl font-black tracking-tight text-emerald-400">Super Admin Panel</h1>
-                <p class="text-xs text-gray-400 mt-0.5">Kompletan pregled klubova, korisnika i pretplatničkih paketa</p>
+                <h1 class="text-2xl font-black tracking-tight text-emerald-700 dark:text-emerald-400">Super Admin Panel</h1>
+                <p class="text-xs text-gray-600 dark:text-gray-400 mt-0.5">Kompletan pregled klubova, korisnika i pretplatničkih paketa</p>
             </div>
-            <span class="px-3 py-1 bg-emerald-950 border border-emerald-800 text-emerald-400 text-xs font-mono font-bold rounded-xl uppercase">
+            <span class="px-3 py-1 bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 text-xs font-mono font-bold rounded-xl uppercase">
                 Platform Overview
             </span>
         </div>
@@ -22,7 +22,7 @@
         />
 
         <!-- UČITAVANJE -->
-        <div v-if="loading" class="text-center py-12 text-gray-400 italic">Učitavanje admin podataka...</div>
+        <div v-if="loading" class="text-center py-12 text-gray-600 dark:text-gray-400 italic">Učitavanje admin podataka...</div>
 
         <div v-else>
             <ClubsTab v-if="activeTab === 'clubs'" :clubs="clubs" @delete="deleteClub" />

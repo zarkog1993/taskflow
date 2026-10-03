@@ -2,9 +2,13 @@
 <template>
     <div
         :class="[
-            'min-h-[110px] p-2 bg-gray-900/90 transition',
-            day.isCurrentMonth ? 'text-white' : 'text-gray-600 bg-gray-950/40',
-            day.isToday ? 'ring-2 ring-indigo-500/50 bg-indigo-950/20' : '',
+            'min-h-[110px] p-2 transition',
+            day.isCurrentMonth ? 'text-gray-900 dark:text-white' : 'text-gray-600',
+            day.isToday
+                ? 'ring-2 ring-indigo-500/50 bg-indigo-50 dark:bg-indigo-950/20'
+                : day.isCurrentMonth
+                    ? 'bg-white/90 dark:bg-gray-900/90'
+                    : 'bg-gray-50/40 dark:bg-gray-950/40',
         ]"
     >
         <div class="flex justify-between items-center mb-1">

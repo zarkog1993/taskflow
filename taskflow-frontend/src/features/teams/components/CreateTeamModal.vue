@@ -1,20 +1,20 @@
 <template>
     <div class="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
-        <div class="bg-gray-800 border border-gray-700/80 rounded-2xl w-full max-w-md p-6 shadow-2xl space-y-5">
-            <div class="flex justify-between items-center border-b border-gray-700 pb-3">
-                <h3 class="text-lg font-black text-white">Dodaj Novu Ekipu</h3>
-                <button @click="$emit('close')" class="text-gray-400 hover:text-white font-bold">✕</button>
+        <div class="bg-gray-100 dark:bg-gray-800 border border-gray-200/80 dark:border-gray-700/80 rounded-2xl w-full max-w-md p-6 shadow-2xl space-y-5">
+            <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-3">
+                <h3 class="text-lg font-black text-gray-900 dark:text-white">Dodaj Novu Ekipu</h3>
+                <button @click="$emit('close')" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white font-bold">✕</button>
             </div>
 
             <form @submit.prevent="$emit('submit')" class="space-y-4">
                 <div>
-                    <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Naziv Ekipe *</label>
-                    <input v-model="form.name" type="text" required placeholder="npr. Rudar U19" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-indigo-500" />
+                    <label class="block text-[10px] font-bold uppercase text-gray-600 dark:text-gray-400 mb-1">Naziv Ekipe *</label>
+                    <input v-model="form.name" type="text" required placeholder="npr. Rudar U19" class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-xs text-gray-900 dark:text-white outline-none focus:border-indigo-500" />
                 </div>
 
                 <div>
-                    <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Kategorija</label>
-                    <AppSelect v-model="form.age_group" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-indigo-500 cursor-pointer">
+                    <label class="block text-[10px] font-bold uppercase text-gray-600 dark:text-gray-400 mb-1">Kategorija</label>
+                    <AppSelect v-model="form.age_group" class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-xs text-gray-900 dark:text-white outline-none focus:border-indigo-500 cursor-pointer">
                         <option value="senior">Seniori</option>
                         <option value="u19">U19 (Omladinci)</option>
                         <option value="u17">U17 (Kadeti)</option>
@@ -24,8 +24,8 @@
                     </AppSelect>
                 </div>
 
-                <div class="flex justify-end gap-3 pt-3 border-t border-gray-700">
-                    <button type="button" @click="$emit('close')" class="px-4 py-2 text-xs font-bold text-gray-400 hover:text-white">Odustani</button>
+                <div class="flex justify-end gap-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                    <button type="button" @click="$emit('close')" class="px-4 py-2 text-xs font-bold text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">Odustani</button>
                     <button type="submit" :disabled="isSubmitting" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-5 py-2 rounded-xl transition shadow-lg cursor-pointer disabled:opacity-50">
                         {{ isSubmitting ? 'Kreiranje...' : 'Sačuvaj Ekipu' }}
                     </button>

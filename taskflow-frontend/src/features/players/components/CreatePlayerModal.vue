@@ -1,20 +1,20 @@
 <template>
     <div class="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
-        <div class="bg-gray-800 border border-gray-700/80 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
-            <div class="p-5 bg-gray-900 border-b border-gray-700/70 flex justify-between items-center shrink-0">
+        <div class="bg-gray-100 dark:bg-gray-800 border border-gray-200/80 dark:border-gray-700/80 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+            <div class="p-5 bg-white dark:bg-gray-900 border-b border-gray-200/70 dark:border-gray-700/70 flex justify-between items-center shrink-0">
                 <div>
-                    <h3 class="text-xl font-black text-white">Dodaj Novog Igrača</h3>
-                    <p class="text-xs text-gray-400 mt-0.5">Unesite lične, fizičke i fudbalske parametre</p>
+                    <h3 class="text-xl font-black text-gray-900 dark:text-white">Dodaj Novog Igrača</h3>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 mt-0.5">Unesite lične, fizičke i fudbalske parametre</p>
                 </div>
-                <button @click="$emit('close')" class="text-gray-400 hover:text-white font-bold text-lg cursor-pointer">✕</button>
+                <button @click="$emit('close')" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white font-bold text-lg cursor-pointer">✕</button>
             </div>
 
             <form @submit.prevent="handleSubmit" class="p-6 space-y-4 overflow-y-auto">
                 <!-- Upload Slike (Max 500 KB) -->
                 <div class="space-y-1">
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400">Slika Igrača (Max 500 KB)</label>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-600 dark:text-gray-400">Slika Igrača (Max 500 KB)</label>
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-full bg-gray-900 border border-gray-700 overflow-hidden flex items-center justify-center shrink-0">
+                        <div class="w-12 h-12 rounded-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 overflow-hidden flex items-center justify-center shrink-0">
                             <img v-if="photoPreview" :src="photoPreview" class="w-full h-full object-cover" />
                             <span v-else class="text-gray-500 text-xs">📷</span>
                         </div>
@@ -22,21 +22,21 @@
                             type="file"
                             accept="image/jpeg,image/png,image/jpg,image/webp"
                             @change="handlePhotoSelect"
-                            class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-xs text-gray-300 outline-none file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-indigo-950 file:text-indigo-400 hover:file:bg-indigo-900 cursor-pointer"
+                            class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-xs text-gray-700 dark:text-gray-300 outline-none file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-indigo-50 dark:file:bg-indigo-950 file:text-indigo-600 dark:file:text-indigo-400 hover:file:bg-indigo-100 dark:hover:file:bg-indigo-900 cursor-pointer"
                         />
                     </div>
-                    <p v-if="photoError" class="text-[10px] font-bold text-rose-400 mt-1">{{ photoError }}</p>
+                    <p v-if="photoError" class="text-[10px] font-bold text-rose-600 dark:text-rose-400 mt-1">{{ photoError }}</p>
                 </div>
 
                 <!-- Ime i Prezime -->
                 <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Ime i Prezime *</label>
-                    <input v-model="form.name" type="text" required placeholder="npr. Marko Marković" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500" />
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-600 dark:text-gray-400 mb-1">Ime i Prezime *</label>
+                    <input v-model="form.name" type="text" required placeholder="npr. Marko Marković" class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-3.5 py-2.5 text-xs text-gray-900 dark:text-white outline-none focus:border-indigo-500" />
                 </div>
 
                 <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Ekipa *</label>
-                    <AppSelect v-model="form.team_id" required class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-indigo-500">
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-600 dark:text-gray-400 mb-1">Ekipa *</label>
+                    <AppSelect v-model="form.team_id" required class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2.5 text-xs text-gray-900 dark:text-white outline-none focus:border-indigo-500">
                         <option disabled value="">Izaberite ekipu</option>
                         <option v-for="team in teams" :key="team.id" :value="team.id">{{ team.name }}</option>
                     </AppSelect>
@@ -45,8 +45,8 @@
                 <!-- Pozicija i Kategorija -->
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Pozicija *</label>
-                        <AppSelect v-model="form.primary_position" required class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-indigo-500 cursor-pointer">
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-600 dark:text-gray-400 mb-1">Pozicija *</label>
+                        <AppSelect v-model="form.primary_position" required class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2.5 text-xs text-gray-900 dark:text-white outline-none focus:border-indigo-500 cursor-pointer">
                             <option value="GK">GK - Golman</option>
                             <option value="CB">CB - Štoper</option>
                             <option value="LB">LB - Levi Bek</option>
@@ -61,8 +61,8 @@
                     </div>
 
                     <div>
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Kategorija</label>
-                        <div class="w-full bg-gray-950 border border-gray-700 rounded-xl px-3 py-2.5 text-xs text-emerald-400 font-bold">
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-600 dark:text-gray-400 mb-1">Kategorija</label>
+                        <div class="w-full bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2.5 text-xs text-emerald-700 dark:text-emerald-400 font-bold">
                             {{ selectedTeamCategory || 'Izaberite ekipu' }}
                         </div>
                     </div>
@@ -71,17 +71,17 @@
                 <!-- Visina, Težina i Datum Rođenja -->
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     <div>
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Visina (cm)</label>
-                        <input v-model.number="form.height" type="number" placeholder="185" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none text-center" />
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-600 dark:text-gray-400 mb-1">Visina (cm)</label>
+                        <input v-model.number="form.height" type="number" placeholder="185" class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2.5 text-xs text-gray-900 dark:text-white outline-none text-center" />
                     </div>
 
                     <div>
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Težina (kg)</label>
-                        <input v-model.number="form.weight" type="number" placeholder="78" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none text-center" />
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-600 dark:text-gray-400 mb-1">Težina (kg)</label>
+                        <input v-model.number="form.weight" type="number" placeholder="78" class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2.5 text-xs text-gray-900 dark:text-white outline-none text-center" />
                     </div>
 
                     <div class="col-span-2 sm:col-span-1 min-w-0">
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Datum Rođenja</label>
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-600 dark:text-gray-400 mb-1">Datum Rođenja</label>
                         <CustomDatePicker v-model="form.date_of_birth" />
                     </div>
                 </div>
@@ -89,8 +89,8 @@
                 <!-- Jača Noga i Broj Dresa -->
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Jača Noga</label>
-                        <AppSelect v-model="form.preferred_foot" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none cursor-pointer">
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-600 dark:text-gray-400 mb-1">Jača Noga</label>
+                        <AppSelect v-model="form.preferred_foot" class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2.5 text-xs text-gray-900 dark:text-white outline-none cursor-pointer">
                             <option value="right">Desna</option>
                             <option value="left">Leva</option>
                             <option value="both">Obe</option>
@@ -98,20 +98,20 @@
                     </div>
 
                     <div>
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Broj Dresa</label>
-                        <input v-model.number="form.jersey_number" type="number" placeholder="10" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none text-center" />
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-600 dark:text-gray-400 mb-1">Broj Dresa</label>
+                        <input v-model.number="form.jersey_number" type="number" placeholder="10" class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2.5 text-xs text-gray-900 dark:text-white outline-none text-center" />
                     </div>
                 </div>
 
                 <!-- Beleška Trenera -->
                 <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Beleška Trenera</label>
-                    <textarea v-model="form.coach_notes" rows="2" placeholder="Taktičke opaske..." class="w-full bg-gray-900 border border-gray-700 rounded-xl p-3 text-xs text-white outline-none focus:border-indigo-500"></textarea>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-600 dark:text-gray-400 mb-1">Beleška Trenera</label>
+                    <textarea v-model="form.coach_notes" rows="2" placeholder="Taktičke opaske..." class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-xs text-gray-900 dark:text-white outline-none focus:border-indigo-500"></textarea>
                 </div>
 
                 <!-- Akcije -->
-                <div class="flex items-center justify-end space-x-3 pt-4 border-t border-gray-700/70 shrink-0">
-                    <button type="button" @click="$emit('close')" class="px-4 py-2 text-xs font-semibold text-gray-400 hover:text-white transition cursor-pointer">Odustani</button>
+                <div class="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200/70 dark:border-gray-700/70 shrink-0">
+                    <button type="button" @click="$emit('close')" class="px-4 py-2 text-xs font-semibold text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition cursor-pointer">Odustani</button>
                     <button type="submit" :disabled="isSubmitting" class="px-5 py-2.5 text-xs bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg transition border border-indigo-500/30 cursor-pointer disabled:opacity-50">
                         <span v-if="isSubmitting" class="animate-spin">⏳</span>
                         <span>Registruj Igrača</span>

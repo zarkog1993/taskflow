@@ -1,10 +1,10 @@
 <template>
     <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
         <!-- Dobrodošlica i Zaglavlje -->
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gray-800/60 p-6 rounded-2xl border border-gray-700/60 backdrop-blur-md shadow-xl">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gray-100/60 dark:bg-gray-800/60 p-6 rounded-2xl border border-gray-200/60 dark:border-gray-700/60 backdrop-blur-md shadow-xl">
             <div>
-                <h2 class="text-3xl font-black text-white tracking-tight">Dobrodošli nazad, {{ authStore.user?.name || 'Trener' }} 👋</h2>
-                <p class="text-xs text-gray-400 mt-1">Pregled stanja u akademiji, predstojećih utakmica i statistike tima</p>
+                <h2 class="text-3xl font-black text-gray-900 dark:text-white tracking-tight">Dobrodošli nazad, {{ authStore.user?.name || 'Trener' }} 👋</h2>
+                <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">Pregled stanja u akademiji, predstojećih utakmica i statistike tima</p>
             </div>
 
             <div class="flex items-center space-x-3">

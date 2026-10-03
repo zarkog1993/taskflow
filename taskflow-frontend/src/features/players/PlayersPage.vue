@@ -1,10 +1,10 @@
 <template>
     <div class="max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
         <!-- Zaglavlje -->
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gray-800/80 p-5 rounded-2xl border border-gray-700/80 shadow-xl">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gray-100/80 dark:bg-gray-800/80 p-5 rounded-2xl border border-gray-200/80 dark:border-gray-700/80 shadow-xl">
             <div>
-                <h1 class="text-2xl font-black text-white tracking-tight">Registar Igrača Kluba</h1>
-                <p class="text-xs text-gray-400 mt-0.5">Pregled i upravljanje igračkim kadrom akademije</p>
+                <h1 class="text-2xl font-black text-gray-900 dark:text-white tracking-tight">Registar Igrača Kluba</h1>
+                <p class="text-xs text-gray-600 dark:text-gray-400 mt-0.5">Pregled i upravljanje igračkim kadrom akademije</p>
             </div>
 
             <button
@@ -16,20 +16,20 @@
         </div>
 
         <!-- Pretraga i Filteri -->
-        <div class="bg-gray-800/60 p-4 rounded-2xl border border-gray-700/60 flex flex-col sm:flex-row gap-3">
+        <div class="bg-gray-100/60 dark:bg-gray-800/60 p-4 rounded-2xl border border-gray-200/60 dark:border-gray-700/60 flex flex-col sm:flex-row gap-3">
             <div class="relative flex-1">
-                <span class="absolute left-3.5 top-2.5 text-gray-400 text-xs">🔍</span>
+                <span class="absolute left-3.5 top-2.5 text-gray-600 dark:text-gray-400 text-xs">🔍</span>
                 <input
                     v-model="searchQuery"
                     type="text"
                     placeholder="Pretraži po imenu, poziciji..."
-                    class="w-full bg-gray-900 border border-gray-700 rounded-xl pl-9 pr-4 py-2 text-xs text-white outline-none focus:border-indigo-500 transition"
+                    class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl pl-9 pr-4 py-2 text-xs text-gray-900 dark:text-white outline-none focus:border-indigo-500 transition"
                 />
             </div>
 
             <AppSelect
                 v-model="selectedSeniority"
-                class="bg-gray-900 border border-gray-700 text-white text-xs font-bold rounded-xl px-3 py-2 outline-none focus:border-indigo-500 cursor-pointer"
+                class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white text-xs font-bold rounded-xl px-3 py-2 outline-none focus:border-indigo-500 cursor-pointer"
             >
                 <option value="all">Sve kategorije</option>
                 <option v-for="option in seniorityOptions" :key="option" :value="option">

@@ -6,17 +6,17 @@
         :aria-labelledby="titleId"
         @click.self="$emit('close')"
     >
-        <div class="w-full max-w-md space-y-5 rounded-2xl border border-gray-700/80 bg-gray-800 p-6 text-center shadow-2xl">
-            <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-rose-800/80 bg-rose-950/80 text-2xl text-rose-400">
+        <div class="w-full max-w-md space-y-5 rounded-2xl border border-gray-200/80 dark:border-gray-700/80 bg-gray-100 dark:bg-gray-800 p-6 text-center shadow-2xl">
+            <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-rose-200/80 dark:border-rose-800/80 bg-rose-50/80 dark:bg-rose-950/80 text-2xl text-rose-600 dark:text-rose-400">
                 {{ icon }}
             </div>
 
             <div class="space-y-2">
-                <h3 :id="titleId" class="text-xl font-black text-white">{{ title }}</h3>
-                <p class="text-sm leading-relaxed text-gray-400">{{ message }}</p>
+                <h3 :id="titleId" class="text-xl font-black text-gray-900 dark:text-white">{{ title }}</h3>
+                <p class="text-sm leading-relaxed text-gray-600 dark:text-gray-400">{{ message }}</p>
             </div>
 
-            <p v-if="error" class="rounded-xl border border-red-800 bg-red-950/60 p-3 text-xs text-red-300">
+            <p v-if="error" class="rounded-xl border border-red-200 dark:border-red-800 bg-red-50/60 dark:bg-red-950/60 p-3 text-xs text-red-700 dark:text-red-300">
                 {{ error }}
             </p>
 
@@ -25,7 +25,7 @@
                     type="button"
                     :disabled="processing"
                     @click="$emit('close')"
-                    class="w-full rounded-xl border border-gray-700 bg-gray-900 py-2.5 text-xs font-bold text-gray-300 transition hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
+                    class="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 py-2.5 text-xs font-bold text-gray-700 dark:text-gray-300 transition hover:bg-gray-200 dark:hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                     Cancel
                 </button>

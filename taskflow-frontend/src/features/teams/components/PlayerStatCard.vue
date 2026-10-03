@@ -1,72 +1,74 @@
 <template>
-    <div
-        class="bg-gray-800/80 hover:bg-gray-800 border border-gray-700/80 hover:border-indigo-500/50 rounded-2xl p-5 shadow-xl transition-all duration-300 flex flex-col justify-between group relative overflow-hidden"
+    <article
+        class="group flex flex-col rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-md transition-all hover:border-slate-200 dark:hover:border-slate-700"
     >
-        <!-- Gornji Akcenat sa Brojem Dresa -->
-        <div class="flex justify-between items-start mb-4">
-            <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-400 bg-indigo-950/80 px-2.5 py-1 rounded-md border border-indigo-800/50">
-              {{ player.primary_position || 'CM' }}
-            </span>
-            <span class="text-xs font-mono font-extrabold text-white bg-indigo-600 px-2.5 py-1 rounded-lg shadow-md">
-              #{{ player.jersey_number || '-' }}
-            </span>
-        </div>
-
-        <!-- Slika, Ime i Klik ka Detaljima -->
+        <!-- Zaglavlje: avatar, ime, bedževi -->
         <div
-            @click="$router.push(`/players/${player.id}`)"
-            class="cursor-pointer text-center space-y-3 my-2 group-hover:transform group-hover:-translate-y-1 transition duration-200"
+            role="link"
+            tabindex="0"
+            class="flex cursor-pointer items-start gap-3 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+            @click="openProfile"
+            @keydown.enter="openProfile"
         >
-            <div class="relative w-24 h-24 mx-auto rounded-full bg-indigo-950 border-2 border-indigo-500/30 group-hover:border-indigo-500 overflow-hidden shadow-lg flex items-center justify-center font-bold text-indigo-300 text-xl">
+            <div class="relative h-12 w-12 shrink-0 overflow-hidden rounded-full border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800">
                 <img
                     v-if="player.photo_url"
                     :src="player.photo_url"
-                    class="w-full h-full object-cover"
                     :alt="player.name"
+                    class="h-full w-full object-cover"
                 />
-                <span v-else>#{{ player.jersey_number || '-' }}</span>
+                <span v-else class="flex h-full w-full items-center justify-center text-sm font-bold text-slate-700 dark:text-slate-300">
+                    {{ initials }}
+                </span>
             </div>
 
-            <div>
-                <h3 class="text-lg font-bold text-white group-hover:text-indigo-300 transition-colors leading-snug">
+            <div class="min-w-0 flex-1">
+                <h3 class="truncate text-base font-bold text-gray-900 dark:text-white transition-colors group-hover:text-indigo-700 dark:group-hover:text-indigo-300">
                     {{ player.name }}
                 </h3>
-                <p class="text-[11px] text-gray-400 mt-0.5 font-mono">
-                    {{ getPlayerCategory(player) }}
-                </p>
+                <span class="mt-1 inline-block rounded-full border border-indigo-500/30 bg-indigo-500/20 px-2.5 py-0.5 text-xs font-semibold text-indigo-600 dark:text-indigo-400">
+                    {{ player.primary_position || 'CM' }}
+                </span>
             </div>
+
+            <span class="shrink-0 rounded-full border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 font-mono text-xs font-bold text-slate-800 dark:text-slate-200">
+                #{{ player.jersey_number ?? '-' }}
+            </span>
         </div>
 
-        <!-- Mini Statistika Igrača na Kartici -->
-        <div class="grid grid-cols-3 gap-2 my-4 bg-gray-900/60 p-2.5 rounded-xl border border-gray-700/50 text-center text-xs">
+        <!-- Statistika -->
+        <dl class="my-3 grid grid-cols-3 gap-2 rounded-xl border border-slate-200/80 dark:border-slate-800/80 bg-slate-50/60 dark:bg-slate-950/60 p-2.5 text-center">
             <div>
-                <div class="text-[9px] font-bold uppercase text-gray-400">Utakmice</div>
-                <div class="font-bold text-emerald-400 mt-0.5">{{ getStat(player, 'matches_played') }}</div>
+                <dt class="text-[10px] font-semibold uppercase text-slate-600 dark:text-slate-400">Utakmice</dt>
+                <dd class="text-sm font-bold text-gray-900 dark:text-white">{{ getStat(player, 'matches_played') }}</dd>
             </div>
             <div>
-                <div class="text-[9px] font-bold uppercase text-gray-400">Golovi</div>
-                <div class="font-bold text-yellow-400 mt-0.5">{{ getStat(player, 'goals') }}</div>
+                <dt class="text-[10px] font-semibold uppercase text-slate-600 dark:text-slate-400">Golovi</dt>
+                <dd class="text-sm font-bold text-emerald-700 dark:text-emerald-400">{{ getStat(player, 'goals') }}</dd>
             </div>
             <div>
-                <div class="text-[9px] font-bold uppercase text-gray-400">Asist.</div>
-                <div class="font-bold text-purple-400 mt-0.5">{{ getStat(player, 'assists') }}</div>
+                <dt class="text-[10px] font-semibold uppercase text-slate-600 dark:text-slate-400">Asistencije</dt>
+                <dd class="text-sm font-bold text-indigo-600 dark:text-indigo-400">{{ getStat(player, 'assists') }}</dd>
             </div>
-        </div>
+        </dl>
 
-        <!-- Akcija: Izmena Učinka -->
+        <!-- Akcija -->
         <button
+            type="button"
+            class="mt-auto flex w-full items-center justify-center gap-1.5 rounded-xl bg-slate-100/80 dark:bg-slate-800/80 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300 transition hover:bg-slate-100 dark:hover:bg-slate-800"
             @click="$emit('edit', player)"
-            class="w-full py-2 px-3 bg-gray-700/60 hover:bg-gray-700 text-gray-200 text-xs font-semibold rounded-xl transition border border-gray-600/50 flex items-center justify-center gap-1.5 cursor-pointer"
         >
-            ✏️ Izmeni Učinak
+            ✏️ Izmeni učinak
         </button>
-    </div>
+    </article>
 </template>
 
 <script setup>
+import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { getPlayerCategory } from '../../players/utils/playerFormatters'
 
-defineProps({
+const props = defineProps({
     player: {
         type: Object,
         required: true
@@ -78,4 +80,15 @@ defineProps({
 })
 
 defineEmits(['edit'])
+
+const router = useRouter()
+
+const initials = computed(() => String(props.player.name || '')
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part.charAt(0).toUpperCase())
+    .join('') || '?')
+
+const openProfile = () => router.push(`/players/${props.player.id}`)
 </script>

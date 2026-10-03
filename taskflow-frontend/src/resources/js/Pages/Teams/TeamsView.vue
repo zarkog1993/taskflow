@@ -52,7 +52,7 @@ onMounted(loadData)
 </script>
 
 <template>
-    <div class="p-6 max-w-7xl mx-auto space-y-6 text-white">
+    <div class="p-6 max-w-7xl mx-auto space-y-6 text-gray-900 dark:text-white">
         <div class="flex justify-between items-center">
             <h1 class="text-2xl font-bold">Upravljanje Timovima i Članovima</h1>
         </div>
@@ -62,12 +62,12 @@ onMounted(loadData)
             <div
                 v-for="team in teams"
                 :key="team.id"
-                class="bg-slate-800 border border-slate-700 rounded-xl p-5 space-y-4"
+                class="bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-5 space-y-4"
             >
-                <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-700 pb-3">
                     <div>
-                        <h3 class="font-bold text-lg text-emerald-400">{{ team.name }}</h3>
-                        <span class="text-xs text-slate-400 font-mono uppercase">{{ team.age_group }}</span>
+                        <h3 class="font-bold text-lg text-emerald-700 dark:text-emerald-400">{{ team.name }}</h3>
+                        <span class="text-xs text-slate-600 dark:text-slate-400 font-mono uppercase">{{ team.age_group }}</span>
                     </div>
                     <button
                         @click="openAssignModal(team)"
@@ -79,18 +79,18 @@ onMounted(loadData)
 
                 <!-- ČLANOVI TIMA -->
                 <div>
-                    <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                    <h4 class="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
                         Članovi tima ({{ team.players?.length || 0 }})
                     </h4>
                     <div v-if="team.players && team.players.length" class="space-y-2">
                         <div
                             v-for="player in team.players"
                             :key="player.id"
-                            class="flex justify-between items-center bg-slate-900 px-3 py-2 rounded-lg text-sm border border-slate-700/50"
+                            class="flex justify-between items-center bg-white dark:bg-slate-900 px-3 py-2 rounded-lg text-sm border border-slate-200/50 dark:border-slate-700/50"
                         >
                             <div>
-                                <p class="font-medium text-slate-200">{{ player.name }}</p>
-                                <p class="text-xs text-slate-400">{{ player.email }}</p>
+                                <p class="font-medium text-slate-800 dark:text-slate-200">{{ player.name }}</p>
+                                <p class="text-xs text-slate-600 dark:text-slate-400">{{ player.email }}</p>
                             </div>
                         </div>
                     </div>
@@ -101,34 +101,34 @@ onMounted(loadData)
 
         <!-- MODAL ZA DODELJIVANJE ČLANOVA -->
         <div v-if="showAssignModal" class="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">
-            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 max-w-lg w-full space-y-4">
-                <h3 class="text-xl font-bold text-white">Dodeli članove timu: {{ selectedTeam?.name }}</h3>
+            <div class="bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 max-w-lg w-full space-y-4">
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white">Dodeli članove timu: {{ selectedTeam?.name }}</h3>
 
                 <div class="max-h-60 overflow-y-auto space-y-2 pr-2">
                     <label
                         v-for="user in availableUsers"
                         :key="user.id"
-                        class="flex items-center justify-between p-3 bg-slate-900 border border-slate-700 rounded-lg cursor-pointer hover:border-slate-500 transition"
+                        class="flex items-center justify-between p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg cursor-pointer hover:border-slate-500 transition"
                     >
                         <div class="flex items-center gap-3">
                             <input
                                 type="checkbox"
                                 :value="user.id"
                                 v-model="selectedUserIds"
-                                class="w-4 h-4 text-emerald-500 rounded bg-slate-800 border-slate-600 focus:ring-emerald-500"
+                                class="w-4 h-4 text-emerald-700 dark:text-emerald-500 rounded bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-slate-600 focus:ring-emerald-500"
                             />
                             <div>
-                                <p class="text-sm font-medium text-white">{{ user.name }}</p>
-                                <p class="text-xs text-slate-400">{{ user.email }}</p>
+                                <p class="text-sm font-medium text-gray-900 dark:text-white">{{ user.name }}</p>
+                                <p class="text-xs text-slate-600 dark:text-slate-400">{{ user.email }}</p>
                             </div>
                         </div>
                     </label>
                 </div>
 
-                <div class="flex justify-end gap-3 pt-4 border-t border-slate-700">
+                <div class="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-700">
                     <button
                         @click="showAssignModal = false"
-                        class="px-4 py-2 text-sm text-slate-400 hover:text-white"
+                        class="px-4 py-2 text-sm text-slate-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white"
                     >
                         Otkaži
                     </button>

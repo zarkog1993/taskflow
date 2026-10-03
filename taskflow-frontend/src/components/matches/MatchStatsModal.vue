@@ -3,23 +3,23 @@
         class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
     >
         <div
-            class="bg-gray-800 border border-gray-700 rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-5"
+            class="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-5"
         >
             <!-- Zaglavlje Modala -->
             <div
-                class="flex justify-between items-center pb-3 border-b border-gray-700"
+                class="flex justify-between items-center pb-3 border-b border-gray-200 dark:border-gray-700"
             >
                 <div>
-                    <h3 class="text-base font-bold text-white">
+                    <h3 class="text-base font-bold text-gray-900 dark:text-white">
                         Zapisnik Utakmice
                     </h3>
-                    <p class="text-xs text-indigo-400 font-medium">
+                    <p class="text-xs text-indigo-600 dark:text-indigo-400 font-medium">
                         {{ match.team?.name }} vs {{ match.opponent }}
                     </p>
                 </div>
                 <button
                     @click="$emit('close')"
-                    class="text-gray-400 hover:text-white text-lg cursor-pointer"
+                    class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-lg cursor-pointer"
                 >
                     ✕
                 </button>
@@ -27,14 +27,14 @@
 
             <!-- Navigacija Kroz Tabove Modala -->
             <div
-                class="flex space-x-1 bg-gray-900/80 p-1.5 rounded-xl border border-gray-700/60"
+                class="flex space-x-1 bg-white/80 dark:bg-gray-900/80 p-1.5 rounded-xl border border-gray-200/60 dark:border-gray-700/60"
             >
                 <button
                     @click="currentTab = 'info'"
                     :class="
                         currentTab === 'info'
                             ? 'bg-indigo-600 text-white font-bold'
-                            : 'text-gray-400 hover:text-white'
+                            : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                     "
                     class="flex-1 py-2 text-xs rounded-lg transition cursor-pointer flex items-center justify-center gap-1.5"
                 >
@@ -47,7 +47,7 @@
                     :class="
                         currentTab === 'squad'
                             ? 'bg-indigo-600 text-white font-bold'
-                            : 'text-gray-400 hover:text-white'
+                            : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                     "
                     class="flex-1 py-2 text-xs rounded-lg transition cursor-pointer flex items-center justify-center gap-1.5"
                 >
@@ -60,7 +60,7 @@
                     :class="
                         currentTab === 'stats'
                             ? 'bg-indigo-600 text-white font-bold'
-                            : 'text-gray-400 hover:text-white'
+                            : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                     "
                     class="flex-1 py-2 text-xs rounded-lg transition cursor-pointer flex items-center justify-center gap-1.5"
                 >
@@ -74,12 +74,12 @@
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
                         <label
-                            class="block text-[10px] font-bold uppercase text-gray-400 mb-1"
+                            class="block text-[10px] font-bold uppercase text-gray-600 dark:text-gray-400 mb-1"
                         >Status Utakmice</label
                         >
                         <AppSelect
                             v-model="statsForm.status"
-                            class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-indigo-500"
+                            class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-xs text-gray-900 dark:text-white outline-none focus:border-indigo-500"
                         >
                             <option value="scheduled">Zakazana</option>
                             <option value="completed">
@@ -91,49 +91,49 @@
 
                     <div>
                         <label
-                            class="block text-[10px] font-bold uppercase text-gray-400 mb-1"
+                            class="block text-[10px] font-bold uppercase text-gray-600 dark:text-gray-400 mb-1"
                         >Domaći Golovi</label
                         >
                         <input
                             v-model.number="statsForm.home_score"
                             type="number"
                             min="0"
-                            class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white font-mono font-bold text-center"
+                            class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-xs text-gray-900 dark:text-white font-mono font-bold text-center"
                         />
                     </div>
 
                     <div>
                         <label
-                            class="block text-[10px] font-bold uppercase text-gray-400 mb-1"
+                            class="block text-[10px] font-bold uppercase text-gray-600 dark:text-gray-400 mb-1"
                         >Gostujući Golovi</label
                         >
                         <input
                             v-model.number="statsForm.away_score"
                             type="number"
                             min="0"
-                            class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white font-mono font-bold text-center"
+                            class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-xs text-gray-900 dark:text-white font-mono font-bold text-center"
                         />
                     </div>
                 </div>
 
                 <div
-                    class="p-4 bg-gray-900/60 rounded-xl border border-gray-700/50 space-y-2 text-xs text-gray-300"
+                    class="p-4 bg-white/60 dark:bg-gray-900/60 rounded-xl border border-gray-200/50 dark:border-gray-700/50 space-y-2 text-xs text-gray-700 dark:text-gray-300"
                 >
                     <div class="flex justify-between">
-                        <span class="text-gray-400">Datum i vreme:</span>
-                        <span class="font-bold text-white">{{
+                        <span class="text-gray-600 dark:text-gray-400">Datum i vreme:</span>
+                        <span class="font-bold text-gray-900 dark:text-white">{{
                                 formatDate(match.scheduled_at)
                             }}</span>
                     </div>
                     <div class="flex justify-between">
-                        <span class="text-gray-400">Teren / Lokacija:</span>
-                        <span class="font-bold text-white">{{
+                        <span class="text-gray-600 dark:text-gray-400">Teren / Lokacija:</span>
+                        <span class="font-bold text-gray-900 dark:text-white">{{
                                 match.location || "Nije uneto"
                             }}</span>
                     </div>
                     <div class="flex justify-between">
-                        <span class="text-gray-400">Uloga:</span>
-                        <span class="font-bold text-white">{{
+                        <span class="text-gray-600 dark:text-gray-400">Uloga:</span>
+                        <span class="font-bold text-gray-900 dark:text-white">{{
                                 match.is_home ? "Domaćin" : "Gost"
                             }}</span>
                     </div>
@@ -143,13 +143,13 @@
             <!-- TAB 2: SASTAV / PRISUSTVO -->
             <div v-if="currentTab === 'squad'" class="space-y-3">
                 <div class="flex justify-between items-center px-1">
-                    <span class="text-xs text-gray-400"
+                    <span class="text-xs text-gray-600 dark:text-gray-400"
                     >Štikliraj igrače koji su igrali na ovoj utakmici:</span
                     >
                     <button
                         type="button"
                         @click="toggleSelectAllSquad"
-                        class="text-[10px] text-indigo-400 hover:underline font-bold cursor-pointer"
+                        class="text-[10px] text-indigo-600 dark:text-indigo-400 hover:underline font-bold cursor-pointer"
                     >
                         {{
                             allSquadSelected ? "Poništi sve" : "Označi sve"
@@ -160,7 +160,7 @@
                 <div class="max-h-[40vh] overflow-y-auto space-y-1.5 pr-1">
                     <div
                         v-if="!statsForm.players.length"
-                        class="text-center py-8 bg-gray-900/40 rounded-xl border border-gray-800"
+                        class="text-center py-8 bg-white/40 dark:bg-gray-900/40 rounded-xl border border-gray-200 dark:border-gray-800"
                     >
                         <p class="text-xs text-gray-500 italic">
                             Ekipa nema unetih igrača. Dodajte igrače u sastav ekipe.
@@ -174,22 +174,22 @@
                         class="flex items-center justify-between p-3 rounded-xl border cursor-pointer transition select-none"
                         :class="
                             player.attended
-                                ? 'bg-indigo-950/70 border-indigo-700/60'
-                                : 'bg-gray-900/60 border-gray-800'
+                                ? 'bg-indigo-50/70 dark:bg-indigo-950/70 border-indigo-200/60 dark:border-indigo-700/60'
+                                : 'bg-white/60 dark:bg-gray-900/60 border-gray-200 dark:border-gray-800'
                         "
                     >
                         <div class="flex items-center gap-3">
                             <input
                                 type="checkbox"
                                 v-model="player.attended"
-                                class="w-4 h-4 text-indigo-600 rounded bg-gray-800 border-gray-600"
+                                class="w-4 h-4 text-indigo-600 rounded bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-600"
                                 @click.stop
                             />
                             <div>
-                                <p class="text-xs font-bold text-white">
+                                <p class="text-xs font-bold text-gray-900 dark:text-white">
                                     {{ player.name }}
                                 </p>
-                                <p class="text-[10px] text-gray-400">
+                                <p class="text-[10px] text-gray-600 dark:text-gray-400">
                                     #{{ player.jersey_number || "-" }} •
                                     {{ player.position || "N/A" }}
                                     <span
@@ -206,8 +206,8 @@
                             class="text-[10px] font-bold px-2 py-0.5 rounded"
                             :class="
                                 player.attended
-                                    ? 'bg-emerald-950 text-emerald-400 border border-emerald-800'
-                                    : 'bg-gray-800 text-gray-500'
+                                    ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800'
+                                    : 'bg-gray-100 dark:bg-gray-800 text-gray-500'
                             "
                         >
                             {{ player.attended ? "Igrao" : "Nije igrao" }}
@@ -220,13 +220,13 @@
             <div v-if="currentTab === 'stats'" class="space-y-3">
                 <div class="flex items-center justify-between px-1">
                     <div>
-                        <p class="text-sm font-bold text-white">Ucinak Na Utakmici</p>
-                        <p class="text-[11px] text-gray-400">Igrači koji su postigli gol ili asistirali</p>
+                        <p class="text-sm font-bold text-gray-900 dark:text-white">Ucinak Na Utakmici</p>
+                        <p class="text-[11px] text-gray-600 dark:text-gray-400">Igrači koji su postigli gol ili asistirali</p>
                     </div>
                     <button
                         type="button"
                         @click="isEditingStats = !isEditingStats"
-                        class="flex items-center gap-1.5 rounded-lg border border-indigo-500/30 bg-indigo-500/10 px-3 py-2 text-[11px] font-bold text-indigo-300 transition hover:border-indigo-400/50 hover:bg-indigo-500/20 cursor-pointer"
+                        class="flex items-center gap-1.5 rounded-lg border border-indigo-500/30 bg-indigo-500/10 px-3 py-2 text-[11px] font-bold text-indigo-700 dark:text-indigo-300 transition hover:border-indigo-400/50 hover:bg-indigo-500/20 cursor-pointer"
                     >
                         <span aria-hidden="true">{{ isEditingStats ? "✓" : "✎" }}</span>
                         {{ isEditingStats ? "Prikaži učinak" : "Izmeni učinak" }}
@@ -237,16 +237,16 @@
                     v-if="!isEditingStats"
                     class="grid max-h-[40vh] grid-cols-1 gap-3 overflow-y-auto pr-1 sm:grid-cols-2"
                 >
-                    <div v-if="scorers.length" class="overflow-hidden rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/[0.08] to-gray-900/80 shadow-lg shadow-black/10">
+                    <div v-if="scorers.length" class="overflow-hidden rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/[0.08] to-white/80 dark:to-gray-900/80 shadow-lg shadow-black/10">
                         <div class="flex items-center justify-between border-b border-emerald-500/15 px-4 py-3">
                             <div class="flex items-center gap-2.5">
                                 <span class="flex h-9 w-9 items-center justify-center rounded-xl border border-emerald-400/20 bg-emerald-400/10 text-lg">⚽</span>
                                 <div>
-                                    <h4 class="text-sm font-bold text-white">Golovi</h4>
-                                    <p class="text-[10px] uppercase tracking-wider text-emerald-300/70">{{ scorers.length }} gol{{ scorers.length === 1 ? "" : "ova" }}</p>
+                                    <h4 class="text-sm font-bold text-gray-900 dark:text-white">Golovi</h4>
+                                    <p class="text-[10px] uppercase tracking-wider text-emerald-700/70 dark:text-emerald-300/70">{{ scorers.length }} gol{{ scorers.length === 1 ? "" : "ova" }}</p>
                                 </div>
                             </div>
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-300/70">Postignuto</span>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-700/70 dark:text-emerald-300/70">Postignuto</span>
                         </div>
                         <div class="divide-y divide-white/[0.06] px-4">
                             <div
@@ -254,24 +254,24 @@
                                 :key="player.id"
                                 class="flex items-center justify-between gap-3 py-3"
                             >
-                                <span class="truncate text-sm font-medium text-gray-100">{{ player.name }}</span>
-                                <span class="shrink-0 rounded-lg border border-emerald-400/20 bg-emerald-400/10 px-2.5 py-1 text-xs font-bold tabular-nums text-emerald-300">
+                                <span class="truncate text-sm font-medium text-gray-900 dark:text-gray-100">{{ player.name }}</span>
+                                <span class="shrink-0 rounded-lg border border-emerald-400/20 bg-emerald-400/10 px-2.5 py-1 text-xs font-bold tabular-nums text-emerald-700 dark:text-emerald-300">
                                     {{ player.goals }} {{ player.goals === 1 ? "gol" : "golova" }}
                                 </span>
                             </div>
                         </div>
                     </div>
 
-                    <div v-if="assisters.length" class="overflow-hidden rounded-2xl border border-sky-500/20 bg-gradient-to-br from-sky-500/[0.08] to-gray-900/80 shadow-lg shadow-black/10">
+                    <div v-if="assisters.length" class="overflow-hidden rounded-2xl border border-sky-500/20 bg-gradient-to-br from-sky-500/[0.08] to-white/80 dark:to-gray-900/80 shadow-lg shadow-black/10">
                         <div class="flex items-center justify-between border-b border-sky-500/15 px-4 py-3">
                             <div class="flex items-center gap-2.5">
                                 <span class="flex h-9 w-9 items-center justify-center rounded-xl border border-sky-400/20 bg-sky-400/10 text-lg">🎯</span>
                                 <div>
-                                    <h4 class="text-sm font-bold text-white">Asistencije</h4>
-                                    <p class="text-[10px] uppercase tracking-wider text-sky-300/70">{{ assisters.length }} asistencij{{ assisters.length === 1 ? "a" : "e" }}</p>
+                                    <h4 class="text-sm font-bold text-gray-900 dark:text-white">Asistencije</h4>
+                                    <p class="text-[10px] uppercase tracking-wider text-sky-700/70 dark:text-sky-300/70">{{ assisters.length }} asistencij{{ assisters.length === 1 ? "a" : "e" }}</p>
                                 </div>
                             </div>
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-sky-300/70">Kreirano</span>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-sky-700/70 dark:text-sky-300/70">Kreirano</span>
                         </div>
                         <div class="divide-y divide-white/[0.06] px-4">
                             <div
@@ -279,17 +279,17 @@
                                 :key="player.id"
                                 class="flex items-center justify-between gap-3 py-3"
                             >
-                                <span class="truncate text-sm font-medium text-gray-100">{{ player.name }}</span>
-                                <span class="shrink-0 rounded-lg border border-sky-400/20 bg-sky-400/10 px-2.5 py-1 text-xs font-bold tabular-nums text-sky-300">
+                                <span class="truncate text-sm font-medium text-gray-900 dark:text-gray-100">{{ player.name }}</span>
+                                <span class="shrink-0 rounded-lg border border-sky-400/20 bg-sky-400/10 px-2.5 py-1 text-xs font-bold tabular-nums text-sky-700 dark:text-sky-300">
                                     {{ player.assists }} {{ player.assists === 1 ? "asistencija" : "asistencije" }}
                                 </span>
                             </div>
                         </div>
                     </div>
 
-                    <div v-if="!contributingPlayers.length" class="col-span-full rounded-2xl border border-dashed border-gray-700 bg-gray-900/50 px-6 py-10 text-center">
-                        <span class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl border border-gray-700 bg-gray-800 text-xl">⚽</span>
-                        <p class="text-sm font-semibold text-gray-300">No contributions yet</p>
+                    <div v-if="!contributingPlayers.length" class="col-span-full rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50 px-6 py-10 text-center">
+                        <span class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-xl">⚽</span>
+                        <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">No contributions yet</p>
                         <p class="mt-1 text-xs text-gray-500">Add goals or assists to see players listed here.</p>
                     </div>
                 </div>
@@ -298,11 +298,11 @@
                     <div
                         v-for="player in attendedPlayers"
                         :key="player.id"
-                        class="flex items-center justify-between bg-gray-900/80 p-3 rounded-xl border border-gray-700/60"
+                        class="flex items-center justify-between bg-white/80 dark:bg-gray-900/80 p-3 rounded-xl border border-gray-200/60 dark:border-gray-700/60"
                     >
                         <div>
-                            <p class="text-xs font-bold text-white">{{ player.name }}</p>
-                            <p class="text-[10px] text-gray-400">#{{ player.jersey_number || "-" }}</p>
+                            <p class="text-xs font-bold text-gray-900 dark:text-white">{{ player.name }}</p>
+                            <p class="text-[10px] text-gray-600 dark:text-gray-400">#{{ player.jersey_number || "-" }}</p>
                         </div>
 
                         <div class="flex items-center gap-4">
@@ -312,7 +312,7 @@
                                     type="number"
                                     min="0"
                                     v-model.number="player.goals"
-                                    class="w-12 bg-gray-800 border border-gray-700 rounded-lg text-center text-xs py-1.5 text-white font-mono font-bold"
+                                    class="w-12 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-center text-xs py-1.5 text-gray-900 dark:text-white font-mono font-bold"
                                 />
                             </div>
                             <div class="flex items-center gap-1.5">
@@ -321,13 +321,13 @@
                                     type="number"
                                     min="0"
                                     v-model.number="player.assists"
-                                    class="w-12 bg-gray-800 border border-gray-700 rounded-lg text-center text-xs py-1.5 text-white font-mono font-bold"
+                                    class="w-12 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-center text-xs py-1.5 text-gray-900 dark:text-white font-mono font-bold"
                                 />
                             </div>
                         </div>
                     </div>
                 </div>
-                <div v-else-if="isEditingStats" class="text-center py-8 bg-gray-900/40 rounded-xl border border-gray-800">
+                <div v-else-if="isEditingStats" class="text-center py-8 bg-white/40 dark:bg-gray-900/40 rounded-xl border border-gray-200 dark:border-gray-800">
                     <p class="text-xs text-gray-500 italic">
                         Nijedan igrač nije označen kao prisutan. Prvo označite sastav u tabu "Sastav".
                     </p>
@@ -336,11 +336,11 @@
 
             <!-- Akcije na dnu -->
             <div
-                class="flex justify-end gap-3 pt-3 border-t border-gray-700"
+                class="flex justify-end gap-3 pt-3 border-t border-gray-200 dark:border-gray-700"
             >
                 <button
                     @click="$emit('close')"
-                    class="px-4 py-2 text-xs font-bold text-gray-400 hover:text-white cursor-pointer"
+                    class="px-4 py-2 text-xs font-bold text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white cursor-pointer"
                 >
                     Odustani
                 </button>
@@ -373,9 +373,9 @@ const currentTab = ref("info");
 const isEditingStats = ref(false);
 
 const RSVP_LABELS = {
-    accepted: { label: "Potvrdio dolazak", class: "text-emerald-400" },
-    declined: { label: "Otkazao", class: "text-red-400" },
-    pending: { label: "Bez odgovora", class: "text-amber-400" },
+    accepted: { label: "Potvrdio dolazak", class: "text-emerald-700 dark:text-emerald-400" },
+    declined: { label: "Otkazao", class: "text-red-600 dark:text-red-400" },
+    pending: { label: "Bez odgovora", class: "text-amber-700 dark:text-amber-400" },
 };
 
 const attendedPlayers = computed(() => {

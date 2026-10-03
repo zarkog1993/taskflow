@@ -1,7 +1,7 @@
 <template>
     <div class="w-full">
         <div>
-            <div class="relative w-full aspect-[1.85/1] overflow-hidden rounded-lg border border-emerald-900/70 bg-emerald-950/30 select-none">
+            <div class="relative w-full aspect-[1.85/1] overflow-hidden rounded-lg border border-emerald-200/70 dark:border-emerald-900/70 bg-emerald-50/30 dark:bg-emerald-950/30 select-none">
                 <svg class="absolute inset-0 w-full h-full stroke-emerald-500/30 fill-none pointer-events-none" stroke-width="2">
                     <rect x="2" y="2" width="99%" height="96%" rx="8" />
                     <line x1="50%" y1="0" x2="50%" y2="100%" />

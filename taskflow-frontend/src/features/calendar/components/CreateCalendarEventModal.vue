@@ -4,19 +4,19 @@
         class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto"
     >
         <div
-            class="bg-slate-900 border border-slate-700/80 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-5 my-8 max-h-[90vh] overflow-y-auto text-white"
+            class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-700/80 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-5 my-8 max-h-[90vh] overflow-y-auto text-gray-900 dark:text-white"
         >
             <!-- Zaglavlje Modala -->
             <div
-                class="flex justify-between items-center pb-3 border-b border-slate-800"
+                class="flex justify-between items-center pb-3 border-b border-slate-200 dark:border-slate-800"
             >
-                <h3 class="text-sm font-bold text-white tracking-wide">
+                <h3 class="text-sm font-bold text-gray-900 dark:text-white tracking-wide">
                     Zakaži Novi Događaj
                 </h3>
                 <button
                     type="button"
                     @click="$emit('close')"
-                    class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition"
+                    class="text-slate-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"
                 >
                     ✕
                 </button>
@@ -26,7 +26,7 @@
                 <!-- Tip Događaja (Trening / Utakmica) -->
                 <div>
                     <label
-                        class="block text-xs font-bold uppercase text-slate-400 mb-1.5"
+                        class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-400 mb-1.5"
                         >Tip Događaja</label
                     >
                     <div class="grid grid-cols-2 gap-2">
@@ -36,7 +36,7 @@
                             :class="
                                 form.eventType === 'training'
                                     ? 'bg-indigo-600 text-white border-indigo-500 font-bold shadow-lg shadow-indigo-600/20'
-                                    : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-white'
+                                    : 'bg-slate-50 dark:bg-slate-950 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:text-gray-900 dark:hover:text-white'
                             "
                             class="py-2.5 text-xs rounded-xl border transition cursor-pointer flex items-center justify-center gap-1.5"
                         >
@@ -48,7 +48,7 @@
                             :class="
                                 form.eventType === 'match'
                                     ? 'bg-emerald-600 text-white border-emerald-500 font-bold shadow-lg shadow-emerald-600/20'
-                                    : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-white'
+                                    : 'bg-slate-50 dark:bg-slate-950 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:text-gray-900 dark:hover:text-white'
                             "
                             class="py-2.5 text-xs rounded-xl border transition cursor-pointer flex items-center justify-center gap-1.5"
                         >
@@ -60,14 +60,14 @@
                 <!-- Ekipa -->
                 <div>
                     <label
-                        class="block text-xs font-bold uppercase text-slate-400 mb-1.5"
+                        class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-400 mb-1.5"
                         >Ekipa</label
                     >
                     <AppSelect
                         v-model="form.team_id"
                         @change="$emit('team-change')"
                         required
-                        class="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500 transition cursor-pointer"
+                        class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200/80 dark:border-slate-700/80 rounded-xl px-3.5 py-2.5 text-xs text-gray-900 dark:text-white outline-none focus:border-indigo-500 transition cursor-pointer"
                     >
                         <option value="" disabled>Izaberite ekipu...</option>
                         <option
@@ -84,7 +84,7 @@
                 <template v-if="form.eventType === 'match'">
                     <div>
                         <label
-                            class="block text-xs font-bold uppercase text-slate-400 mb-1.5"
+                            class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-400 mb-1.5"
                             >Protivnik</label
                         >
                         <input
@@ -92,17 +92,17 @@
                             type="text"
                             placeholder="npr. FK Napredak"
                             required
-                            class="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500 transition"
+                            class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200/80 dark:border-slate-700/80 rounded-xl px-3.5 py-2.5 text-xs text-gray-900 dark:text-white outline-none focus:border-indigo-500 transition"
                         />
                     </div>
                     <div>
                         <label
-                            class="block text-xs font-bold uppercase text-slate-400 mb-1.5"
+                            class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-400 mb-1.5"
                             >Teren</label
                         >
                         <AppSelect
                             v-model="form.is_home"
-                            class="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500 transition cursor-pointer"
+                            class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200/80 dark:border-slate-700/80 rounded-xl px-3.5 py-2.5 text-xs text-gray-900 dark:text-white outline-none focus:border-indigo-500 transition cursor-pointer"
                         >
                             <option :value="true">Domaćin</option>
                             <option :value="false">Gost</option>
@@ -114,7 +114,7 @@
                 <template v-else>
                     <div>
                         <label
-                            class="block text-xs font-bold uppercase text-slate-400 mb-1.5"
+                            class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-400 mb-1.5"
                             >Naziv / Trenažni Cilj</label
                         >
                         <input
@@ -122,7 +122,7 @@
                             type="text"
                             placeholder="npr. Taktička priprema i šut"
                             required
-                            class="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500 transition"
+                            class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200/80 dark:border-slate-700/80 rounded-xl px-3.5 py-2.5 text-xs text-gray-900 dark:text-white outline-none focus:border-indigo-500 transition"
                         />
                     </div>
                 </template>
@@ -130,7 +130,7 @@
                 <!-- DATUM I VREME (Custom Srpska Latinica + 24h Format) -->
                 <div class="space-y-1.5">
                     <label
-                        class="block text-xs font-bold uppercase text-slate-400"
+                        class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-400"
                     >
                         Datum i Vreme
                     </label>
@@ -145,7 +145,7 @@
                         <div class="relative">
                             <AppSelect
                                 v-model="form.time"
-                                class="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-xs font-medium text-white focus:outline-none focus:border-indigo-500 transition appearance-none cursor-pointer"
+                                class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200/80 dark:border-slate-700/80 rounded-xl px-3.5 py-2.5 text-xs font-medium text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 transition appearance-none cursor-pointer"
                                 required
                             >
                                 <option value="" disabled>
@@ -160,7 +160,7 @@
                                 </option>
                             </AppSelect>
                             <div
-                                class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-[10px]"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-600 dark:text-slate-400 text-[10px]"
                             >
                                 ▼
                             </div>
@@ -171,14 +171,14 @@
                 <!-- Lokacija -->
                 <div>
                     <label
-                        class="block text-xs font-bold uppercase text-slate-400 mb-1.5"
+                        class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-400 mb-1.5"
                         >Lokacija</label
                     >
                     <input
                         v-model="form.location"
                         type="text"
                         placeholder="npr. Glavni teren"
-                        class="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500 transition"
+                        class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200/80 dark:border-slate-700/80 rounded-xl px-3.5 py-2.5 text-xs text-gray-900 dark:text-white outline-none focus:border-indigo-500 transition"
                     />
                 </div>
 
@@ -193,12 +193,12 @@
 
                 <!-- Podnožje sa Akcijama -->
                 <div
-                    class="flex justify-end gap-3 pt-3 border-t border-slate-800"
+                    class="flex justify-end gap-3 pt-3 border-t border-slate-200 dark:border-slate-800"
                 >
                     <button
                         type="button"
                         @click="$emit('close')"
-                        class="px-4 py-2 text-xs font-bold text-slate-400 hover:text-white transition"
+                        class="px-4 py-2 text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white transition"
                     >
                         Odustani
                     </button>

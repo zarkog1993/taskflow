@@ -6,22 +6,22 @@
             :aria-expanded="open"
             aria-haspopup="true"
             @click="toggle"
-            class="flex w-full min-w-36 items-center justify-between gap-3 rounded-lg border border-gray-700 bg-gray-900 px-3 py-2 text-white hover:border-gray-500 focus:outline-none focus:border-indigo-500"
+            class="flex w-full min-w-36 items-center justify-between gap-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-gray-900 dark:text-white hover:border-gray-500 focus:outline-none focus:border-indigo-500"
         >
             <span>{{ selectedLabel }}</span>
-            <span aria-hidden="true" class="text-gray-400">▾</span>
+            <span aria-hidden="true" class="text-gray-600 dark:text-gray-400">▾</span>
         </button>
 
         <div
             v-if="open"
-            class="absolute right-0 top-full z-50 mt-2 w-64 rounded-lg border border-gray-700 bg-gray-900 p-3 text-white shadow-2xl"
+            class="absolute right-0 top-full z-50 mt-2 w-64 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3 text-gray-900 dark:text-white shadow-2xl"
             role="group"
             aria-label="Izaberite mesec"
         >
             <div class="mb-3 flex items-center justify-between">
-                <button type="button" aria-label="Prethodna godina" :disabled="year <= 1" @click="year--" class="rounded px-2 py-1 text-gray-300 hover:bg-gray-800 focus:outline-none focus:bg-gray-800 disabled:opacity-40">‹</button>
+                <button type="button" aria-label="Prethodna godina" :disabled="year <= 1" @click="year--" class="rounded px-2 py-1 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-800 disabled:opacity-40">‹</button>
                 <span class="font-semibold">{{ year }}</span>
-                <button type="button" aria-label="Sledeća godina" :disabled="year >= 9999" @click="year++" class="rounded px-2 py-1 text-gray-300 hover:bg-gray-800 focus:outline-none focus:bg-gray-800 disabled:opacity-40">›</button>
+                <button type="button" aria-label="Sledeća godina" :disabled="year >= 9999" @click="year++" class="rounded px-2 py-1 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-800 disabled:opacity-40">›</button>
             </div>
             <div class="grid grid-cols-3 gap-1">
                 <button
@@ -31,7 +31,7 @@
                     :aria-label="`${month} ${year}`"
                     :aria-pressed="year === selectedYear && index + 1 === selectedMonth"
                     @click="selectMonth(index + 1)"
-                    :class="year === selectedYear && index + 1 === selectedMonth ? 'bg-indigo-600 text-white' : 'text-gray-300 hover:bg-gray-800'"
+                    :class="year === selectedYear && index + 1 === selectedMonth ? 'bg-indigo-600 text-white' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'"
                     class="rounded-md px-1 py-2 text-center font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 >
                     {{ month.slice(0, 3) }}

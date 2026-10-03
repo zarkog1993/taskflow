@@ -2,3 +2,13 @@
 
 /* Postavlja dark varijantu da zavisi od 'dark' klase na <html> tagu */
 @custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+    html {
+        color-scheme: light;
+    }
+
+    html.dark {
+        color-scheme: dark;
+    }
+}

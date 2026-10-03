@@ -1,10 +1,10 @@
 <template>
-    <section v-if="information.length" :class="compact ? 'mt-3 border-t border-slate-800 pt-3' : 'rounded-2xl border border-slate-800 bg-slate-900/90 p-4'">
-        <h2 v-if="!compact" class="mb-2 text-sm font-bold text-white">Informacije o igraču</h2>
-        <dl :class="compact ? 'grid grid-cols-2 gap-x-3 gap-y-2' : 'divide-y divide-slate-800/80'">
+    <section v-if="information.length" :class="compact ? 'mt-3 border-t border-slate-200 dark:border-slate-800 pt-3' : 'rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 p-4'">
+        <h2 v-if="!compact" class="mb-2 text-sm font-bold text-gray-900 dark:text-white">Informacije o igraču</h2>
+        <dl :class="compact ? 'grid grid-cols-2 gap-x-3 gap-y-2' : 'divide-y divide-slate-200/80 dark:divide-slate-800/80'">
             <div v-for="item in information" :key="item.label" :class="compact ? 'min-w-0' : 'flex items-center justify-between gap-3 py-2 text-xs'">
-                <dt class="text-slate-400">{{ item.label }}</dt>
-                <dd :class="compact ? 'mt-0.5 truncate text-xs font-semibold text-slate-200' : 'truncate text-right font-medium text-slate-200'">{{ item.value }}</dd>
+                <dt class="text-slate-600 dark:text-slate-400">{{ item.label }}</dt>
+                <dd :class="compact ? 'mt-0.5 truncate text-xs font-semibold text-slate-800 dark:text-slate-200' : 'truncate text-right font-medium text-slate-800 dark:text-slate-200'">{{ item.value }}</dd>
             </div>
         </dl>
     </section>
@@ -31,6 +31,7 @@ const age = computed(() => {
 
 const information = computed(() => [
     ...(props.compact ? [
+        {label: 'Datum rođenja', value: props.player.date_of_birth},
         { label: 'Uzrast', value: age.value === null ? null : `${age.value} god.` },
         { label: 'Visina', value: props.player.height ? `${props.player.height} cm` : null },
         { label: 'Težina', value: props.player.weight ? `${props.player.weight} kg` : null },

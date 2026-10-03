@@ -7,10 +7,10 @@
             :aria-expanded="isOpen"
             aria-haspopup="dialog"
             :aria-label="`Datum: ${formattedDisplayDate}`"
-            class="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm font-medium text-white flex justify-between items-center focus:outline-none focus:border-indigo-500 transition shadow-inner"
+            class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200/80 dark:border-slate-700/80 rounded-xl px-4 py-2.5 text-sm font-medium text-gray-900 dark:text-white flex justify-between items-center focus:outline-none focus:border-indigo-500 transition shadow-inner"
         >
             <span class="font-mono">{{ formattedDisplayDate }}</span>
-            <span class="text-slate-400 text-xs">📅</span>
+            <span class="text-slate-600 dark:text-slate-400 text-xs">📅</span>
         </button>
 
         <!-- Pop-up Kalendar na Srpskoj Latinici -->
@@ -21,27 +21,27 @@
             role="dialog"
             aria-label="Izaberite datum"
             :style="popupStyle"
-            class="fixed z-100 overflow-y-auto p-4 bg-slate-900 border border-slate-700/80 rounded-lg shadow-2xl w-72 text-white font-sans"
+            class="fixed z-100 overflow-y-auto p-4 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-700/80 rounded-lg shadow-2xl w-72 text-gray-900 dark:text-white font-sans"
         >
             <!-- Navigacija po mjesecima i godinama -->
             <div
-                class="flex justify-between items-center mb-4 pb-2 border-b border-slate-800"
+                class="flex justify-between items-center mb-4 pb-2 border-b border-slate-200 dark:border-slate-800"
             >
                 <button
                     type="button"
                     @click="prevMonth"
-                    class="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition"
+                    class="p-1.5 text-slate-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"
                 >
                     ◄
                 </button>
-                <div class="flex items-center gap-2 text-sm text-indigo-400">
+                <div class="flex items-center gap-2 text-sm text-indigo-600 dark:text-indigo-400">
                     <span class="font-bold">{{ monthNames[currentMonth] }}</span>
-                    <input v-model.number="currentYear" type="number" min="1" max="9999" aria-label="Godina" class="w-16 rounded border border-slate-700 bg-slate-950 px-1 py-1 text-center text-white focus:outline-none focus:border-indigo-500" />
+                    <input v-model.number="currentYear" type="number" min="1" max="9999" aria-label="Godina" class="w-16 rounded border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-1 py-1 text-center text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500" />
                 </div>
                 <button
                     type="button"
                     @click="nextMonth"
-                    class="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition"
+                    class="p-1.5 text-slate-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"
                 >
                     ►
                 </button>
@@ -49,7 +49,7 @@
 
             <!-- Dani u tjednu -->
             <div
-                class="grid grid-cols-7 gap-1 text-center text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2"
+                class="grid grid-cols-7 gap-1 text-center text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2"
             >
                 <span v-for="day in weekDays" :key="day">{{ day }}</span>
             </div>
@@ -72,7 +72,7 @@
                         'h-8 w-8 rounded-xl font-medium transition flex items-center justify-center',
                         isSelected(day)
                             ? 'bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-600/30'
-                            : 'hover:bg-slate-800 text-slate-300',
+                            : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300',
                     ]"
                 >
                     {{ day }}
@@ -81,19 +81,19 @@
 
             <!-- Podnožje: "Danas" i "Zatvori" -->
             <div
-                class="mt-4 pt-3 border-t border-slate-800 flex justify-between items-center text-xs"
+                class="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800 flex justify-between items-center text-xs"
             >
                 <button
                     type="button"
                     @click="selectToday"
-                    class="text-indigo-400 font-semibold hover:text-indigo-300 transition"
+                    class="text-indigo-600 dark:text-indigo-400 font-semibold hover:text-indigo-700 dark:hover:text-indigo-300 transition"
                 >
                     Danas
                 </button>
                 <button
                     type="button"
                     @click="isOpen = false"
-                    class="text-slate-400 hover:text-white transition"
+                    class="text-slate-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white transition"
                 >
                     Zatvori
                 </button>

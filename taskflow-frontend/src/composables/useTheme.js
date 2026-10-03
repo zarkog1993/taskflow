@@ -5,12 +5,11 @@ const getInitialTheme = () => {
 
 	const savedTheme = localStorage.getItem('theme')
 
-	if (savedTheme) {
+	if (savedTheme === 'dark' || savedTheme === 'light') {
 		return savedTheme === 'dark'
 	}
 
-	return document.documentElement.classList.contains('dark') ||
-		window.matchMedia('(prefers-color-scheme: dark)').matches
+	return window.matchMedia('(prefers-color-scheme: dark)').matches
 }
 
 const isDark = ref(getInitialTheme())
@@ -18,15 +17,7 @@ const isDark = ref(getInitialTheme())
 const applyTheme = (dark) => {
 	if (typeof document === 'undefined') return
 
-	const htmlEl = document.documentElement
-
-	if (dark) {
-		htmlEl.classList.add('dark')
-		localStorage.setItem('theme', 'dark')
-	} else {
-		htmlEl.classList.remove('dark')
-		localStorage.setItem('theme', 'light')
-	}
+	document.documentElement.classList.toggle('dark', dark)
 }
 
 // Inicijalna primena
@@ -35,7 +26,8 @@ if (typeof window !== 'undefined') {
 
 	// Osluškivanje sistemske teme ukoliko korisnik nema eksplicitno sačuvano
 	window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-		if (!localStorage.getItem('theme')) {
+		const savedTheme = localStorage.getItem('theme')
+		if (savedTheme !== 'dark' && savedTheme !== 'light') {
 			isDark.value = e.matches
 			applyTheme(e.matches)
 		}
@@ -43,15 +35,13 @@ if (typeof window !== 'undefined') {
 }
 
 export function useTheme() {
-	const toggleTheme = () => {
-		isDark.value = !isDark.value
+	const setTheme = (theme) => {
+		isDark.value = theme === 'dark'
+		localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
 		applyTheme(isDark.value)
 	}
 
-	const setTheme = (theme) => {
-		isDark.value = theme === 'dark'
-		applyTheme(isDark.value)
-	}
+	const toggleTheme = () => setTheme(isDark.value ? 'light' : 'dark')
 
 	return {
 		isDark,

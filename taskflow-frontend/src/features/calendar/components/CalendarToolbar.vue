@@ -4,8 +4,8 @@
         <!-- Zaglavlje -->
         <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
             <div>
-                <h1 class="text-2xl font-black text-white">Kalendar Aktivnosti</h1>
-                <p class="text-xs text-gray-400">Pregled svih zakazanih treninga i utakmica</p>
+                <h1 class="text-2xl font-black text-gray-900 dark:text-white">Kalendar Aktivnosti</h1>
+                <p class="text-xs text-gray-600 dark:text-gray-400">Pregled svih zakazanih treninga i utakmica</p>
             </div>
             <button
                 @click="$emit('create')"
@@ -16,19 +16,19 @@
         </div>
 
         <!-- Navigacija Kroz Mesec -->
-        <div class="bg-gray-800/80 border border-gray-700/80 rounded-2xl p-4 flex justify-between items-center">
+        <div class="bg-gray-100/80 dark:bg-gray-800/80 border border-gray-200/80 dark:border-gray-700/80 rounded-2xl p-4 flex justify-between items-center">
             <button
                 @click="$emit('prev')"
-                class="bg-gray-900 hover:bg-gray-700 text-gray-300 text-xs px-3 py-1.5 rounded-xl border border-gray-700 transition cursor-pointer"
+                class="bg-white dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs px-3 py-1.5 rounded-xl border border-gray-200 dark:border-gray-700 transition cursor-pointer"
             >
                 ← Prethodni
             </button>
-            <h2 class="text-base font-bold text-white uppercase tracking-wider capitalize">
+            <h2 class="text-base font-bold text-gray-900 dark:text-white uppercase tracking-wider capitalize">
                 {{ currentMonthName }} {{ currentYear }}
             </h2>
             <button
                 @click="$emit('next')"
-                class="bg-gray-900 hover:bg-gray-700 text-gray-300 text-xs px-3 py-1.5 rounded-xl border border-gray-700 transition cursor-pointer"
+                class="bg-white dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs px-3 py-1.5 rounded-xl border border-gray-200 dark:border-gray-700 transition cursor-pointer"
             >
                 Sledeći →
             </button>
@@ -38,11 +38,11 @@
         <div class="flex gap-4 text-xs">
             <div class="flex items-center gap-2">
                 <span class="w-3 h-3 rounded-full bg-indigo-500 border border-indigo-400"></span>
-                <span class="text-gray-300">Trening</span>
+                <span class="text-gray-700 dark:text-gray-300">Trening</span>
             </div>
             <div class="flex items-center gap-2">
                 <span class="w-3 h-3 rounded-full bg-emerald-500 border border-emerald-400"></span>
-                <span class="text-gray-300">Utakmica</span>
+                <span class="text-gray-700 dark:text-gray-300">Utakmica</span>
             </div>
         </div>
     </div>

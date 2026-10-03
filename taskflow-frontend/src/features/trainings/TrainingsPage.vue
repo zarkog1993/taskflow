@@ -2,10 +2,10 @@
 <template>
     <div class="max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
         <!-- Gornja traka: Naslov, Mesec i Dodavanje -->
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gray-800/80 p-5 rounded-2xl border border-gray-700/80 shadow-xl">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gray-100/80 dark:bg-gray-800/80 p-5 rounded-2xl border border-gray-200/80 dark:border-gray-700/80 shadow-xl">
             <div>
-                <h2 class="text-2xl font-black text-white tracking-tight">Trening Sesije</h2>
-                <p class="text-xs text-gray-400 mt-0.5">Pregled svih zakazanih treninga i evidencija prisustva</p>
+                <h2 class="text-2xl font-black text-gray-900 dark:text-white tracking-tight">Trening Sesije</h2>
+                <p class="text-xs text-gray-600 dark:text-gray-400 mt-0.5">Pregled svih zakazanih treninga i evidencija prisustva</p>
             </div>
 
             <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
@@ -13,18 +13,18 @@
                     @click="trainingStore.fetchSessions()"
                     :disabled="trainingStore.loading"
                     title="Osveži odgovore na pozivnice"
-                    class="p-2.5 bg-gray-900 hover:bg-gray-700 border border-gray-700/80 text-gray-300 hover:text-white rounded-xl transition text-xs cursor-pointer disabled:opacity-50"
+                    class="p-2.5 bg-white dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-200/80 dark:border-gray-700/80 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white rounded-xl transition text-xs cursor-pointer disabled:opacity-50"
                 >
                     {{ trainingStore.loading ? '⏳' : '↻' }}
                 </button>
 
                 <!-- Izbor meseca -->
-                <div class="flex items-center bg-gray-900 rounded-xl p-1 border border-gray-700/80">
-                    <button @click="changeMonth(-1)" class="p-2 text-gray-400 hover:text-white transition cursor-pointer">←</button>
-                    <span class="px-3 text-xs font-bold text-white min-w-[120px] text-center capitalize">
+                <div class="flex items-center bg-white dark:bg-gray-900 rounded-xl p-1 border border-gray-200/80 dark:border-gray-700/80">
+                    <button @click="changeMonth(-1)" class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition cursor-pointer">←</button>
+                    <span class="px-3 text-xs font-bold text-gray-900 dark:text-white min-w-[120px] text-center capitalize">
             {{ currentMonthName }} {{ currentYear }}
           </span>
-                    <button @click="changeMonth(1)" class="p-2 text-gray-400 hover:text-white transition cursor-pointer">→</button>
+                    <button @click="changeMonth(1)" class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition cursor-pointer">→</button>
                 </div>
 
                 <button
@@ -38,17 +38,17 @@
 
         <!-- Statistički pregled za izabrani mesec -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div class="bg-gray-800/60 border border-gray-700/60 p-4 rounded-2xl">
-                <div class="text-xs font-bold text-gray-400 uppercase">Ukupno Treninga</div>
-                <div class="text-2xl font-black text-white mt-1">{{ monthlySessions.length }}</div>
+            <div class="bg-gray-100/60 dark:bg-gray-800/60 border border-gray-200/60 dark:border-gray-700/60 p-4 rounded-2xl">
+                <div class="text-xs font-bold text-gray-600 dark:text-gray-400 uppercase">Ukupno Treninga</div>
+                <div class="text-2xl font-black text-gray-900 dark:text-white mt-1">{{ monthlySessions.length }}</div>
             </div>
-            <div class="bg-gray-800/60 border border-gray-700/60 p-4 rounded-2xl">
-                <div class="text-xs font-bold text-gray-400 uppercase">Prosečan Odziv</div>
-                <div class="text-2xl font-black text-emerald-400 mt-1">{{ averageMonthlyAttendance }}%</div>
+            <div class="bg-gray-100/60 dark:bg-gray-800/60 border border-gray-200/60 dark:border-gray-700/60 p-4 rounded-2xl">
+                <div class="text-xs font-bold text-gray-600 dark:text-gray-400 uppercase">Prosečan Odziv</div>
+                <div class="text-2xl font-black text-emerald-700 dark:text-emerald-400 mt-1">{{ averageMonthlyAttendance }}%</div>
             </div>
-            <div class="bg-gray-800/60 border border-gray-700/60 p-4 rounded-2xl">
-                <div class="text-xs font-bold text-gray-400 uppercase">Naredni Trening</div>
-                <div class="text-sm font-bold text-indigo-300 mt-1 truncate">
+            <div class="bg-gray-100/60 dark:bg-gray-800/60 border border-gray-200/60 dark:border-gray-700/60 p-4 rounded-2xl">
+                <div class="text-xs font-bold text-gray-600 dark:text-gray-400 uppercase">Naredni Trening</div>
+                <div class="text-sm font-bold text-indigo-700 dark:text-indigo-300 mt-1 truncate">
                     {{ nextUpcomingSession ? nextUpcomingSession.title : 'Nema zakazanih treninga' }}
                 </div>
             </div>
@@ -65,9 +65,9 @@
         </div>
 
         <!-- Prazno stanje -->
-        <div v-else class="text-center py-12 bg-gray-800/40 border border-dashed border-gray-700/80 rounded-2xl space-y-3">
+        <div v-else class="text-center py-12 bg-gray-100/40 dark:bg-gray-800/40 border border-dashed border-gray-200/80 dark:border-gray-700/80 rounded-2xl space-y-3">
             <div class="text-3xl">⚽</div>
-            <div class="text-sm font-bold text-gray-300">Nema zakazanih treninga za {{ currentMonthName }} {{ currentYear }}</div>
+            <div class="text-sm font-bold text-gray-700 dark:text-gray-300">Nema zakazanih treninga za {{ currentMonthName }} {{ currentYear }}</div>
             <p class="text-xs text-gray-500">Kliknite na dugme "+ Zakaži Trening" za dodavanje novog treninga.</p>
         </div>
 

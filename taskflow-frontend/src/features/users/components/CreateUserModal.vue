@@ -1,51 +1,51 @@
 <template>
     <div class="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
-        <div class="bg-gray-800 border border-gray-700/80 rounded-2xl w-full max-w-md p-6 shadow-2xl space-y-5">
-            <div class="flex justify-between items-center border-b border-gray-700 pb-3">
-                <h3 class="text-lg font-black text-white">Novi Korisnik</h3>
-                <button @click="$emit('close')" class="text-gray-400 hover:text-white font-bold">✕</button>
+        <div class="bg-gray-100 dark:bg-gray-800 border border-gray-200/80 dark:border-gray-700/80 rounded-2xl w-full max-w-md p-6 shadow-2xl space-y-5">
+            <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-3">
+                <h3 class="text-lg font-black text-gray-900 dark:text-white">Novi Korisnik</h3>
+                <button @click="$emit('close')" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white font-bold">✕</button>
             </div>
 
             <form @submit.prevent="$emit('submit')" class="space-y-4">
                 <div>
-                    <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Ime i Prezime *</label>
+                    <label class="block text-[10px] font-bold uppercase text-gray-600 dark:text-gray-400 mb-1">Ime i Prezime *</label>
                     <input
                         v-model="form.name"
                         type="text"
                         required
                         placeholder="npr. Petar Petrović"
-                        class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-indigo-500"
+                        class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-xs text-gray-900 dark:text-white outline-none focus:border-indigo-500"
                     />
                 </div>
 
                 <div>
-                    <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Email Adresa *</label>
+                    <label class="block text-[10px] font-bold uppercase text-gray-600 dark:text-gray-400 mb-1">Email Adresa *</label>
                     <input
                         v-model="form.email"
                         type="email"
                         required
                         placeholder="petar@example.com"
-                        class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-indigo-500"
+                        class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-xs text-gray-900 dark:text-white outline-none focus:border-indigo-500"
                     />
                 </div>
 
                 <div>
-                    <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Lozinka *</label>
+                    <label class="block text-[10px] font-bold uppercase text-gray-600 dark:text-gray-400 mb-1">Lozinka *</label>
                     <input
                         v-model="form.password"
                         type="password"
                         required
                         placeholder="••••••••"
-                        class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-indigo-500"
+                        class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-xs text-gray-900 dark:text-white outline-none focus:border-indigo-500"
                     />
                 </div>
 
                 <div>
-                    <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Dodeljeni Klub *</label>
+                    <label class="block text-[10px] font-bold uppercase text-gray-600 dark:text-gray-400 mb-1">Dodeljeni Klub *</label>
                     <AppSelect
                         v-model="form.club_id"
                         required
-                        class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-indigo-500 cursor-pointer"
+                        class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-xs text-gray-900 dark:text-white outline-none focus:border-indigo-500 cursor-pointer"
                     >
                         <option :value="null" disabled>Izaberite klub...</option>
                         <option v-for="club in clubs" :key="club.id" :value="club.id">
@@ -55,19 +55,19 @@
                 </div>
 
                 <div>
-                    <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Uloga Korisnika *</label>
+                    <label class="block text-[10px] font-bold uppercase text-gray-600 dark:text-gray-400 mb-1">Uloga Korisnika *</label>
                     <AppSelect
                         v-model="form.role"
                         required
-                        class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-indigo-500 cursor-pointer"
+                        class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-xs text-gray-900 dark:text-white outline-none focus:border-indigo-500 cursor-pointer"
                     >
                         <option value="player">Igrač</option>
                         <option value="club-admin">Klupski Admin</option>
                     </AppSelect>
                 </div>
 
-                <div class="flex justify-end gap-3 pt-3 border-t border-gray-700">
-                    <button type="button" @click="$emit('close')" class="px-4 py-2 text-xs font-bold text-gray-400 hover:text-white">
+                <div class="flex justify-end gap-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                    <button type="button" @click="$emit('close')" class="px-4 py-2 text-xs font-bold text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
                         Odustani
                     </button>
                     <button

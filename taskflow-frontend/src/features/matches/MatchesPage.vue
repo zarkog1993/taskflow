@@ -4,8 +4,8 @@
         <!-- Zaglavlje -->
         <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
             <div>
-                <h1 class="text-2xl font-black text-white">Utakmice & Zapisnici</h1>
-                <p class="text-xs text-gray-400">Pregled zakazanih mečeva, sastava i statistike igrača</p>
+                <h1 class="text-2xl font-black text-gray-900 dark:text-white">Utakmice & Zapisnici</h1>
+                <p class="text-xs text-gray-600 dark:text-gray-400">Pregled zakazanih mečeva, sastava i statistike igrača</p>
             </div>
             <button @click="openCreateModal" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-lg cursor-pointer">
                 + Zakaži Utakmicu
@@ -17,10 +17,10 @@
             <MatchTabs v-model:active-tab="activeTab" :upcoming-count="upcomingMatches.length" :completed-count="completedMatches.length" />
 
             <div class="flex items-center gap-2 pb-2">
-                <label class="text-[10px] font-bold uppercase text-gray-400 tracking-wider">Mesec</label>
+                <label class="text-[10px] font-bold uppercase text-gray-600 dark:text-gray-400 tracking-wider">Mesec</label>
                 <AppSelect
                     v-model="selectedMonth"
-                    class="bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-indigo-500 cursor-pointer"
+                    class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-xs text-gray-900 dark:text-white outline-none focus:border-indigo-500 cursor-pointer"
                 >
                     <option value="all">Svi meseci</option>
                     <option v-for="option in monthOptions" :key="option.value" :value="option.value">
@@ -40,8 +40,8 @@
                 @delete="handleDeleteMatch"
             />
         </div>
-        <div v-else class="text-center py-12 bg-gray-800/40 border border-gray-700/50 rounded-2xl space-y-2">
-            <p class="text-sm text-gray-400 italic">
+        <div v-else class="text-center py-12 bg-gray-100/40 dark:bg-gray-800/40 border border-gray-200/50 dark:border-gray-700/50 rounded-2xl space-y-2">
+            <p class="text-sm text-gray-600 dark:text-gray-400 italic">
                 <template v-if="selectedMonth !== 'all'">
                     Nema utakmica u ovoj kategoriji za {{ selectedMonthLabel }}.
                 </template>
@@ -53,7 +53,7 @@
                 v-if="selectedMonth !== 'all'"
                 type="button"
                 @click="resetMonthFilter"
-                class="text-[11px] font-bold text-indigo-400 hover:underline cursor-pointer"
+                class="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer"
             >
                 Prikaži sve mesece
             </button>

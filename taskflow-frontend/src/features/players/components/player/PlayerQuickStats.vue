@@ -1,10 +1,10 @@
 <template>
     <section v-if="stats.length" class="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <div v-for="stat in stats" :key="stat.key" class="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-900/90 p-3">
+            <div v-for="stat in stats" :key="stat.key" class="flex items-center gap-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 p-3">
                 <span aria-hidden="true" class="text-xl">{{ stat.icon }}</span>
                 <dl class="min-w-0">
-                    <dt class="text-[10px] font-semibold uppercase tracking-wide text-slate-400">{{ stat.label }}</dt>
-                    <dd class="mt-0.5 font-mono text-2xl font-bold leading-none tabular-nums text-white">{{ stat.value }}{{ stat.suffix || '' }}</dd>
+                    <dt class="text-[10px] font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-400">{{ stat.label }}</dt>
+                    <dd class="mt-0.5 font-mono text-2xl font-bold leading-none tabular-nums text-gray-900 dark:text-white">{{ stat.value }}{{ stat.suffix || '' }}</dd>
                 </dl>
             </div>
     </section>

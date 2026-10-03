@@ -1,23 +1,23 @@
 <template>
     <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
         <!-- Zaglavlje i Globalni Filteri -->
-        <div class="bg-gray-800/60 p-6 rounded-2xl border border-gray-700/60 backdrop-blur-md shadow-xl space-y-6">
+        <div class="bg-gray-100/60 dark:bg-gray-800/60 p-6 rounded-2xl border border-gray-200/60 dark:border-gray-700/60 backdrop-blur-md shadow-xl space-y-6">
             <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
                 <div>
-                    <h1 class="text-3xl font-black text-white tracking-tight flex items-center gap-3">
+                    <h1 class="text-3xl font-black text-gray-900 dark:text-white tracking-tight flex items-center gap-3">
                         <span>💳</span> Finansije i Članarine
                     </h1>
-                    <p class="text-xs text-gray-400 mt-1">
+                    <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">
                         Objedinjena evidencija mesečnih članarina akademije i isplata prvotimcima.
                     </p>
                 </div>
 
                 <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto">
                     <label class="flex items-center gap-2 text-xs">
-                        <span class="text-gray-400 font-medium whitespace-nowrap">Ekipa:</span>
+                        <span class="text-gray-600 dark:text-gray-400 font-medium whitespace-nowrap">Ekipa:</span>
                         <AppSelect
                             v-model="selectedTeamId"
-                            class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-indigo-500 w-full sm:w-56"
+                            class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-gray-900 dark:text-white text-xs focus:outline-none focus:border-indigo-500 w-full sm:w-56"
                         >
                             <option :value="null">Sve ekipe</option>
                             <option v-for="team in teams" :key="team.id" :value="team.id">
@@ -27,16 +27,16 @@
                     </label>
 
                     <div class="flex items-center gap-2 text-xs">
-                        <span class="text-gray-400 font-medium whitespace-nowrap">Mesec:</span>
+                        <span class="text-gray-600 dark:text-gray-400 font-medium whitespace-nowrap">Mesec:</span>
                         <MonthPicker v-model="selectedPeriod" />
                     </div>
                 </div>
             </div>
 
             <!-- Podrazumevani Mesečni Iznos -->
-            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 bg-gray-900/60 border border-gray-700/60 rounded-xl p-3">
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 bg-white/60 dark:bg-gray-900/60 border border-gray-200/60 dark:border-gray-700/60 rounded-xl p-3">
                 <label class="flex items-center gap-2 text-xs flex-1">
-                    <span class="text-gray-400 font-medium whitespace-nowrap">
+                    <span class="text-gray-600 dark:text-gray-400 font-medium whitespace-nowrap">
                         {{ activeType === 'membership' ? 'Mesečna članarina:' : 'Mesečni honorar:' }}
                     </span>
                     <input
@@ -44,7 +44,7 @@
                         min="0"
                         step="100"
                         v-model.number="monthlyAmount"
-                        class="w-32 bg-gray-950 border border-gray-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold text-emerald-400 focus:outline-none focus:border-indigo-500"
+                        class="w-32 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold text-emerald-700 dark:text-emerald-400 focus:outline-none focus:border-indigo-500"
                     />
                     <span class="text-[11px] text-gray-500">
                         Primenjuje se na igrače bez evidentirane uplate ({{ unsavedCount }}).
@@ -62,40 +62,40 @@
 
             <!-- KPI Kartice -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div class="bg-gray-900/60 border border-gray-700/60 rounded-xl p-4">
-                    <p class="text-[11px] uppercase tracking-wider text-gray-400 font-semibold">Ukupno očekivano</p>
-                    <p class="text-2xl font-black text-white mt-1">{{ formatCurrency(summary.expected) }}</p>
+                <div class="bg-white/60 dark:bg-gray-900/60 border border-gray-200/60 dark:border-gray-700/60 rounded-xl p-4">
+                    <p class="text-[11px] uppercase tracking-wider text-gray-600 dark:text-gray-400 font-semibold">Ukupno očekivano</p>
+                    <p class="text-2xl font-black text-gray-900 dark:text-white mt-1">{{ formatCurrency(summary.expected) }}</p>
                     <p class="text-[11px] text-gray-500 mt-1">
                         {{ summary.players_count }} igrača × {{ formatCurrency(monthlyAmount) }}
                     </p>
                 </div>
-                <div class="bg-gray-900/60 border border-emerald-500/30 rounded-xl p-4">
-                    <p class="text-[11px] uppercase tracking-wider text-emerald-400 font-semibold">Naplaćeno / Isplaćeno</p>
-                    <p class="text-2xl font-black text-emerald-400 mt-1">{{ formatCurrency(summary.collected) }}</p>
+                <div class="bg-white/60 dark:bg-gray-900/60 border border-emerald-500/30 rounded-xl p-4">
+                    <p class="text-[11px] uppercase tracking-wider text-emerald-700 dark:text-emerald-400 font-semibold">Naplaćeno / Isplaćeno</p>
+                    <p class="text-2xl font-black text-emerald-700 dark:text-emerald-400 mt-1">{{ formatCurrency(summary.collected) }}</p>
                     <p class="text-[11px] text-gray-500 mt-1">{{ summary.paid_count }} evidentiranih uplata</p>
                 </div>
-                <div class="bg-gray-900/60 border border-amber-500/30 rounded-xl p-4">
-                    <p class="text-[11px] uppercase tracking-wider text-amber-400 font-semibold">Na čekanju / Kasni</p>
-                    <p class="text-2xl font-black text-amber-400 mt-1">{{ formatCurrency(summary.outstanding) }}</p>
+                <div class="bg-white/60 dark:bg-gray-900/60 border border-amber-500/30 rounded-xl p-4">
+                    <p class="text-[11px] uppercase tracking-wider text-amber-700 dark:text-amber-400 font-semibold">Na čekanju / Kasni</p>
+                    <p class="text-2xl font-black text-amber-700 dark:text-amber-400 mt-1">{{ formatCurrency(summary.outstanding) }}</p>
                     <p class="text-[11px] text-gray-500 mt-1">
-                        Kasni: <span class="text-rose-400 font-semibold">{{ formatCurrency(summary.overdue) }}</span>
+                        Kasni: <span class="text-rose-600 dark:text-rose-400 font-semibold">{{ formatCurrency(summary.overdue) }}</span>
                     </p>
                 </div>
             </div>
         </div>
 
         <!-- Glavni Tabovi -->
-        <div class="flex bg-gray-900/80 p-1 rounded-xl border border-gray-700 text-xs w-full sm:w-fit">
+        <div class="flex bg-white/80 dark:bg-gray-900/80 p-1 rounded-xl border border-gray-200 dark:border-gray-700 text-xs w-full sm:w-fit">
             <button
                 @click="activeType = 'membership'"
-                :class="activeType === 'membership' ? 'bg-indigo-600 text-white font-bold shadow-md' : 'text-gray-400 hover:text-white'"
+                :class="activeType === 'membership' ? 'bg-indigo-600 text-white font-bold shadow-md' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'"
                 class="px-4 py-2.5 rounded-lg transition flex-1 sm:flex-none flex items-center justify-center gap-2"
             >
                 <span>🧾</span> Mesečne Članarine (Akademija)
             </button>
             <button
                 @click="activeType = 'stipend'"
-                :class="activeType === 'stipend' ? 'bg-indigo-600 text-white font-bold shadow-md' : 'text-gray-400 hover:text-white'"
+                :class="activeType === 'stipend' ? 'bg-indigo-600 text-white font-bold shadow-md' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'"
                 class="px-4 py-2.5 rounded-lg transition flex-1 sm:flex-none flex items-center justify-center gap-2"
             >
                 <span>💰</span> Isplate Prvotimcima
@@ -105,14 +105,14 @@
         <!-- Greška -->
         <div
             v-if="error"
-            class="bg-rose-500/10 border border-rose-500/30 text-rose-300 text-sm rounded-xl px-4 py-3"
+            class="bg-rose-500/10 border border-rose-500/30 text-rose-700 dark:text-rose-300 text-sm rounded-xl px-4 py-3"
         >
             {{ error }}
         </div>
 
         <!-- Učitavanje -->
-        <div v-if="loading" class="text-center py-20 text-gray-400 font-medium flex justify-center items-center gap-3">
-            <svg class="animate-spin h-6 w-6 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <div v-if="loading" class="text-center py-20 text-gray-600 dark:text-gray-400 font-medium flex justify-center items-center gap-3">
+            <svg class="animate-spin h-6 w-6 text-indigo-700 dark:text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
@@ -120,9 +120,9 @@
         </div>
 
         <!-- Tabela -->
-        <div v-else-if="rows.length > 0" class="overflow-x-auto rounded-2xl border border-gray-700/60 bg-gray-800/40">
-            <table class="w-full text-left text-sm text-gray-300">
-                <thead class="bg-gray-900/80 text-xs uppercase text-gray-400 border-b border-gray-700">
+        <div v-else-if="rows.length > 0" class="overflow-x-auto rounded-2xl border border-gray-200/60 dark:border-gray-700/60 bg-gray-100/40 dark:bg-gray-800/40">
+            <table class="w-full text-left text-sm text-gray-700 dark:text-gray-300">
+                <thead class="bg-white/80 dark:bg-gray-900/80 text-xs uppercase text-gray-600 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
                     <tr>
                         <th class="py-3 px-4">Igrač</th>
                         <th class="py-3 px-4">Dres / Pozicija</th>
@@ -131,13 +131,13 @@
                         <th class="py-3 px-4 text-right">Akcija</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-800/60">
-                    <tr v-for="row in rows" :key="row.player_id" class="hover:bg-gray-800/60 transition">
+                <tbody class="divide-y divide-gray-200/60 dark:divide-gray-800/60">
+                    <tr v-for="row in rows" :key="row.player_id" class="hover:bg-gray-100/60 dark:hover:bg-gray-800/60 transition">
                         <td class="py-3 px-4">
-                            <p class="font-semibold text-white">{{ row.player_name }}</p>
+                            <p class="font-semibold text-gray-900 dark:text-white">{{ row.player_name }}</p>
                             <p v-if="!selectedTeamId" class="text-[11px] text-gray-500">{{ row.team_name }}</p>
                         </td>
-                        <td class="py-3 px-4 text-xs text-gray-400 font-mono">
+                        <td class="py-3 px-4 text-xs text-gray-600 dark:text-gray-400 font-mono">
                             #{{ row.jersey_number ?? '-' }} | {{ row.position || 'Igrač' }}
                         </td>
                         <td class="py-3 px-4">
@@ -148,7 +148,7 @@
                                 v-model.number="row.amount"
                                 @change="persistRow(row)"
                                 :disabled="savingIds.has(row.player_id)"
-                                class="w-28 bg-gray-950 border border-gray-700 rounded-lg px-2.5 py-1 text-sm font-semibold text-emerald-400 focus:outline-none focus:border-indigo-500 disabled:opacity-50"
+                                class="w-28 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-700 rounded-lg px-2.5 py-1 text-sm font-semibold text-emerald-700 dark:text-emerald-400 focus:outline-none focus:border-indigo-500 disabled:opacity-50"
                             />
                         </td>
                         <td class="py-3 px-4">
@@ -167,7 +167,7 @@
                                     @click="setStatus(row, action.value)"
                                     :disabled="savingIds.has(row.player_id)"
                                     :class="row.status === action.value ? action.activeClass : action.idleClass"
-                                    class="px-2.5 py-1 text-xs font-semibold rounded-lg border border-gray-700 transition disabled:opacity-50"
+                                    class="px-2.5 py-1 text-xs font-semibold rounded-lg border border-gray-200 dark:border-gray-700 transition disabled:opacity-50"
                                 >
                                     {{ action.label }}
                                 </button>
@@ -179,8 +179,8 @@
         </div>
 
         <!-- Prazno stanje -->
-        <div v-else class="text-center py-16 bg-gray-800/40 rounded-2xl border border-dashed border-gray-700/60">
-            <p class="text-sm text-gray-400 italic">
+        <div v-else class="text-center py-16 bg-gray-100/40 dark:bg-gray-800/40 rounded-2xl border border-dashed border-gray-200/60 dark:border-gray-700/60">
+            <p class="text-sm text-gray-600 dark:text-gray-400 italic">
                 Nema igrača za izabranu ekipu i period.
             </p>
         </div>
@@ -211,19 +211,19 @@ const STATUS_ACTIONS = [
         value: 'paid',
         label: '✓ Plaćeno',
         activeClass: 'bg-emerald-600 text-white',
-        idleClass: 'bg-gray-800 text-gray-300 hover:bg-emerald-600/30'
+        idleClass: 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-emerald-600/30'
     },
     {
         value: 'pending',
         label: '⏳ Čeka',
         activeClass: 'bg-amber-600 text-white',
-        idleClass: 'bg-gray-800 text-gray-300 hover:bg-amber-600/30'
+        idleClass: 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-amber-600/30'
     },
     {
         value: 'overdue',
         label: '✕ Kasni',
         activeClass: 'bg-rose-600 text-white',
-        idleClass: 'bg-gray-800 text-gray-300 hover:bg-rose-600/30'
+        idleClass: 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-rose-600/30'
     }
 ]
 
@@ -275,9 +275,9 @@ function readStoredAmount(type) {
 }
 
 const statusBadgeClass = (status) => ({
-    'bg-emerald-500/10 text-emerald-400 border-emerald-500/30': status === 'paid',
-    'bg-amber-500/10 text-amber-400 border-amber-500/30': status === 'pending',
-    'bg-rose-500/10 text-rose-400 border-rose-500/30': status === 'overdue'
+    'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30': status === 'paid',
+    'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/30': status === 'pending',
+    'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30': status === 'overdue'
 })
 
 const loadTeams = async () => {

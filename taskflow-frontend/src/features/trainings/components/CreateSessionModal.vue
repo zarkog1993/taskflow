@@ -1,63 +1,63 @@
 <!-- Modal za zakazivanje novog treninga. -->
 <template>
     <div class="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
-        <div class="bg-gray-800 border border-gray-700/80 rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden">
-            <div class="p-6 bg-gray-900 border-b border-gray-700/70 relative">
-                <button @click="$emit('close')" class="absolute top-5 right-5 text-gray-400 hover:text-white">✕</button>
-                <h3 class="text-2xl font-black text-white">Zakaži Novi Trening</h3>
+        <div class="bg-gray-100 dark:bg-gray-800 border border-gray-200/80 dark:border-gray-700/80 rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden">
+            <div class="p-6 bg-white dark:bg-gray-900 border-b border-gray-200/70 dark:border-gray-700/70 relative">
+                <button @click="$emit('close')" class="absolute top-5 right-5 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">✕</button>
+                <h3 class="text-2xl font-black text-gray-900 dark:text-white">Zakaži Novi Trening</h3>
             </div>
 
             <form @submit.prevent="handleSubmit" class="p-6 space-y-4">
                 <div>
-                    <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Ekipa</label>
-                    <AppSelect v-model="form.team_id" required class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2.5 text-xs text-white">
+                    <label class="block text-xs font-bold uppercase text-gray-600 dark:text-gray-400 mb-1">Ekipa</label>
+                    <AppSelect v-model="form.team_id" required class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2.5 text-xs text-gray-900 dark:text-white">
                         <option disabled value="">Izaberite ekipu</option>
                         <option v-for="team in teams" :key="team.id" :value="team.id">{{ team.name }}</option>
                     </AppSelect>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Naslov / Tema</label>
-                    <input v-model="form.title" type="text" required placeholder="npr. Taktička priprema za meč" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-2.5 text-xs text-white" />
+                    <label class="block text-xs font-bold uppercase text-gray-600 dark:text-gray-400 mb-1">Naslov / Tema</label>
+                    <input v-model="form.title" type="text" required placeholder="npr. Taktička priprema za meč" class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2.5 text-xs text-gray-900 dark:text-white" />
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Tip Događaja</label>
-                        <AppSelect v-model="form.type" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2.5 text-xs text-white">
+                        <label class="block text-xs font-bold uppercase text-gray-600 dark:text-gray-400 mb-1">Tip Događaja</label>
+                        <AppSelect v-model="form.type" class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2.5 text-xs text-gray-900 dark:text-white">
                             <option value="training">🏃‍♂️ Trening</option>
                             <option value="match">⚽ Utakmica</option>
                         </AppSelect>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Lokacija</label>
-                        <input v-model="form.location" type="text" placeholder="Glavni Teren A" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-2.5 text-xs text-white" />
+                        <label class="block text-xs font-bold uppercase text-gray-600 dark:text-gray-400 mb-1">Lokacija</label>
+                        <input v-model="form.location" type="text" placeholder="Glavni Teren A" class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2.5 text-xs text-gray-900 dark:text-white" />
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Datum i Vreme</label>
+                    <label class="block text-xs font-bold uppercase text-gray-600 dark:text-gray-400 mb-1">Datum i Vreme</label>
                     <div class="grid grid-cols-3 gap-2">
                         <CustomDatePicker v-model="formDate" />
-                        <AppSelect v-model="formHours" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-2 py-2 text-xs text-white">
+                        <AppSelect v-model="formHours" class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-2 py-2 text-xs text-gray-900 dark:text-white">
                             <option v-for="h in 24" :key="h-1" :value="String(h-1).padStart(2,'0')">{{ String(h-1).padStart(2,'0') }}h</option>
                         </AppSelect>
-                        <AppSelect v-model="formMinutes" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-2 py-2 text-xs text-white">
+                        <AppSelect v-model="formMinutes" class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-2 py-2 text-xs text-gray-900 dark:text-white">
                             <option value="00">00 min</option>
                             <option value="15">15 min</option>
                             <option value="30">30 min</option>
                             <option value="45">45 min</option>
                         </AppSelect>
                     </div>
-                    <p v-if="dateMissing && !formDate" class="mt-1 text-xs text-rose-400">Izaberite datum.</p>
+                    <p v-if="dateMissing && !formDate" class="mt-1 text-xs text-rose-600 dark:text-rose-400">Izaberite datum.</p>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Opis / Napomena</label>
-                    <textarea v-model="form.description" rows="3" placeholder="Uputstva za igrače..." class="w-full bg-gray-900 border border-gray-700 rounded-xl p-3 text-xs text-white resize-none"></textarea>
+                    <label class="block text-xs font-bold uppercase text-gray-600 dark:text-gray-400 mb-1">Opis / Napomena</label>
+                    <textarea v-model="form.description" rows="3" placeholder="Uputstva za igrače..." class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-xs text-gray-900 dark:text-white resize-none"></textarea>
                 </div>
 
-                <div class="flex justify-end gap-3 pt-3 border-t border-gray-700">
-                    <button type="button" @click="$emit('close')" class="px-4 py-2 text-xs font-bold text-gray-400 hover:text-white">Odustani</button>
+                <div class="flex justify-end gap-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                    <button type="button" @click="$emit('close')" class="px-4 py-2 text-xs font-bold text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">Odustani</button>
                     <button type="submit" class="px-5 py-2 text-xs bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl">Sačuvaj</button>
                 </div>
             </form>

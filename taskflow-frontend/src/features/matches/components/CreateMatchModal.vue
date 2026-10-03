@@ -1,45 +1,45 @@
 <!-- Modal za zakazivanje nove utakmice. -->
 <template>
     <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md">
-        <form @submit.prevent="handleSubmit" class="w-full max-w-lg space-y-4 rounded-2xl border border-gray-700 bg-gray-800 p-6">
-            <div class="flex items-center justify-between border-b border-gray-700 pb-3">
-                <h2 class="text-lg font-black text-white">Zakaži Utakmicu</h2>
-                <button type="button" @click="$emit('close')" class="text-gray-400 hover:text-white">✕</button>
+        <form @submit.prevent="handleSubmit" class="w-full max-w-lg space-y-4 rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 p-6">
+            <div class="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-3">
+                <h2 class="text-lg font-black text-gray-900 dark:text-white">Zakaži Utakmicu</h2>
+                <button type="button" @click="$emit('close')" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">✕</button>
             </div>
             <div>
-                <label class="mb-1 block text-xs font-bold uppercase text-gray-400">Ekipa</label>
-                <AppSelect v-model="form.team_id" required class="w-full rounded-xl border border-gray-700 bg-gray-900 px-3 py-2.5 text-xs text-white">
+                <label class="mb-1 block text-xs font-bold uppercase text-gray-600 dark:text-gray-400">Ekipa</label>
+                <AppSelect v-model="form.team_id" required class="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2.5 text-xs text-gray-900 dark:text-white">
                     <option disabled value="">Izaberite ekipu</option>
                     <option v-for="team in teams" :key="team.id" :value="team.id">{{ team.name }}</option>
                 </AppSelect>
             </div>
             <div>
-                <label class="mb-1 block text-xs font-bold uppercase text-gray-400">Protivnik</label>
-                <input v-model="form.opponent" required class="w-full rounded-xl border border-gray-700 bg-gray-900 px-3 py-2.5 text-xs text-white" />
+                <label class="mb-1 block text-xs font-bold uppercase text-gray-600 dark:text-gray-400">Protivnik</label>
+                <input v-model="form.opponent" required class="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2.5 text-xs text-gray-900 dark:text-white" />
             </div>
             <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <label class="mb-1 block text-xs font-bold uppercase text-gray-400">Datum i vreme</label>
+                    <label class="mb-1 block text-xs font-bold uppercase text-gray-600 dark:text-gray-400">Datum i vreme</label>
                     <div class="flex flex-col gap-2">
                         <CustomDatePicker v-model="matchDate" />
-                        <AppSelect v-model="matchTime" class="w-full rounded-xl border border-gray-700 bg-gray-900 px-3 py-2.5 text-xs text-white">
+                        <AppSelect v-model="matchTime" class="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2.5 text-xs text-gray-900 dark:text-white">
                             <option v-if="!timeSlots.includes(matchTime)" :value="matchTime">{{ matchTime }}</option>
                             <option v-for="time in timeSlots" :key="time" :value="time">{{ time }}</option>
                         </AppSelect>
                     </div>
-                    <p v-if="dateMissing && !matchDate" class="mt-1 text-xs text-rose-400">Izaberite datum.</p>
+                    <p v-if="dateMissing && !matchDate" class="mt-1 text-xs text-rose-600 dark:text-rose-400">Izaberite datum.</p>
                 </div>
                 <div>
-                    <label class="mb-1 block text-xs font-bold uppercase text-gray-400">Lokacija</label>
-                    <input v-model="form.location" class="w-full rounded-xl border border-gray-700 bg-gray-900 px-3 py-2.5 text-xs text-white" />
+                    <label class="mb-1 block text-xs font-bold uppercase text-gray-600 dark:text-gray-400">Lokacija</label>
+                    <input v-model="form.location" class="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2.5 text-xs text-gray-900 dark:text-white" />
                 </div>
             </div>
-            <label class="flex items-center gap-2 text-xs text-gray-300">
+            <label class="flex items-center gap-2 text-xs text-gray-700 dark:text-gray-300">
                 <input v-model="form.is_home" type="checkbox" />
                 Domaća utakmica
             </label>
-            <div class="flex justify-end gap-3 border-t border-gray-700 pt-3">
-                <button type="button" @click="$emit('close')" class="px-4 py-2 text-xs font-bold text-gray-400">Odustani</button>
+            <div class="flex justify-end gap-3 border-t border-gray-200 dark:border-gray-700 pt-3">
+                <button type="button" @click="$emit('close')" class="px-4 py-2 text-xs font-bold text-gray-600 dark:text-gray-400">Odustani</button>
                 <button type="submit" class="rounded-xl bg-indigo-600 px-5 py-2 text-xs font-bold text-white">Sačuvaj</button>
             </div>
         </form>
