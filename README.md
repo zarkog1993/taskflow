@@ -16,7 +16,7 @@ TaskFlow je SaaS platforma za upravljanje fudbalskim klubovima — timovi, igra�
 - [Pretplate i kontrola pristupa](#pretplate-i-kontrola-pristupa)
 - [Testiranje](#testiranje)
 - [API](#api)
-- [Poznati problemi](#poznati-problemi)
+- [Poznati nedovršeni delovi](#poznati-nedovršeni-delovi)
 
 ## Funkcionalnosti
 
@@ -24,15 +24,16 @@ TaskFlow je SaaS platforma za upravljanje fudbalskim klubovima — timovi, igra�
 | --- | --- |
 | **Autentifikacija** | Registracija, prijava, odjava, dohvat trenutnog korisnika (Sanctum bearer token) |
 | **Onboarding** | Registracija kluba preko pozivnog tokena i izbor pretplatničkog paketa |
-| **Klub** | Profil kluba, osnovni podaci, akademija i sezone |
+| **Klub** | Profil kluba i osnovni podaci |
 | **Timovi** | Starosne kategorije, roster igrača, članovi stručnog štaba |
 | **Igrači** | Kartoni igrača, pozicije, brojevi dresova, fotografije, statistika |
 | **Treninzi** | Zakazivanje termina, slanje pozivnica, RSVP odgovori igrača |
-| **Utakmice** | Zakazivanje, sastav (lineup), zapisnik utakmice sa golovima i asistencijama |
+| **Utakmice** | Zakazivanje, zasebni tabovi za zakazane/odigrane/otkazane mečeve; Premium zapisnik sa sastavom, golovima i asistencijama |
 | **Statistika** | Automatsko računanje odigranih utakmica, golova i asistencija iz zapisnika |
 | **Analitika** | Prosečna posećenost treninga, top strelci, filteri po timu i periodu, pretraga igrača |
 | **Finansije** | Evidencija uplata igrača, pregled po timu, grupne uplate |
 | **Super admin** | Upravljanje klubovima, korisnicima i pretplatama |
+| **Taktika** | Formacije i drag-and-drop tabla; čuvanje je još samo potvrda u UI-ju |
 
 ## Tech Stack
 
@@ -170,12 +171,14 @@ Preduslovi: Docker i Docker Compose.
    docker compose exec -w /var/www/html/src app php artisan migrate
    ```
 
-6. Po potrebi pokreni seed-ere (nisu povezani u `DatabaseSeeder`, pozivaju se pojedinačno):
+6. Po potrebi dodaj početne uloge i testne podatke. `DatabaseSeeder` pravi test nalog, pa ga ne pokreći na produkciji:
 
    ```bash
-   docker compose exec -w /var/www/html/src app php artisan db:seed --class=RoleAndPermissionSeeder
+   docker compose exec -w /var/www/html/src app php artisan db:seed --class=RolesAndPermissionsSeeder
    docker compose exec -w /var/www/html/src app php artisan db:seed --class=TeamPlayersSeeder
    ```
+
+`TeamPlayersSeeder` zahteva postojeći klub i tim; dodaje testne igrače i uplate prvom klubu. Seed-eri nisu pozvani iz `DatabaseSeeder`.
 
 > **Napomena:** kod aplikacije se unutar `app` kontejnera nalazi na putanji `/var/www/html/src`, pa svaka `artisan` i `composer` komanda zahteva `-w /var/www/html/src`.
 
@@ -231,7 +234,7 @@ Svaki klub ima pretplatu koja nosi listu dozvoljenih funkcionalnosti. Middleware
 
 Slug `teams` otključava i timove i treninge — rute `/training-sessions` su gate-ovane istim slugom. Utakmice (`matches`) su prva razlika između `basic` i `standard` paketa.
 
-U ponudi su Basic, Standard i Premium paketi. Stari `pro` i `unlimited` zapisi ostaju neaktivni za nove prijave, ali se postojeće pretplate mogu administrirati. Slugovi koriste notaciju sa donjom crtom (`club_profile`, `advanced_stats`). Od slugova se u kodu stvarno proveravaju `club_profile`, `players`, `teams`, `matches` i `advanced_stats` (backend rute) te `tactics` i `advanced_management` (frontend ruter); `news`, `club_basic_information` i `additional_content` su trenutno samo opisne oznake.
+U ponudi su Basic, Standard i Premium paketi. Stari `pro` i `unlimited` zapisi ostaju neaktivni za nove prijave, ali se postojeće pretplate mogu administrirati. Slugovi koriste notaciju sa donjom crtom (`club_profile`, `advanced_stats`). Backend trenutno proverava `club_profile`, `players`, `teams`, `matches` i `advanced_stats`; frontend ruter dodatno proverava `tactics` i `advanced_management`. Nijedan aktivni paket trenutno ne sadrži `advanced_management`; `news`, `club_basic_information` i `additional_content` su opisne oznake bez implementiranog feature-gating-a.
 
 **Važno:** `subscriptions` tabela nosi sopstvenu kopiju liste funkcionalnosti — `Subscription::hasFeature()` čita `subscriptions.features`, a ne plan. Izmena paketa se zato ne odražava na postojeće pretplatnike dok im se lista ponovo ne prepiše iz plana.
 
@@ -241,7 +244,7 @@ U ponudi su Basic, Standard i Premium paketi. Stari `pro` i `unlimited` zapisi o
 docker compose exec -T -w /var/www/html/src app php artisan test
 ```
 
-Trenutno stanje: **32 testa, 100 asercija — sve prolazi.**
+Trenutno stanje: **40 testova, 132 asercije.**
 
 ## API
 
@@ -265,28 +268,37 @@ Svi odgovori su u JSON formatu. Zaštićene rute zahtevaju zaglavlje `Authorizat
 | Metoda | Ruta | Opis |
 | --- | --- | --- |
 | `GET` | `/me` | Trenutni korisnik |
+| `GET` | `/user` | Alias za dohvat trenutno prijavljenog korisnika |
 | `POST` | `/logout` | Poništavanje tokena |
+| `POST` | `/onboarding/complete` | Izbor paketa za registrovani klub |
 | `GET` `POST` | `/teams` | Lista i kreiranje timova |
 | `GET` `PUT` `DELETE` | `/teams/{team}` | Detalji, izmena, brisanje tima |
-| `GET` | `/teams/{team}/members` | Članovi tima |
 | `GET` `POST` | `/players` | Lista i kreiranje igrača |
-| `GET` `PUT` `DELETE` | `/players/{player}` | Detalji, izmena, brisanje igrača |
+| `GET` `PUT` `PATCH` `DELETE` | `/players/{player}` | Detalji, izmena i brisanje igrača |
 | `GET` `POST` | `/training-sessions` | Lista i zakazivanje treninga |
 | `PUT` `DELETE` | `/training-sessions/{trainingSession}` | Izmena i brisanje treninga |
-| `PATCH` | `/training-sessions/{trainingSession}/status` | Promena statusa treninga |
+| `PUT` | `/training-sessions/{trainingSession}/status` | Promena statusa treninga |
 | `GET` `POST` | `/matches` | Lista i zakazivanje utakmica |
-| `PUT` `DELETE` | `/matches/{match}` | Izmena i brisanje utakmice |
-| `POST` | `/matches/{match}/stats` | Čuvanje zapisnika utakmice (sastav, golovi, asistencije) |
-| `PATCH` | `/matches/{match}/status` | Promena statusa utakmice |
+| `PUT` | `/matches/{match}` | Izmena utakmice |
+| `DELETE` | `/matches/{match}` | Brisanje utakmice |
+| `PUT` | `/matches/{match}/stats` | Čuvanje zapisnika (Premium: sastav, golovi, asistencije) |
+| `PUT` | `/matches/{match}/status` | Promena statusa utakmice |
 | `GET` | `/analytics` | Analitika (podržava `team_id`, `date_from`, `date_to`) |
 | `GET` | `/finances/overview` | Pregled finansija |
-| `GET` `POST` | `/payments` | Uplate igrača |
+| `GET` | `/teams/{team}/payments` | Uplate za tim |
+| `POST` | `/payments` | Evidentiranje ili izmena uplate |
 | `POST` | `/payments/bulk` | Grupno evidentiranje uplata |
 | `GET` `PUT` | `/club` | Profil kluba |
-| `GET` `POST` | `/users` | Korisnički nalozi kluba |
-| `GET` `PUT` `DELETE` | `/users/{user}` | Detalji, izmena, brisanje korisnika |
+| `GET` `POST` | `/users` | Lista i kreiranje naloga |
+| `GET` `PUT` `PATCH` `DELETE` | `/users/{user}` | Detalji, izmena i brisanje naloga |
+| `PATCH` | `/subscriptions/{subscription}/status` | Odluka super-admina o pretplati |
+| `PATCH` | `/super-admin/subscriptions/{subscription}/plan` | Promena paketa |
+| `PATCH` | `/super-admin/subscriptions/{subscription}/cancel` | Otkazivanje pretplate |
+| `DELETE` | `/super-admin/users/{user}` | Brisanje korisnika od super-admina |
+| `DELETE` | `/super-admin/clubs/{club}` | Brisanje kluba od super-admina |
 | `GET` | `/roles` | Lista uloga |
 | `GET` | `/super-admin/dashboard` | Super admin pregled |
+| `GET` | `/admin/clubs` | Pregled klubova za super-admina |
 
 Kompletnu listu ruta ispisuje:
 
@@ -294,11 +306,12 @@ Kompletnu listu ruta ispisuje:
 docker compose exec -w /var/www/html/src app php artisan route:list --path=api
 ```
 
-## Poznati problemi
+## Poznati nedovršeni delovi
 
-- **Utakmice sa statusom `canceled`** se ne prikazuju ni u jednom tabu na stranici `/matches`.
-- **Middleware `CheckSubscriptionFeature`** postoji u kodu ali nije registrovan u `bootstrap/app.php` — koristi se samo `EnsureSubscriptionFeature`.
-- **Keširanje nije implementirano** nigde u `src/app/`.
+- Taktike se ne čuvaju na serveru; dugme za čuvanje trenutno prikazuje samo potvrdu.
+- Frontend API URL je fiksiran na `http://localhost:8080/api`; pre produkcionog deploy-a treba ga izvući u environment konfiguraciju.
+- CI workflow pokreće Laravel testove, ali ne proverava frontend build.
+- Pretplatnički feature-gating treba proveriti na svim API rutama — frontend ograničenja nisu bezbednosna granica.
 
 ## Licenca
 
