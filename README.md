@@ -68,7 +68,7 @@ Ključna stvar za razumevanje projekta: **`users` i `players` su dve odvojene ta
 - **`users`** — nalozi za prijavu u aplikaciju (administratori kluba, treneri, super admin). Imaju email i lozinku.
 - **`players`** — roster igrača kluba. Nemaju nalog, ne prijavljuju se, i **nemaju `user_id` kolonu**.
 
-Sva evidencija vezana za igrače (pozivnice, prisustvo, sastavi, statistika, uplate) referencira `players`, nikada `users`.
+Sva evidencija vezana za igrače (pozivnice, prisustvo, sastavi, statistika, uplate) referencira `players`, nikada `users`. Limit `max_players` važi za roster zapise u `players`; korisnički nalozi sa ulogom `player` nisu uključeni u taj broj.
 
 ### Glavne tabele
 
@@ -254,7 +254,7 @@ Aktivni katalog paketa čita se iz `subscription_plans`; GET zahtevi ga ne sinhr
 docker compose exec -T -w /var/www/html/src app php artisan test
 ```
 
-Trenutno stanje: **51 test, 191 asercija.**
+Trenutno stanje: **53 testa, 198 asercija.**
 
 ## API
 

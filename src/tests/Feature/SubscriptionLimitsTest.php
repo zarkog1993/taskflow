@@ -138,4 +138,50 @@ class SubscriptionLimitsTest extends TestCase
             'club_id' => $club->id,
         ]);
     }
+
+    public function test_roster_player_limit_counts_roster_records_not_player_login_accounts(): void
+    {
+        $club = Club::create(['name' => 'FK Separate Player Limits']);
+        $admin = User::factory()->create(['club_id' => $club->id]);
+        $admin->roles()->sync([Role::where('slug', 'club-admin')->first()->id]);
+        Subscription::create([
+            'user_id' => $admin->id,
+            'club_id' => $club->id,
+            'plan_type' => 'basic',
+            'status' => 'active',
+            'max_teams' => 2,
+            'max_players' => 1,
+            'features' => ['players', 'teams'],
+            'ends_at' => now()->addMonth(),
+        ]);
+        $team = Team::create([
+            'name' => 'Separate Limits Team',
+            'age_group' => 'u19',
+            'club_id' => $club->id,
+        ]);
+        $playerRole = Role::where('slug', 'player')->firstOrFail();
+
+        foreach (range(1, 3) as $number) {
+            $playerAccount = User::factory()->create(['club_id' => $club->id]);
+            $playerAccount->roles()->attach($playerRole);
+        }
+
+        $this->actingAs($admin, 'sanctum')
+            ->postJson('/api/players', [
+                'name' => 'First Roster Player',
+                'primary_position' => 'ST',
+                'team_id' => $team->id,
+            ])
+            ->assertCreated();
+
+        $this->postJson('/api/players', [
+            'name' => 'Over Limit Roster Player',
+            'primary_position' => 'CM',
+            'team_id' => $team->id,
+        ])
+            ->assertForbidden()
+            ->assertJsonPath('message', 'The player limit for this subscription has been reached.');
+
+        $this->assertDatabaseCount('players', 1);
+    }
 }
