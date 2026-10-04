@@ -1,6 +1,6 @@
 <template>
     <div class="lg:col-span-3 bg-white/90 dark:bg-gray-900/90 border border-gray-200 dark:border-gray-800 rounded-3xl p-4 sm:p-6 shadow-2xl relative overflow-hidden">
-        <div @dragover.prevent @drop="$emit('drop', $event)" class="relative w-full aspect-[1.5/1] bg-emerald-50/50 dark:bg-emerald-950/50 rounded-2xl border-2 border-emerald-200/60 dark:border-emerald-800/60 overflow-hidden select-none">
+        <div @dragover.prevent @drop="$emit('drop', $event)" class="relative w-full aspect-square sm:aspect-[1.5/1] bg-emerald-50/50 dark:bg-emerald-950/50 rounded-2xl border-2 border-emerald-200/60 dark:border-emerald-800/60 overflow-hidden select-none">
 
             <svg class="absolute inset-0 w-full h-full stroke-emerald-500/30 fill-none pointer-events-none" stroke-width="2">
                 <rect x="2" y="2" width="99%" height="96%" rx="10" />
@@ -24,7 +24,7 @@
             >
                 <div class="flex flex-col items-center">
                     <div
-                        class="w-11 h-11 border-2 font-black text-xs rounded-full flex items-center justify-center shadow-2xl relative transition"
+                        class="w-9 h-9 sm:w-11 sm:h-11 border-2 font-black text-[10px] sm:text-xs rounded-full flex items-center justify-center shadow-2xl relative transition"
                         :class="spot.player ? 'bg-indigo-600 border-white text-white' : 'bg-gray-100/90 dark:bg-gray-800/90 border-dashed border-gray-500 text-gray-600 dark:text-gray-400'"
                     >
                         #{{ spot.player?.jersey_number || spot.defaultNumber || '?' }}
@@ -32,7 +32,10 @@
                   {{ spot.position }}
                 </span>
                     </div>
-                    <span class="text-[10px] font-bold text-gray-900 dark:text-white bg-gray-50/90 dark:bg-gray-950/90 px-2 py-0.5 rounded-md border border-gray-200 dark:border-gray-800 mt-1 shadow-md whitespace-nowrap">
+                    <span
+                        :title="spot.player ? spot.player.name : spot.roleName"
+                        class="max-w-[76px] sm:max-w-[140px] truncate text-[8px] sm:text-[10px] font-bold text-gray-900 dark:text-white bg-gray-50/90 dark:bg-gray-950/90 px-1.5 sm:px-2 py-0.5 rounded-md border border-gray-200 dark:border-gray-800 mt-1 shadow-md"
+                    >
                 {{ spot.player ? spot.player.name : spot.roleName }}
               </span>
                 </div>
