@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Club;
+use App\Models\Player;
 use App\Models\Role;
 use App\Models\Subscription;
 use App\Models\Team;
@@ -56,5 +57,85 @@ class SubscriptionLimitsTest extends TestCase
 
         // Očekujemo 403 Forbidden jer validacija prolazi, ali Policy blokira zbog limita
         $response->assertStatus(403);
+    }
+
+    public function test_cannot_create_player_when_club_limit_is_reached_across_teams(): void
+    {
+        $club = Club::create(['name' => 'FK Players']);
+        $admin = User::factory()->create(['club_id' => $club->id]);
+        $admin->roles()->sync([Role::where('slug', 'club-admin')->first()->id]);
+        Subscription::create([
+            'user_id' => $admin->id,
+            'club_id' => $club->id,
+            'plan_type' => 'basic',
+            'status' => 'active',
+            'max_teams' => 2,
+            'max_players' => 1,
+            'features' => ['players', 'teams'],
+            'ends_at' => now()->addMonth(),
+        ]);
+
+        $firstTeam = Team::create([
+            'name' => 'First Team',
+            'age_group' => 'u19',
+            'club_id' => $club->id,
+        ]);
+        $secondTeam = Team::create([
+            'name' => 'Second Team',
+            'age_group' => 'senior',
+            'club_id' => $club->id,
+        ]);
+        Player::create([
+            'name' => 'Existing Player',
+            'primary_position' => 'CM',
+            'team_id' => $firstTeam->id,
+            'club_id' => $club->id,
+        ]);
+
+        $this->actingAs($admin, 'sanctum')
+            ->postJson('/api/players', [
+                'name' => 'Over Limit Player',
+                'primary_position' => 'ST',
+                'team_id' => $secondTeam->id,
+            ])
+            ->assertForbidden()
+            ->assertJsonPath('message', 'The player limit for this subscription has been reached.');
+
+        $this->assertDatabaseMissing('players', ['name' => 'Over Limit Player']);
+    }
+
+    public function test_can_create_player_below_club_limit(): void
+    {
+        $club = Club::create(['name' => 'FK Within Limit']);
+        $admin = User::factory()->create(['club_id' => $club->id]);
+        $admin->roles()->sync([Role::where('slug', 'club-admin')->first()->id]);
+        Subscription::create([
+            'user_id' => $admin->id,
+            'club_id' => $club->id,
+            'plan_type' => 'basic',
+            'status' => 'active',
+            'max_teams' => 1,
+            'max_players' => 1,
+            'features' => ['players', 'teams'],
+            'ends_at' => now()->addMonth(),
+        ]);
+        $team = Team::create([
+            'name' => 'Within Limit Team',
+            'age_group' => 'u19',
+            'club_id' => $club->id,
+        ]);
+
+        $this->actingAs($admin, 'sanctum')
+            ->postJson('/api/players', [
+                'name' => 'First Player',
+                'primary_position' => 'ST',
+                'team_id' => $team->id,
+            ])
+            ->assertCreated();
+
+        $this->assertDatabaseHas('players', [
+            'name' => 'First Player',
+            'club_id' => $club->id,
+        ]);
     }
 }

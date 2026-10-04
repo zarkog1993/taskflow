@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePlayerRequest;
 use App\Http\Resources\PlayerResource;
 use App\Models\Player;
+use App\Models\Subscription;
 use App\Models\Team;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class PlayerController extends Controller
@@ -38,11 +40,27 @@ class PlayerController extends Controller
         $data['club_id'] = $team->club_id;
         $data['seniority'] = $this->seniorityFromAgeGroup($team->age_group);
 
-        if ($request->hasFile('photo')) {
-            $data['photo_path'] = $request->file('photo')->store('players', 'public');
-        }
+        $player = DB::transaction(function () use ($request, $data, $team) {
+            if (!$request->user()->isSuperAdmin()) {
+                $subscription = Subscription::query()
+                    ->where('club_id', $team->club_id)
+                    ->lockForUpdate()
+                    ->first();
 
-        $player = Player::create($data);
+                abort_unless($subscription?->isActive(), 403, 'An active club subscription is required.');
+                abort_if(
+                    Player::where('club_id', $team->club_id)->count() >= $subscription->max_players,
+                    403,
+                    'The player limit for this subscription has been reached.',
+                );
+            }
+
+            if ($request->hasFile('photo')) {
+                $data['photo_path'] = $request->file('photo')->store('players', 'public');
+            }
+
+            return Player::create($data);
+        });
 
         return response()->json([
             'message' => 'Igrač je uspešno kreiran.',
