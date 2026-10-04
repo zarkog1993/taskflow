@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -81,15 +82,22 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
             'club_id' => 'nullable|exists:clubs,id',
-            'role' => 'required|string|exists:roles,slug',
+            'role' => ['required', 'string', Rule::exists('roles', 'slug')],
         ]);
 
-        // Kreiranje korisnika
+        $actor = $request->user();
+        abort_unless(
+            $actor->isSuperAdmin() || in_array($validated['role'], ['player', 'club-admin'], true),
+            403,
+        );
+
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'club_id' => $validated['club_id'] ?? $request->user()->club_id,
+            'club_id' => $actor->isSuperAdmin()
+                ? ($validated['club_id'] ?? null)
+                : $actor->club_id,
         ]);
 
         // Dodeljivanje uloge
@@ -111,6 +119,8 @@ class UserController extends Controller
      */
     public function show(User $user): JsonResponse
     {
+        Gate::authorize('view', $user);
+
         return response()->json([
             'data' => $user->load(['roles', 'playerProfile', 'teams'])
         ]);

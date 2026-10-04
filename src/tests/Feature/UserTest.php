@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Club;
+use App\Models\Role;
 use App\Models\Subscription;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -71,18 +72,64 @@ class UserTest extends TestCase
         ]);
     }
 
-    public function test_authenticated_user_can_see_single_user(): void
+    public function test_authenticated_user_can_see_their_own_account(): void
     {
-        $targetUser = User::factory()->create();
-
-        $response = $this->getJson("/api/users/{$targetUser->id}");
+        $response = $this->getJson("/api/users/{$this->authUser->id}");
 
         $response->assertStatus(200);
         $response->assertJson([
             'data' => [
-                'id' => $targetUser->id,
-                'email' => $targetUser->email
+                'id' => $this->authUser->id,
+                'email' => $this->authUser->email
             ]
+        ]);
+    }
+
+    public function test_authenticated_user_cannot_see_another_clubs_user(): void
+    {
+        $otherClub = Club::factory()->create();
+        $targetUser = User::factory()->create(['club_id' => $otherClub->id]);
+
+        $this->getJson("/api/users/{$targetUser->id}")
+            ->assertForbidden();
+    }
+
+    public function test_club_admin_cannot_create_a_super_admin(): void
+    {
+        $clubAdmin = $this->createClubAdmin();
+        Role::firstOrCreate(['slug' => 'admin'], ['name' => 'Admin']);
+
+        $this->actingAs($clubAdmin, 'sanctum')
+            ->postJson('/api/users', [
+                'name' => 'Privileged User',
+                'email' => 'privileged@example.com',
+                'password' => 'password123',
+                'role' => 'admin',
+            ])
+            ->assertForbidden();
+
+        $this->assertDatabaseMissing('users', ['email' => 'privileged@example.com']);
+    }
+
+    public function test_club_admin_cannot_assign_a_new_user_to_another_club(): void
+    {
+        $clubAdmin = $this->createClubAdmin();
+        $otherClub = Club::factory()->create();
+        Role::firstOrCreate(['slug' => 'player'], ['name' => 'Player']);
+
+        $this->actingAs($clubAdmin, 'sanctum')
+            ->postJson('/api/users', [
+                'name' => 'New Player',
+                'email' => 'new-player@example.com',
+                'password' => 'password123',
+                'club_id' => $otherClub->id,
+                'role' => 'player',
+            ])
+            ->assertCreated();
+
+        $this->assertDatabaseHas('users', [
+            'email' => 'new-player@example.com',
+            'club_id' => $clubAdmin->club_id,
         ]);
     }
 
@@ -157,5 +204,28 @@ class UserTest extends TestCase
         $this->assertDatabaseMissing('users', [
             'id' => $targetUser->id,
         ]);
+    }
+
+    private function createClubAdmin(): User
+    {
+        $clubAdminRole = Role::firstOrCreate(
+            ['slug' => 'club-admin'],
+            ['name' => 'Club Admin'],
+        );
+        $clubAdmin = User::factory()->create(['club_id' => $this->authUser->club_id]);
+        $clubAdmin->roles()->attach($clubAdminRole);
+
+        Subscription::create([
+            'user_id' => $clubAdmin->id,
+            'club_id' => $clubAdmin->club_id,
+            'plan_type' => 'standard',
+            'status' => 'active',
+            'max_teams' => 5,
+            'max_players' => 150,
+            'features' => ['players'],
+            'ends_at' => now()->addMonth(),
+        ]);
+
+        return $clubAdmin;
     }
 }
