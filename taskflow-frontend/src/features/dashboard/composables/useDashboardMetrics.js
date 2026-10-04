@@ -1,38 +1,44 @@
 // Composable koji objedinjuje podatke i izvedene metrike za stranicu kontrolne table:
-// učitava ekipe/korisnike/treninge i izračunava KPI, sledeću aktivnost i top igrače.
+// učitava ekipe/treninge i izračunava KPI, sledeću aktivnost i najbolje igrače.
 import { computed, onMounted } from 'vue'
 import { useAuthStore } from '../../../stores/auth'
 import { useTeamStore } from '../../../stores/team'
-import { useUserStore } from '../../../stores/user'
 import { useTrainingStore } from '../../../stores/training'
 
 export function useDashboardMetrics() {
     const authStore = useAuthStore()
     const teamStore = useTeamStore()
-    const userStore = useUserStore()
     const trainingStore = useTrainingStore()
 
     onMounted(() => {
         teamStore.fetchTeams()
-        userStore.fetchUsers()
         trainingStore.fetchSessions()
     })
 
+    const players = computed(() => teamStore.teams.flatMap(team => team.players || []))
+
     const upcomingSessionsCount = computed(() => {
-        return trainingStore.sessions.filter(s => s.status === 'planned').length
+        const now = Date.now()
+        return trainingStore.sessions.filter(session =>
+            session.status === 'planned' && new Date(session.scheduled_at).getTime() >= now
+        ).length
     })
 
     const totalGoalsCount = computed(() => {
-        return userStore.users.reduce((sum, u) => sum + (u.player_profile?.goals || 0), 0)
+        return players.value.reduce((sum, player) => sum + (player.goals || 0), 0)
     })
 
     const nextSession = computed(() => {
-        return trainingStore.sessions.find(s => s.status === 'planned') || null
+        return trainingStore.sessions
+            .filter(session =>
+                session.status === 'planned' && new Date(session.scheduled_at).getTime() >= Date.now()
+            )
+            .sort((a, b) => new Date(a.scheduled_at) - new Date(b.scheduled_at))[0] || null
     })
 
     const topPlayers = computed(() => {
-        return [...userStore.users]
-            .sort((a, b) => (b.player_profile?.goals || 0) - (a.player_profile?.goals || 0))
+        return [...players.value]
+            .sort((a, b) => (b.goals || 0) - (a.goals || 0))
             .slice(0, 5)
     })
 
@@ -44,7 +50,7 @@ export function useDashboardMetrics() {
     return {
         authStore,
         teamStore,
-        userStore,
+        players,
         upcomingSessionsCount,
         totalGoalsCount,
         nextSession,
