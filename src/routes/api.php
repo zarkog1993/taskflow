@@ -80,10 +80,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/super-admin/subscriptions/{subscription}/plan', [SuperAdminController::class, 'changeSubscriptionPlan']);
 
     // Finansije: članarine (akademija) i honorari/isplate (seniori)
-    Route::get('/finances/overview', [PaymentController::class, 'overview']);
-    Route::get('/teams/{team}/payments', [PaymentController::class, 'index']);
-    Route::post('/payments', [PaymentController::class, 'storeOrUpdate']);
-    Route::post('/payments/bulk', [PaymentController::class, 'bulkStoreOrUpdate']);
+    Route::get('/finances/overview', [PaymentController::class, 'overview'])->middleware('subscription.feature:teams');
+    Route::get('/teams/{team}/payments', [PaymentController::class, 'index'])->middleware('subscription.feature:teams');
+    Route::post('/payments', [PaymentController::class, 'storeOrUpdate'])->middleware('subscription.feature:teams');
+    Route::post('/payments/bulk', [PaymentController::class, 'bulkStoreOrUpdate'])->middleware('subscription.feature:teams');
 
     Route::get('/analytics', [AnalyticsController::class, 'index'])
         ->middleware('subscription.feature:advanced_stats');
