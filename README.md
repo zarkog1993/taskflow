@@ -201,6 +201,14 @@ Podrazumevane vrednosti (iz `docker-compose.yml`) — uskladi ih sa `.env`:
 
 `FRONTEND_URL` se koristi za preusmeravanje nakon RSVP odgovora iz email pozivnice.
 
+Frontend koristi `VITE_API_BASE_URL` za adresu backend API-ja. Ako promenljiva nije postavljena, koristi se `http://localhost:8080/api`. Za drugo okruženje je postavi u `taskflow-frontend/.env` ili u promenljive okruženja prilikom Vite build-a, na primer:
+
+```env
+VITE_API_BASE_URL=https://api.example.com/api
+```
+
+Pošto se Vite promenljive ugrađuju u frontend bundle, promena vrednosti zahteva ponovno pokretanje development servera ili novi build.
+
 ## Pokretanje
 
 | Servis | URL / Port |
@@ -245,7 +253,7 @@ Trenutno stanje: **32 testa, 100 asercija — sve prolazi.**
 
 ## API
 
-Osnovni URL: `http://localhost:8080/api`
+Podrazumevani API URL: `http://localhost:8080/api` (može se promeniti pomoću `VITE_API_BASE_URL`, vidi [konfiguraciju okruženja](#konfiguracija-okruženja)).
 
 Svi odgovori su u JSON formatu. Zaštićene rute zahtevaju zaglavlje `Authorization: Bearer <token>`.
 
