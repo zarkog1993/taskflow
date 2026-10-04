@@ -12,7 +12,7 @@ Najvažnija domenska odluka: **`users` i `players` su različiti entiteti.** `us
 
 - **Backend:** PHP 8.3+, Laravel 13, Sanctum, Eloquent, MySQL; Redis je uključen u Docker okruženje.
 - **Frontend:** Vue 3, Vite, Pinia, Vue Router, Tailwind CSS 4 i Axios.
-- **Testovi:** PHPUnit / Laravel test runner; trenutni skup ima 53 testa i 198 asercija.
+- **Testovi:** PHPUnit / Laravel test runner; trenutni skup ima 55 testova i 216 asercija.
 - **CI:** GitHub Actions pokreće backend testove sa SQLite; frontend build nije deo workflow-a.
 
 Backend je organizovan oko `routes/api.php`, HTTP kontrolera i middleware-a, modela, servisa, policies i API resources. Frontend je grupisan po funkcionalnosti u `taskflow-frontend/src/features/`, uz zajedničke stores, composables, services i komponente.
@@ -50,15 +50,10 @@ Nedavne izmene su zatvorile nekoliko ranije identifikovanih problema:
 - Finansijske API rute zahtevaju aktivan `teams` feature; frontend API adresa se podešava preko `VITE_API_BASE_URL`.
 - Taktika se čuva kao jedna aktivna formacija po ekipi; pristup je zaštićen `tactics` feature-om i proverom pristupa timu.
 - Katalog pretplata se čita iz aktivnih zapisa u bazi bez menjanja podataka pri GET zahtevima; neaktivni `pro` i `unlimited` paketi ostaju dostupni za istorijske pretplate.
+- Potpisani RSVP odgovori na trening ulaze u analitiku posećenosti; regresioni testovi proveravaju prihvaćene, odbijene i buduće pozivnice.
 - Zastarele tabele za task manager i stari modeli prisustva očišćeni su migracijama.
 
 ## Preporučeni sledeći koraci
-
-### Srednji prioritet
-
-1. **Proširiti testove poslovne logike.** Dodati regresione testove za obračun analitike i RSVP prisustvo.
-
-### Niži prioritet
 
 1. **Ojačati klijentsku autentifikaciju.** Bearer token se čuva u `localStorage`; razmotriti HTTP-only cookie pristup ili odgovarajuće mitigacije XSS rizika pre javne produkcije.
 2. **Uvesti keširanje tek uz merenje.** Analitika trenutno računa agregacije na zahtev; za trenutni obim prvo pratiti trajanje upita, pa keširati uz pouzdano invalidiranje nakon promene podataka.
