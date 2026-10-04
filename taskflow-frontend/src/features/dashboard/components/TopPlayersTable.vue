@@ -14,26 +14,26 @@
                 </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200/50 dark:divide-gray-700/50 text-xs">
-                <tr v-for="user in players" :key="user.id" class="hover:bg-gray-200/30 dark:hover:bg-gray-700/30 transition">
+                <tr v-for="player in players" :key="player.id" class="hover:bg-gray-200/30 dark:hover:bg-gray-700/30 transition">
                     <td class="py-3 px-4 font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                         <div class="w-6 h-6 rounded-full bg-indigo-600/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-[10px]">
-                            {{ user.name.charAt(0) }}
+                            {{ player.name.charAt(0) }}
                         </div>
-                        <router-link :to="`/players/${user.id}`" class="hover:text-indigo-600 dark:hover:text-indigo-400">
-                            {{ user.name }}
+                        <router-link :to="`/players/${player.id}`" class="hover:text-indigo-600 dark:hover:text-indigo-400">
+                            {{ player.name }}
                         </router-link>
                     </td>
                     <td class="py-3 px-4 text-center text-gray-600 dark:text-gray-400 font-mono">
-                        {{ user.player_profile?.primary_position || 'CM' }}
+                        {{ player.primary_position || 'N/A' }}
                     </td>
                     <td class="py-3 px-4 text-center font-bold text-emerald-700 dark:text-emerald-400">
-                        {{ user.player_profile?.matches_played || 0 }}
+                        {{ player.matches_played || 0 }}
                     </td>
                     <td class="py-3 px-4 text-center font-bold text-yellow-700 dark:text-yellow-400">
-                        {{ user.player_profile?.goals || 0 }}
+                        {{ player.goals || 0 }}
                     </td>
                     <td class="py-3 px-4 text-center font-bold text-purple-600 dark:text-purple-400">
-                        {{ user.player_profile?.assists || 0 }}
+                        {{ player.assists || 0 }}
                     </td>
                 </tr>
 

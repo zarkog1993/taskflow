@@ -21,7 +21,7 @@
         <!-- KPI Statistika -->
         <DashboardKpiCards
             :teams-count="teamStore.teams.length"
-            :users-count="userStore.users.length"
+            :players-count="players.length"
             :upcoming-sessions-count="upcomingSessionsCount"
             :total-goals-count="totalGoalsCount"
         />
@@ -54,7 +54,7 @@ import TeamsOverviewCard from './components/TeamsOverviewCard.vue'
 const {
     authStore,
     teamStore,
-    userStore,
+    players,
     upcomingSessionsCount,
     totalGoalsCount,
     nextSession,

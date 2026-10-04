@@ -14,7 +14,7 @@
         <div class="bg-gray-100/80 dark:bg-gray-800/80 border border-gray-200/80 dark:border-gray-700/80 p-5 rounded-2xl shadow-xl flex items-center justify-between">
             <div>
                 <div class="text-[10px] font-bold uppercase tracking-wider text-gray-600 dark:text-gray-400">Registrovani Igrači</div>
-                <div class="text-3xl font-black text-emerald-700 dark:text-emerald-400 mt-1">{{ usersCount }}</div>
+                <div class="text-3xl font-black text-emerald-700 dark:text-emerald-400 mt-1">{{ playersCount }}</div>
                 <div class="text-[11px] text-emerald-700 dark:text-emerald-500 mt-1">Članovi akademije</div>
             </div>
             <div class="p-3 bg-emerald-600/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-400 rounded-2xl text-xl">
@@ -26,7 +26,7 @@
             <div>
                 <div class="text-[10px] font-bold uppercase tracking-wider text-gray-600 dark:text-gray-400">Predstojeći Treninzi</div>
                 <div class="text-3xl font-black text-yellow-700 dark:text-yellow-400 mt-1">{{ upcomingSessionsCount }}</div>
-                <div class="text-[11px] text-yellow-700 dark:text-yellow-500 mt-1">Ove nedelje</div>
+                <div class="text-[11px] text-yellow-700 dark:text-yellow-500 mt-1">Zakazani događaji</div>
             </div>
             <div class="p-3 bg-yellow-600/10 border border-yellow-500/20 text-yellow-700 dark:text-yellow-400 rounded-2xl text-xl">
                 📅
@@ -35,9 +35,9 @@
 
         <div class="bg-gray-100/80 dark:bg-gray-800/80 border border-gray-200/80 dark:border-gray-700/80 p-5 rounded-2xl shadow-xl flex items-center justify-between">
             <div>
-                <div class="text-[10px] font-bold uppercase tracking-wider text-gray-600 dark:text-gray-400">Prosečni Golovi</div>
+                <div class="text-[10px] font-bold uppercase tracking-wider text-gray-600 dark:text-gray-400">Ukupno Golova</div>
                 <div class="text-3xl font-black text-purple-600 dark:text-purple-400 mt-1">{{ totalGoalsCount }}</div>
-                <div class="text-[11px] text-purple-600 dark:text-purple-400 mt-1">Ukupno u sezoni</div>
+                <div class="text-[11px] text-purple-600 dark:text-purple-400 mt-1">U odigranim utakmicama</div>
             </div>
             <div class="p-3 bg-purple-600/10 border border-purple-500/20 text-purple-600 dark:text-purple-400 rounded-2xl text-xl">
                 ⚽
@@ -52,7 +52,7 @@ defineProps({
         type: Number,
         default: 0
     },
-    usersCount: {
+    playersCount: {
         type: Number,
         default: 0
     },
