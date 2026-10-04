@@ -17,18 +17,18 @@
 
             <div class="max-h-64 overflow-y-auto space-y-2 pr-1">
                 <div
-                    v-for="user in filteredUsers"
-                    :key="user.id"
-                    @click="$emit('assign', user)"
+                    v-for="player in filteredUsers"
+                    :key="player.id"
+                    @click="$emit('assign', player)"
                     class="p-3 bg-gray-100/60 dark:bg-gray-800/60 hover:bg-indigo-50/60 dark:hover:bg-indigo-950/60 border border-gray-200/50 dark:border-gray-700/50 rounded-xl flex items-center justify-between cursor-pointer transition"
                 >
                     <div class="flex items-center space-x-3">
                         <div class="w-8 h-8 rounded-full bg-indigo-50 dark:bg-indigo-950 border border-indigo-200 dark:border-indigo-800 flex items-center justify-center font-bold text-xs text-indigo-700 dark:text-indigo-300">
-                            #{{ user.player_profile?.jersey_number || '-' }}
+                            #{{ player.jersey_number || '-' }}
                         </div>
                         <div>
-                            <div class="text-xs font-bold text-gray-900 dark:text-white">{{ user.name }}</div>
-                            <div class="text-[10px] text-gray-600 dark:text-gray-400 font-mono">{{ user.player_profile?.primary_position || 'N/A' }}</div>
+                            <div class="text-xs font-bold text-gray-900 dark:text-white">{{ player.name }}</div>
+                            <div class="text-[10px] text-gray-600 dark:text-gray-400 font-mono">{{ player.primary_position || 'N/A' }}</div>
                         </div>
                     </div>
                     <span class="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950 px-2 py-1 rounded border border-indigo-200 dark:border-indigo-800">Postavi</span>

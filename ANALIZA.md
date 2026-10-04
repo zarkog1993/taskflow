@@ -1,6 +1,6 @@
 # TaskFlow — pregled projekta
 
-> Ažurirano: 2026-10-04. Ovaj dokument opisuje stanje koda na grani `main`; razvojna baza i njeni podaci nisu izvor dokumentacije.
+> Ažurirano: 2026-10-04. Razvojna baza i njeni podaci nisu izvor dokumentacije.
 
 ## Pregled
 
@@ -12,7 +12,7 @@ Najvažnija domenska odluka: **`users` i `players` su različiti entiteti.** `us
 
 - **Backend:** PHP 8.3+, Laravel 13, Sanctum, Eloquent, MySQL; Redis je uključen u Docker okruženje.
 - **Frontend:** Vue 3, Vite, Pinia, Vue Router, Tailwind CSS 4 i Axios.
-- **Testovi:** PHPUnit / Laravel test runner; trenutni skup ima 40 testova i 132 asercije.
+- **Testovi:** PHPUnit / Laravel test runner; trenutni skup ima 49 testova i 176 asercija.
 - **CI:** GitHub Actions pokreće backend testove sa SQLite; frontend build nije deo workflow-a.
 
 Backend je organizovan oko `routes/api.php`, HTTP kontrolera i middleware-a, modela, servisa, policies i API resources. Frontend je grupisan po funkcionalnosti u `taskflow-frontend/src/features/`, uz zajedničke stores, composables, services i komponente.
@@ -45,28 +45,23 @@ Nedavne izmene su zatvorile nekoliko ranije identifikovanih problema:
 - Konfiguracija paketa, onboarding i dokumentacija usklađeni su na tri paketa; Basic uključuje profil kluba, igrače i timove.
 - Zapisnik utakmice je ograničen na Premium i podaci o statistici se ne učitavaju za pretplatnike bez `advanced_stats`.
 - Otkazane utakmice prikazuju se odvojeno.
+- Finansijske API rute zahtevaju aktivan `teams` feature; frontend API adresa se podešava preko `VITE_API_BASE_URL`.
+- Taktika se čuva kao jedna aktivna formacija po ekipi; pristup je zaštićen `tactics` feature-om i proverom pristupa timu.
 - Zastarele tabele za task manager i stari modeli prisustva očišćeni su migracijama.
 
 ## Preporučeni sledeći koraci
 
-### Visok prioritet
-
-1. **Proveriti pretplatničku kontrolu svih API ruta.** Rute `/finances/overview`, `/teams/{team}/payments`, `/payments` i `/payments/bulk` u `routes/api.php` imaju samo `auth:sanctum` grupu, bez provere aktivne pretplate ili `subscription.feature` middleware-a. Finansijski API zato treba da odbije naloge sa neaktivnom pretplatom, nezavisno od frontend rutera.
-2. **Ukloniti fiksni API URL iz frontenda.** `taskflow-frontend/src/services/api.js` koristi `http://localhost:8080/api`; koristiti Vite environment promenljivu za različita okruženja.
-3. **Dodati frontend build u CI.** Postojeći workflow proverava Laravel testove, ali ne i `npm run build`.
-
 ### Srednji prioritet
 
-4. **Dovršiti čuvanje taktike.** Tabla trenutno menja stanje u memoriji, a `saveTactics` samo prikazuje `alert`; dodati model, API i povezivanje taktike sa timom ili utakmicom.
-5. **Ukloniti pisanje iz čitanja kataloga paketa.** `SubscriptionPlanService::all()` poziva `updateOrCreate` i deaktivira pakete tokom čitanja javne liste paketa. Sinhronizaciju konfiguracije i baze premestiti u seeder/deploy komandu, da GET zahtev ne menja podatke i ne resetuje administratorske izmene.
-6. **Razjasniti ograničenje „igrača” u `UserPolicy`.** To ograničenje broji naloge `users` sa ulogom `player`, dok stvarni roster limit broji `players`. Odlučiti da li su to zasebni limiti i nazvati ih tako u kodu i interfejsu.
-7. **Proširiti testove poslovne logike.** Trenutni testovi pokrivaju autentifikaciju, autorizaciju, onboarding i deo pretplatničkih ograničenja, ali nema namenskih regresionih testova za finansijske upise, obračun analitike i RSVP prisustvo.
+1. **Ukloniti pisanje iz čitanja kataloga paketa.** `SubscriptionPlanService::all()` poziva `updateOrCreate` i deaktivira pakete tokom čitanja javne liste paketa. Sinhronizaciju konfiguracije i baze premestiti u seeder/deploy komandu, da GET zahtev ne menja podatke i ne resetuje administratorske izmene.
+2. **Razjasniti ograničenje „igrača” u `UserPolicy`.** To ograničenje broji naloge `users` sa ulogom `player`, dok stvarni roster limit broji `players`. Odlučiti da li su to zasebni limiti i nazvati ih tako u kodu i interfejsu.
+3. **Proširiti testove poslovne logike.** Dodati regresione testove za obračun analitike i RSVP prisustvo.
 
 ### Niži prioritet
 
-8. **Ojačati klijentsku autentifikaciju.** Bearer token se čuva u `localStorage`; razmotriti HTTP-only cookie pristup ili odgovarajuće mitigacije XSS rizika pre javne produkcije.
-9. **Uvesti keširanje tek uz merenje.** Analitika trenutno računa agregacije na zahtev; za trenutni obim prvo pratiti trajanje upita, pa keširati uz pouzdano invalidiranje nakon promene podataka.
-10. **Uskladiti preostalu dokumentaciju i uklanjati neaktivne modele postepeno.** `README.md` opisuje aktivni sistem; proveriti da li zastareli modeli i frontend template fajlovi imaju reference pre uklanjanja.
+4. **Ojačati klijentsku autentifikaciju.** Bearer token se čuva u `localStorage`; razmotriti HTTP-only cookie pristup ili odgovarajuće mitigacije XSS rizika pre javne produkcije.
+5. **Uvesti keširanje tek uz merenje.** Analitika trenutno računa agregacije na zahtev; za trenutni obim prvo pratiti trajanje upita, pa keširati uz pouzdano invalidiranje nakon promene podataka.
+6. **Uklanjati neaktivne modele postepeno.** Proveriti da li zastareli modeli i frontend template fajlovi imaju reference pre uklanjanja.
 
 ## Predlog interesantnog feature-a
 

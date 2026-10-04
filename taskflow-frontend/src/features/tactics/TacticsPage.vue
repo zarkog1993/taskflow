@@ -7,6 +7,10 @@
             @team-filter-change="onTeamFilterChange"
             @apply-formation="applyFormation"
             @save="saveTactics"
+            :is-loading="isLoading"
+            :is-saving="isSaving"
+            :error-message="errorMessage"
+            :save-message="saveMessage"
         />
 
         <!-- Teren i Sastav Ekipe -->
@@ -57,6 +61,10 @@ const {
     onDragStart,
     onDropOnPitch,
     applyFormation,
-    saveTactics
+    saveTactics,
+    errorMessage,
+    saveMessage,
+    isLoading,
+    isSaving
 } = useTacticsBoard()
 </script>

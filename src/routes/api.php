@@ -11,6 +11,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\TeamController;
+use App\Http\Controllers\TeamTacticsController;
 use App\Http\Controllers\TrainingSessionController;
 use App\Http\Controllers\ClubController;
 use App\Http\Controllers\SuperAdminController;
@@ -64,6 +65,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/teams/{team}', [TeamController::class, 'update'])->middleware('subscription.feature:teams');
     Route::delete('/teams/{team}', [TeamController::class, 'destroy'])->middleware('subscription.feature:teams');
     Route::post('/teams/{team}/members', [TeamController::class, 'assignMembers'])->middleware('subscription.feature:teams');
+    Route::get('/teams/{team}/tactics', [TeamTacticsController::class, 'show'])->middleware('subscription.feature:tactics');
+    Route::put('/teams/{team}/tactics', [TeamTacticsController::class, 'update'])->middleware('subscription.feature:tactics');
 
     Route::get('/matches', [MatchDayController::class, 'index'])->middleware('subscription.feature:matches');
     Route::post('/matches', [MatchDayController::class, 'store'])->middleware('subscription.feature:matches');

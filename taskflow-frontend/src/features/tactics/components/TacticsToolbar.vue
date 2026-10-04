@@ -8,22 +8,32 @@
         <div class="flex items-center gap-3">
             <div class="flex items-center gap-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-1.5">
                 <span class="text-xs font-bold text-gray-600 dark:text-gray-400 uppercase">EKIPA:</span>
-                <AppSelect v-model="selectedTeamFilter" @change="$emit('team-filter-change')" class="bg-transparent text-gray-900 dark:text-white text-xs font-bold outline-none cursor-pointer">
+                <AppSelect v-model="selectedTeamFilter" :disabled="isLoading || isSaving" @change="$emit('team-filter-change')" class="bg-transparent text-gray-900 dark:text-white text-xs font-bold outline-none cursor-pointer">
                     <option v-for="team in teams" :key="team.id" :value="team.id">{{ team.name }}</option>
                 </AppSelect>
             </div>
 
-            <AppSelect v-model="selectedFormation" @change="$emit('apply-formation')" class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white text-xs font-bold rounded-xl px-3 py-2.5 outline-none cursor-pointer">
+            <AppSelect v-model="selectedFormation" :disabled="isLoading || isSaving" @change="$emit('apply-formation')" class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white text-xs font-bold rounded-xl px-3 py-2.5 outline-none cursor-pointer">
                 <option value="4-3-3">Formacija 4-3-3</option>
                 <option value="4-4-2">Formacija 4-4-2</option>
                 <option value="4-2-3-1">Formacija 4-2-3-1</option>
                 <option value="3-5-2">Formacija 3-5-2</option>
             </AppSelect>
 
-            <button @click="$emit('save')" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2 cursor-pointer">
-                <span>💾</span> Sačuvaj Taktiku
+            <button
+                @click="$emit('save')"
+                :disabled="isLoading || isSaving || !selectedTeamFilter"
+                class="bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2 cursor-pointer"
+            >
+                <span>💾</span> {{ isSaving ? 'Čuvanje...' : 'Sačuvaj Taktiku' }}
             </button>
         </div>
+        <p v-if="errorMessage || saveMessage" role="status" aria-live="polite" class="w-full text-xs font-semibold" :class="errorMessage ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-700 dark:text-emerald-400'">
+            {{ errorMessage || saveMessage }}
+        </p>
+        <p v-else-if="!teams.length && !isLoading" role="status" class="w-full text-xs text-gray-600 dark:text-gray-400">
+            Nema dostupnih ekipa za prikaz taktike.
+        </p>
     </div>
 </template>
 
@@ -32,7 +42,11 @@ defineProps({
     teams: {
         type: Array,
         default: () => []
-    }
+    },
+    isLoading: Boolean,
+    isSaving: Boolean,
+    errorMessage: String,
+    saveMessage: String
 })
 
 defineEmits(['team-filter-change', 'apply-formation', 'save'])
