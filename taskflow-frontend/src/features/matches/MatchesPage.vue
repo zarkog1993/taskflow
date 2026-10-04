@@ -1,4 +1,4 @@
-<!-- Stranica utakmica: tabovi predstojeće/odigrane, kartice mečeva, zakazivanje, zapisnik i brisanje. -->
+<!-- Stranica utakmica: tabovi po statusu, kartice mečeva, zakazivanje, zapisnik i brisanje. -->
 <template>
     <div class="max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
         <!-- Zaglavlje -->
@@ -14,7 +14,12 @@
 
         <!-- Tabovi + filter po mesecu -->
         <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-            <MatchTabs v-model:active-tab="activeTab" :upcoming-count="upcomingMatches.length" :completed-count="completedMatches.length" />
+            <MatchTabs
+                v-model:active-tab="activeTab"
+                :upcoming-count="upcomingMatches.length"
+                :completed-count="completedMatches.length"
+                :canceled-count="canceledMatches.length"
+            />
 
             <div class="flex items-center gap-2 pb-2">
                 <label class="text-[10px] font-bold uppercase text-gray-600 dark:text-gray-400 tracking-wider">Mesec</label>
@@ -42,10 +47,10 @@
         <div v-else class="text-center py-12 bg-gray-100/40 dark:bg-gray-800/40 border border-gray-200/50 dark:border-gray-700/50 rounded-2xl space-y-2">
             <p class="text-sm text-gray-600 dark:text-gray-400 italic">
                 <template v-if="selectedMonth !== 'all'">
-                    Nema utakmica u ovoj kategoriji za {{ selectedMonthLabel }}.
+                    {{ emptyStateLabel }} za {{ selectedMonthLabel }}.
                 </template>
                 <template v-else>
-                    Nema utakmica u ovoj kategoriji.
+                    {{ emptyStateLabel }}.
                 </template>
             </p>
             <button
@@ -82,6 +87,7 @@ import DeleteMatchModal from '../../components/matches/DeleteMatchModal.vue'
 import MatchTabs from './components/MatchTabs.vue'
 import CreateMatchModal from './components/CreateMatchModal.vue'
 import { useMatchesPage } from './composables/useMatchesPage'
+import { computed } from 'vue'
 
 const {
     teams,
@@ -92,6 +98,7 @@ const {
     createMatch,
     upcomingMatches,
     completedMatches,
+    canceledMatches,
     filteredMatches,
     selectedMonth,
     monthOptions,
@@ -102,4 +109,10 @@ const {
     handleDeleteMatch,
     confirmDeleteMatch
 } = useMatchesPage()
+
+const emptyStateLabel = computed(() => ({
+    upcoming: 'Nema predstojećih utakmica',
+    completed: 'Nema odigranih utakmica',
+    canceled: 'Nema otkazanih utakmica'
+}[activeTab.value]))
 </script>

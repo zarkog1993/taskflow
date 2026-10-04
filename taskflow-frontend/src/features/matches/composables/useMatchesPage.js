@@ -1,5 +1,5 @@
 // Composable koji objedinjuje podatke i akcije za stranicu utakmica:
-// listu mečeva, tabove (predstojeće/odigrane), kreiranje utakmice, zapisnik i brisanje.
+// listu mečeva, tabove po statusu, kreiranje utakmice, zapisnik i brisanje.
 import { ref, reactive, computed, onMounted } from 'vue'
 import { fetchTeams } from '../../../services/teamsService'
 import { fetchMatches as fetchMatchesRequest, createMatch as createMatchRequest, deleteMatch as deleteMatchRequest } from '../../../services/matchesService'
@@ -91,7 +91,13 @@ export function useMatchesPage() {
 
     const upcomingMatches = computed(() => inSelectedMonth(byStatus('scheduled')))
     const completedMatches = computed(() => inSelectedMonth(byStatus('completed')))
-    const filteredMatches = computed(() => activeTab.value === 'upcoming' ? upcomingMatches.value : completedMatches.value)
+    const canceledMatches = computed(() => inSelectedMonth(byStatus('canceled')))
+    const matchesByTab = {
+        upcoming: upcomingMatches,
+        completed: completedMatches,
+        canceled: canceledMatches
+    }
+    const filteredMatches = computed(() => matchesByTab[activeTab.value]?.value || [])
 
     const selectedMonthLabel = computed(
         () => monthOptions.value.find((o) => o.value === selectedMonth.value)?.label ?? ''
@@ -140,6 +146,7 @@ export function useMatchesPage() {
         createMatch,
         upcomingMatches,
         completedMatches,
+        canceledMatches,
         filteredMatches,
         selectedMonth,
         monthOptions,
