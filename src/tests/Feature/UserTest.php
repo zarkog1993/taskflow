@@ -133,6 +133,31 @@ class UserTest extends TestCase
         ]);
     }
 
+    public function test_club_admin_can_create_player_login_accounts_beyond_roster_player_limit(): void
+    {
+        $clubAdmin = $this->createClubAdmin(maxPlayers: 1);
+        $playerRole = Role::firstOrCreate(['slug' => 'player'], ['name' => 'Player']);
+        $existingPlayerAccount = User::factory()->create(['club_id' => $clubAdmin->club_id]);
+        $existingPlayerAccount->roles()->attach($playerRole);
+
+        $this->actingAs($clubAdmin, 'sanctum')
+            ->postJson('/api/users', [
+                'name' => 'Second Player Account',
+                'email' => 'second-player-account@example.com',
+                'password' => 'password123',
+                'role' => 'player',
+            ])
+            ->assertCreated();
+
+        $this->assertSame(
+            2,
+            User::where('club_id', $clubAdmin->club_id)
+                ->whereHas('roles', fn ($query) => $query->where('slug', 'player'))
+                ->count(),
+        );
+        $this->assertDatabaseCount('players', 0);
+    }
+
     public function test_authenticated_user_can_update_user_without_changing_email(): void
     {
         $updatePayload = [
@@ -206,7 +231,7 @@ class UserTest extends TestCase
         ]);
     }
 
-    private function createClubAdmin(): User
+    private function createClubAdmin(int $maxPlayers = 150): User
     {
         $clubAdminRole = Role::firstOrCreate(
             ['slug' => 'club-admin'],
@@ -221,7 +246,7 @@ class UserTest extends TestCase
             'plan_type' => 'standard',
             'status' => 'active',
             'max_teams' => 5,
-            'max_players' => 150,
+            'max_players' => $maxPlayers,
             'features' => ['players'],
             'ends_at' => now()->addMonth(),
         ]);

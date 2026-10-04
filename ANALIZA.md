@@ -12,7 +12,7 @@ Najvažnija domenska odluka: **`users` i `players` su različiti entiteti.** `us
 
 - **Backend:** PHP 8.3+, Laravel 13, Sanctum, Eloquent, MySQL; Redis je uključen u Docker okruženje.
 - **Frontend:** Vue 3, Vite, Pinia, Vue Router, Tailwind CSS 4 i Axios.
-- **Testovi:** PHPUnit / Laravel test runner; trenutni skup ima 51 test i 191 aserciju.
+- **Testovi:** PHPUnit / Laravel test runner; trenutni skup ima 53 testa i 198 asercija.
 - **CI:** GitHub Actions pokreće backend testove sa SQLite; frontend build nije deo workflow-a.
 
 Backend je organizovan oko `routes/api.php`, HTTP kontrolera i middleware-a, modela, servisa, policies i API resources. Frontend je grupisan po funkcionalnosti u `taskflow-frontend/src/features/`, uz zajedničke stores, composables, services i komponente.
@@ -22,6 +22,8 @@ Backend je organizovan oko `routes/api.php`, HTTP kontrolera i middleware-a, mod
 ### Igrači i timovi
 
 `Player` pripada klubu i opciono timu. Model ima globalni scope koji ograničava igrače na klub prijavljenog korisnika; super-admin može da vidi sve. Kreiranje igrača proverava aktivnu pretplatu i limit `max_players` na nivou celog kluba.
+
+Nalozi u tabeli `users`, uključujući naloge sa ulogom `player`, nisu roster zapisi i ne troše `max_players`. Kreiranje naloga zahteva aktivnu pretplatu i feature pristup, dok se kvota primenjuje samo na `Player` zapise.
 
 ### Treninzi i RSVP
 
@@ -41,7 +43,7 @@ Nedavne izmene su zatvorile nekoliko ranije identifikovanih problema:
 
 - Pristup pojedinačnom korisničkom nalogu sada prolazi kroz policy; klupski admin ne može dodeliti super-admin ulogu niti prebaciti nov nalog u drugi klub.
 - Dashboard koristi roster `players` za broj igrača i golove, umesto zastarele `users.player_profile` relacije.
-- Limit igrača proverava stvarne `players` zapise na nivou kluba.
+- Limit `max_players` proverava samo stvarne `players` zapise na nivou kluba; nalozi sa ulogom `player` imaju zasebnu namenu.
 - Konfiguracija paketa, onboarding i dokumentacija usklađeni su na tri paketa; Basic uključuje profil kluba, igrače i timove.
 - Zapisnik utakmice je ograničen na Premium i podaci o statistici se ne učitavaju za pretplatnike bez `advanced_stats`.
 - Otkazane utakmice prikazuju se odvojeno.
@@ -54,14 +56,13 @@ Nedavne izmene su zatvorile nekoliko ranije identifikovanih problema:
 
 ### Srednji prioritet
 
-1. **Razjasniti ograničenje „igrača” u `UserPolicy`.** To ograničenje broji naloge `users` sa ulogom `player`, dok stvarni roster limit broji `players`. Odlučiti da li su to zasebni limiti i nazvati ih tako u kodu i interfejsu.
-2. **Proširiti testove poslovne logike.** Dodati regresione testove za obračun analitike i RSVP prisustvo.
+1. **Proširiti testove poslovne logike.** Dodati regresione testove za obračun analitike i RSVP prisustvo.
 
 ### Niži prioritet
 
-4. **Ojačati klijentsku autentifikaciju.** Bearer token se čuva u `localStorage`; razmotriti HTTP-only cookie pristup ili odgovarajuće mitigacije XSS rizika pre javne produkcije.
-5. **Uvesti keširanje tek uz merenje.** Analitika trenutno računa agregacije na zahtev; za trenutni obim prvo pratiti trajanje upita, pa keširati uz pouzdano invalidiranje nakon promene podataka.
-6. **Uklanjati neaktivne modele postepeno.** Proveriti da li zastareli modeli i frontend template fajlovi imaju reference pre uklanjanja.
+1. **Ojačati klijentsku autentifikaciju.** Bearer token se čuva u `localStorage`; razmotriti HTTP-only cookie pristup ili odgovarajuće mitigacije XSS rizika pre javne produkcije.
+2. **Uvesti keširanje tek uz merenje.** Analitika trenutno računa agregacije na zahtev; za trenutni obim prvo pratiti trajanje upita, pa keširati uz pouzdano invalidiranje nakon promene podataka.
+3. **Uklanjati neaktivne modele postepeno.** Proveriti da li zastareli modeli i frontend template fajlovi imaju reference pre uklanjanja.
 
 ## Predlog interesantnog feature-a
 

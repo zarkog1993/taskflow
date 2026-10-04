@@ -36,18 +36,10 @@ class UserPolicy
             return true;
         }
 
-        // Ako je Club Admin sa klubom, proveravamo pretplatu i limit igrača
+        // User nalog nije roster igrač; max_players se primenjuje na Player zapisima.
         if ($authUser->isClubAdmin() && $authUser->club_id) {
             $subscription = $authUser->subscription;
-            if (!$subscription || $subscription->status !== 'active') {
-                return false;
-            }
-
-            $currentPlayersCount = User::where('club_id', $authUser->club_id)
-                ->whereHas('roles', fn ($q) => $q->where('slug', 'player'))
-                ->count();
-
-            return $currentPlayersCount < $subscription->max_players;
+            return $subscription?->isActive() ?? false;
         }
 
         return false;
