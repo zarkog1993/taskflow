@@ -33,7 +33,7 @@ TaskFlow je SaaS platforma za upravljanje fudbalskim klubovima — timovi, igra�
 | **Analitika** | Prosečna posećenost treninga, top strelci, filteri po timu i periodu, pretraga igrača |
 | **Finansije** | Evidencija uplata igrača, pregled po timu, grupne uplate |
 | **Super admin** | Upravljanje klubovima, korisnicima i pretplatama |
-| **Taktika** | Formacije i drag-and-drop tabla; čuvanje je još samo potvrda u UI-ju |
+| **Taktika** | Formacije, drag-and-drop raspored i čuvanje jedne aktivne taktike po ekipi |
 
 ## Tech Stack
 
@@ -252,7 +252,7 @@ U ponudi su Basic, Standard i Premium paketi. Stari `pro` i `unlimited` zapisi o
 docker compose exec -T -w /var/www/html/src app php artisan test
 ```
 
-Trenutno stanje: **40 testova, 132 asercije.**
+Trenutno stanje: **49 testova, 176 asercija.**
 
 ## API
 
@@ -281,6 +281,7 @@ Svi odgovori su u JSON formatu. Zaštićene rute zahtevaju zaglavlje `Authorizat
 | `POST` | `/onboarding/complete` | Izbor paketa za registrovani klub |
 | `GET` `POST` | `/teams` | Lista i kreiranje timova |
 | `GET` `PUT` `DELETE` | `/teams/{team}` | Detalji, izmena, brisanje tima |
+| `GET` `PUT` | `/teams/{team}/tactics` | Učitavanje i čuvanje taktike ekipe (Premium) |
 | `GET` `POST` | `/players` | Lista i kreiranje igrača |
 | `GET` `PUT` `PATCH` `DELETE` | `/players/{player}` | Detalji, izmena i brisanje igrača |
 | `GET` `POST` | `/training-sessions` | Lista i zakazivanje treninga |
@@ -316,10 +317,7 @@ docker compose exec -w /var/www/html/src app php artisan route:list --path=api
 
 ## Poznati nedovršeni delovi
 
-- Taktike se ne čuvaju na serveru; dugme za čuvanje trenutno prikazuje samo potvrdu.
-- Frontend API URL je fiksiran na `http://localhost:8080/api`; pre produkcionog deploy-a treba ga izvući u environment konfiguraciju.
 - CI workflow pokreće Laravel testove, ali ne proverava frontend build.
-- Pretplatnički feature-gating treba proveriti na svim API rutama — frontend ograničenja nisu bezbednosna granica.
 
 ## Licenca
 

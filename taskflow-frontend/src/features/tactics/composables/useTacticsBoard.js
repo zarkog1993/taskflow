@@ -9,44 +9,89 @@ export function useTacticsBoard() {
     const draggedSpot = ref(null)
 
     const teams = ref([])
-    const allUsers = ref([])
     const teamPlayers = ref([])
     const activeSpotForSelection = ref(null)
     const selectedTeamFilter = ref('')
     const searchQuery = ref('')
+    const errorMessage = ref('')
+    const saveMessage = ref('')
+    const isLoading = ref(false)
+    const isSaving = ref(false)
+    let teamLoadVersion = 0
 
     const fieldSpots = ref(createDefaultFieldSpots())
 
     const fetchData = async () => {
+        isLoading.value = true
         try {
-            const [teamsRes, usersRes] = await Promise.all([
-                api.get('/teams'),
-                api.get('/users')
-            ])
+            const teamsRes = await api.get('/teams')
             teams.value = teamsRes.data.data || teamsRes.data || []
-            allUsers.value = usersRes.data.data || usersRes.data || []
 
             if (teams.value.length > 0) {
                 selectedTeamFilter.value = teams.value[0].id
-                loadTeamPlayers(teams.value[0].id)
+                await loadTeamTactics(teams.value[0].id)
             }
         } catch (err) {
-            console.error('Greška pri učitavanju:', err)
+            errorMessage.value = 'Nije moguće učitati ekipe i taktiku.'
+        } finally {
+            isLoading.value = false
         }
     }
 
-    const loadTeamPlayers = (teamId) => {
-        const selectedTeam = teams.value.find(t => t.id === Number(teamId))
-        teamPlayers.value = selectedTeam?.users || selectedTeam?.players || allUsers.value
+    const loadTeamTactics = async (teamId) => {
+        const requestVersion = ++teamLoadVersion
+        const selectedTeam = teams.value.find(team => Number(team.id) === Number(teamId))
+        teamPlayers.value = selectedTeam?.players || []
+        fieldSpots.value = createDefaultFieldSpots()
+        selectedFormation.value = '4-3-3'
+        errorMessage.value = ''
+        saveMessage.value = ''
+
+        if (!selectedTeam) {
+            isLoading.value = false
+            return
+        }
+
+        isLoading.value = true
+        try {
+            const response = await api.get(`/teams/${teamId}/tactics`)
+            if (requestVersion !== teamLoadVersion) return
+
+            const tactic = response.data.data
+            if (!tactic) return
+
+            selectedFormation.value = tactic.formation
+            const savedPositions = new Map(
+                tactic.positions.map(position => [Number(position.spot_id), position]),
+            )
+            fieldSpots.value = createDefaultFieldSpots().map(spot => {
+                const savedPosition = savedPositions.get(spot.id)
+                const player = teamPlayers.value.find(
+                    teamPlayer => Number(teamPlayer.id) === Number(savedPosition?.player_id),
+                ) || null
+
+                return savedPosition
+                    ? { ...spot, x: Number(savedPosition.x), y: Number(savedPosition.y), player }
+                    : spot
+            })
+        } catch (err) {
+            if (requestVersion === teamLoadVersion) {
+                errorMessage.value = 'Nije moguće učitati sačuvanu taktiku.'
+            }
+        } finally {
+            if (requestVersion === teamLoadVersion) {
+                isLoading.value = false
+            }
+        }
     }
 
     const onTeamFilterChange = () => {
-        loadTeamPlayers(selectedTeamFilter.value)
+        loadTeamTactics(selectedTeamFilter.value)
     }
 
     const filteredUsers = computed(() => {
-        return teamPlayers.value.filter(user => {
-            return !searchQuery.value || user.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+        return teamPlayers.value.filter(player => {
+            return !searchQuery.value || player.name.toLowerCase().includes(searchQuery.value.toLowerCase())
         })
     })
 
@@ -59,12 +104,12 @@ export function useTacticsBoard() {
         activeSpotForSelection.value = null
     }
 
-    const assignPlayerToSpot = (user) => {
+    const assignPlayerToSpot = (player) => {
         if (!activeSpotForSelection.value) return
         fieldSpots.value.forEach(s => {
-            if (s.player?.id === user.id) s.player = null
+            if (s.player?.id === player.id) s.player = null
         })
-        activeSpotForSelection.value.player = user
+        activeSpotForSelection.value.player = player
         activeSpotForSelection.value = null
     }
 
@@ -99,7 +144,29 @@ export function useTacticsBoard() {
         })
     }
 
-    const saveTactics = () => { alert('Taktika je uspešno sačuvana!') }
+    const saveTactics = async () => {
+        if (!selectedTeamFilter.value || isSaving.value) return
+
+        isSaving.value = true
+        errorMessage.value = ''
+        saveMessage.value = ''
+        try {
+            await api.put(`/teams/${selectedTeamFilter.value}/tactics`, {
+                formation: selectedFormation.value,
+                positions: fieldSpots.value.map(spot => ({
+                    spot_id: spot.id,
+                    x: spot.x,
+                    y: spot.y,
+                    player_id: spot.player?.id ?? null,
+                })),
+            })
+            saveMessage.value = 'Taktika je sačuvana.'
+        } catch (err) {
+            errorMessage.value = err.response?.data?.message || 'Nije moguće sačuvati taktiku.'
+        } finally {
+            isSaving.value = false
+        }
+    }
 
     onMounted(() => { fetchData() })
 
@@ -120,6 +187,10 @@ export function useTacticsBoard() {
         onDragStart,
         onDropOnPitch,
         applyFormation,
-        saveTactics
+        saveTactics,
+        errorMessage,
+        saveMessage,
+        isLoading,
+        isSaving
     }
 }

@@ -27,7 +27,7 @@
                         class="w-11 h-11 border-2 font-black text-xs rounded-full flex items-center justify-center shadow-2xl relative transition"
                         :class="spot.player ? 'bg-indigo-600 border-white text-white' : 'bg-gray-100/90 dark:bg-gray-800/90 border-dashed border-gray-500 text-gray-600 dark:text-gray-400'"
                     >
-                        #{{ spot.player?.player_profile?.jersey_number || spot.defaultNumber || '?' }}
+                        #{{ spot.player?.jersey_number || spot.defaultNumber || '?' }}
                         <span class="absolute -bottom-1 -right-1 bg-emerald-500 text-gray-950 text-[9px] font-extrabold px-1 rounded border border-white">
                   {{ spot.position }}
                 </span>
