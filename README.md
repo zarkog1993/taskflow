@@ -225,15 +225,13 @@ Svaki klub ima pretplatu koja nosi listu dozvoljenih funkcionalnosti. Middleware
 
 | Paket | Cena | Funkcionalnosti |
 | --- | --- | --- |
-| `basic` | 10 | `club_profile`, `players`, `teams` |
-| `standard` | 20 | `club_profile`, `players`, `teams`, `matches`, `news` |
-| `premium` | 50 | `standard` + `advanced_stats`, `tactics` |
-| `pro` | 50 | `standard` + `club_basic_information` |
-| `unlimited` | 100 | `premium` + `club_basic_information`, `advanced_management`, `additional_content` |
+| `basic` | 10 €/mesec | `club_profile`, `players`, `teams` |
+| `standard` | 20 €/mesec | `club_profile`, `players`, `teams`, `matches`, `news` |
+| `premium` | 50 €/mesec | `standard` + `advanced_stats`, `tactics` |
 
 Slug `teams` otključava i timove i treninge — rute `/training-sessions` su gate-ovane istim slugom. Utakmice (`matches`) su prva razlika između `basic` i `standard` paketa.
 
-Slugovi koriste notaciju sa donjom crtom (`club_profile`, `advanced_stats`). Od slugova se u kodu stvarno proveravaju `club_profile`, `players`, `teams`, `matches` i `advanced_stats` (backend rute) te `tactics` i `advanced_management` (frontend ruter); `news`, `club_basic_information` i `additional_content` su trenutno samo opisne oznake.
+U ponudi su Basic, Standard i Premium paketi. Stari `pro` i `unlimited` zapisi ostaju neaktivni za nove prijave, ali se postojeće pretplate mogu administrirati. Slugovi koriste notaciju sa donjom crtom (`club_profile`, `advanced_stats`). Od slugova se u kodu stvarno proveravaju `club_profile`, `players`, `teams`, `matches` i `advanced_stats` (backend rute) te `tactics` i `advanced_management` (frontend ruter); `news`, `club_basic_information` i `additional_content` su trenutno samo opisne oznake.
 
 **Važno:** `subscriptions` tabela nosi sopstvenu kopiju liste funkcionalnosti — `Subscription::hasFeature()` čita `subscriptions.features`, a ne plan. Izmena paketa se zato ne odražava na postojeće pretplatnike dok im se lista ponovo ne prepiše iz plana.
 
@@ -298,7 +296,6 @@ docker compose exec -w /var/www/html/src app php artisan route:list --path=api
 
 ## Poznati problemi
 
-- **Cene paketa se razlikuju između migracije i baze.** Migracija `create_subscription_plans_table` seed-uje `basic=20`, `standard=50`, `premium=100`, dok su u razvojnoj bazi vrednosti `10`, `20`, `50` (naknadno ručno izmenjene). Sveža instalacija zato dobija drugačiji cenovnik od onog u tabeli iznad.
 - **Utakmice sa statusom `canceled`** se ne prikazuju ni u jednom tabu na stranici `/matches`.
 - **Middleware `CheckSubscriptionFeature`** postoji u kodu ali nije registrovan u `bootstrap/app.php` — koristi se samo `EnsureSubscriptionFeature`.
 - **Keširanje nije implementirano** nigde u `src/app/`.
