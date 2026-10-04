@@ -12,7 +12,7 @@ Najvažnija domenska odluka: **`users` i `players` su različiti entiteti.** `us
 
 - **Backend:** PHP 8.3+, Laravel 13, Sanctum, Eloquent, MySQL; Redis je uključen u Docker okruženje.
 - **Frontend:** Vue 3, Vite, Pinia, Vue Router, Tailwind CSS 4 i Axios.
-- **Testovi:** PHPUnit / Laravel test runner; trenutni skup ima 49 testova i 176 asercija.
+- **Testovi:** PHPUnit / Laravel test runner; trenutni skup ima 51 test i 191 aserciju.
 - **CI:** GitHub Actions pokreće backend testove sa SQLite; frontend build nije deo workflow-a.
 
 Backend je organizovan oko `routes/api.php`, HTTP kontrolera i middleware-a, modela, servisa, policies i API resources. Frontend je grupisan po funkcionalnosti u `taskflow-frontend/src/features/`, uz zajedničke stores, composables, services i komponente.
@@ -47,15 +47,15 @@ Nedavne izmene su zatvorile nekoliko ranije identifikovanih problema:
 - Otkazane utakmice prikazuju se odvojeno.
 - Finansijske API rute zahtevaju aktivan `teams` feature; frontend API adresa se podešava preko `VITE_API_BASE_URL`.
 - Taktika se čuva kao jedna aktivna formacija po ekipi; pristup je zaštićen `tactics` feature-om i proverom pristupa timu.
+- Katalog pretplata se čita iz aktivnih zapisa u bazi bez menjanja podataka pri GET zahtevima; neaktivni `pro` i `unlimited` paketi ostaju dostupni za istorijske pretplate.
 - Zastarele tabele za task manager i stari modeli prisustva očišćeni su migracijama.
 
 ## Preporučeni sledeći koraci
 
 ### Srednji prioritet
 
-1. **Ukloniti pisanje iz čitanja kataloga paketa.** `SubscriptionPlanService::all()` poziva `updateOrCreate` i deaktivira pakete tokom čitanja javne liste paketa. Sinhronizaciju konfiguracije i baze premestiti u seeder/deploy komandu, da GET zahtev ne menja podatke i ne resetuje administratorske izmene.
-2. **Razjasniti ograničenje „igrača” u `UserPolicy`.** To ograničenje broji naloge `users` sa ulogom `player`, dok stvarni roster limit broji `players`. Odlučiti da li su to zasebni limiti i nazvati ih tako u kodu i interfejsu.
-3. **Proširiti testove poslovne logike.** Dodati regresione testove za obračun analitike i RSVP prisustvo.
+1. **Razjasniti ograničenje „igrača” u `UserPolicy`.** To ograničenje broji naloge `users` sa ulogom `player`, dok stvarni roster limit broji `players`. Odlučiti da li su to zasebni limiti i nazvati ih tako u kodu i interfejsu.
+2. **Proširiti testove poslovne logike.** Dodati regresione testove za obračun analitike i RSVP prisustvo.
 
 ### Niži prioritet
 

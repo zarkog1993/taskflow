@@ -124,6 +124,79 @@ class OnboardingTest extends TestCase
             ->assertJsonPath('subscription.features.0', 'club_profile');
     }
 
+    public function test_plan_catalog_reads_active_database_values_without_mutating_plans(): void
+    {
+        $basicPlan = SubscriptionPlan::where('slug', 'basic')->firstOrFail();
+        $standardPlan = SubscriptionPlan::where('slug', 'standard')->firstOrFail();
+        $legacyPlan = SubscriptionPlan::where('slug', 'pro')->firstOrFail();
+
+        $basicPlan->update([
+            'name' => 'Custom Basic',
+            'price' => 15,
+            'max_teams' => 2,
+            'features' => ['club_profile', 'teams'],
+        ]);
+        $standardPlan->update(['is_active' => false]);
+        $legacyPlan->update(['name' => 'Legacy Pro']);
+
+        $this->getJson('/api/subscription-plans')
+            ->assertOk()
+            ->assertJsonCount(2, 'plans')
+            ->assertJsonPath('plans.0.slug', 'basic')
+            ->assertJsonPath('plans.0.name', 'Custom Basic')
+            ->assertJsonPath('plans.0.price', 15)
+            ->assertJsonPath('plans.0.max_teams', 2)
+            ->assertJsonPath('plans.1.slug', 'premium');
+
+        $this->assertDatabaseHas('subscription_plans', [
+            'id' => $basicPlan->id,
+            'name' => 'Custom Basic',
+            'price' => 15,
+            'max_teams' => 2,
+            'is_active' => true,
+        ]);
+        $this->assertDatabaseHas('subscription_plans', [
+            'id' => $standardPlan->id,
+            'is_active' => false,
+        ]);
+        $this->assertDatabaseHas('subscription_plans', [
+            'id' => $legacyPlan->id,
+            'name' => 'Legacy Pro',
+            'is_active' => false,
+        ]);
+    }
+
+    public function test_inactive_plan_cannot_be_selected_during_onboarding(): void
+    {
+        Mail::fake();
+        $this->postJson('/api/register', [
+            'name' => 'Club Owner',
+            'club_name' => 'FK Inactive Plan',
+            'email' => 'inactive-plan@example.com',
+            'password' => 'Password123!',
+            'password_confirmation' => 'Password123!',
+        ])->assertCreated();
+
+        $user = User::where('email', 'inactive-plan@example.com')->firstOrFail();
+        $user->onboarding_token_expires_at = now()->addDay();
+        $user->save();
+        $club = $user->club;
+        $token = 'inactive-plan-token';
+        $club->update([
+            'onboarding_token_hash' => hash('sha256', $token),
+            'onboarding_token_expires_at' => now()->addDay(),
+        ]);
+        SubscriptionPlan::where('slug', 'basic')->update(['is_active' => false]);
+
+        $this->postJson("/api/onboarding/{$token}/select", [
+            'plan_type' => 'basic',
+        ])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('plan_type');
+
+        $this->assertDatabaseMissing('subscriptions', ['user_id' => $user->id]);
+    }
+
     public function test_pending_legacy_subscription_can_still_be_approved(): void
     {
         $club = Club::create(['name' => 'Legacy Club', 'status' => 'pending_subscription']);

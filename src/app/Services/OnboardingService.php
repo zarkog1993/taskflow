@@ -6,6 +6,7 @@ use App\Models\Club;
 use App\Models\Subscription;
 use App\Models\User;
 use App\Mail\SubscriptionPendingMail;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -16,7 +17,7 @@ class OnboardingService
     {
     }
 
-    public function plans()
+    public function plans(): Collection
     {
         return $this->planService->all();
     }
@@ -46,7 +47,7 @@ class OnboardingService
         return DB::transaction(function () use ($token, $planType) {
             $club = $this->findByToken($token);
             $owner = $club->users()->oldest('users.id')->firstOrFail();
-            $plan = $this->planService->find($planType);
+            $plan = $this->planService->findActive($planType);
 
             $subscription = Subscription::updateOrCreate(
                 ['user_id' => $owner->id],
@@ -100,7 +101,7 @@ class OnboardingService
 
     private function selectPlanForUser(User $user, string $planType): Subscription
     {
-        $plan = $this->planService->find($planType);
+        $plan = $this->planService->findActive($planType);
 
         return Subscription::updateOrCreate(
             ['user_id' => $user->id],
@@ -125,7 +126,7 @@ class OnboardingService
         }
 
         return DB::transaction(function () use ($subscription, $status, $approver) {
-            $plan = $this->planService->find($subscription->plan_type);
+            $plan = $this->planService->findBySlug($subscription->plan_type);
 
             $subscription->update([
                 'subscription_plan_id' => $plan->id,

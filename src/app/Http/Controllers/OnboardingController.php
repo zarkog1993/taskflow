@@ -35,7 +35,11 @@ class OnboardingController extends Controller
     public function select(Request $request, string $token): JsonResponse
     {
         $validated = $request->validate([
-            'plan_type' => ['required', 'string', Rule::in(array_keys(config('subscriptions.plans', [])))],
+            'plan_type' => [
+                'required',
+                'string',
+                Rule::exists('subscription_plans', 'slug')->where('is_active', true),
+            ],
         ]);
 
         $subscription = $this->onboardingService->selectPlan($token, $validated['plan_type']);
@@ -49,7 +53,11 @@ class OnboardingController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'plan_type' => ['required', 'string', Rule::in(array_keys(config('subscriptions.plans', [])))],
+            'plan_type' => [
+                'required',
+                'string',
+                Rule::exists('subscription_plans', 'slug')->where('is_active', true),
+            ],
         ]);
 
         $club = $this->onboardingService->completeOnboarding($request->user(), $validated);
