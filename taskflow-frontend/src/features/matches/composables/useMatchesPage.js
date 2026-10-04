@@ -3,7 +3,6 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { fetchTeams } from '../../../services/teamsService'
 import { fetchMatches as fetchMatchesRequest, createMatch as createMatchRequest, deleteMatch as deleteMatchRequest } from '../../../services/matchesService'
-import { useMatchStats } from '../../../composables/useMatchStats'
 
 export function useMatchesPage() {
     const matches = ref([])
@@ -53,8 +52,6 @@ export function useMatchesPage() {
             window.alert(err.response?.data?.message || 'Utakmica nije mogla biti zakazana.')
         }
     }
-
-    const { selectedMatch, modalTab, statsForm, openStatsModal, saveMatchStats } = useMatchStats(fetchMatches)
 
     // Filter po mesecu ('all' = svi meseci). Ključ je "YYYY-MM".
     const selectedMonth = ref('all')
@@ -141,11 +138,6 @@ export function useMatchesPage() {
         newMatch,
         openCreateModal,
         createMatch,
-        selectedMatch,
-        modalTab,
-        statsForm,
-        openStatsModal,
-        saveMatchStats,
         upcomingMatches,
         completedMatches,
         filteredMatches,

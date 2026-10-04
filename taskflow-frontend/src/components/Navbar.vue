@@ -24,7 +24,7 @@
                         v-if="hasFeature('matches') && !isSuperAdmin"
                         to="/matches"
                         class="text-xs font-semibold px-3 py-2 rounded-xl transition shrink-0"
-                        :class="$route.path === '/matches' ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100/60 dark:hover:bg-slate-800/60'"
+                        :class="$route.path === '/matches' || $route.path.startsWith('/matches/') ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100/60 dark:hover:bg-slate-800/60'"
                     >
                         Utakmice
                     </router-link>

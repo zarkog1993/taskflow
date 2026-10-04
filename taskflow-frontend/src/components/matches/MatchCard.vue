@@ -31,12 +31,12 @@
             </div>
 
             <div class="flex items-center gap-2">
-                <button
-                    @click="$emit('open-stats', match)"
+                <router-link
+                    :to="{ name: 'match-stats', params: { id: match.id } }"
                     class="bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-700 dark:text-indigo-300 border border-indigo-500/30 text-xs font-bold px-4 py-2.5 rounded-xl transition cursor-pointer flex items-center gap-2"
                 >
                     📋 Detalji & Zapisnik
-                </button>
+                </router-link>
                 <button
                     @click="$emit('delete', match)"
                     title="Obriši meč"
@@ -66,7 +66,7 @@
 <script setup>
 import { computed } from "vue"
 
-defineEmits(['open-stats', 'delete'])
+defineEmits(['delete'])
 
 const props = defineProps({
     match: { type: Object, required: true }

@@ -36,7 +36,6 @@
                 v-for="match in filteredMatches"
                 :key="match.id"
                 :match="match"
-                @open-stats="openStatsModal"
                 @delete="handleDeleteMatch"
             />
         </div>
@@ -67,7 +66,6 @@
             @close="showCreateModal = false"
             @submit="createMatch"
         />
-        <MatchStatsModal v-if="selectedMatch" :match="selectedMatch" :stats-form="statsForm" :modal-tab="modalTab" @close="selectedMatch = null" @save="saveMatchStats" />
         <DeleteMatchModal
             v-if="matchToDelete"
             :match-title="matchToDelete.opponent || 'Utakmica'"
@@ -80,7 +78,6 @@
 
 <script setup>
 import MatchCard from '../../components/matches/MatchCard.vue'
-import MatchStatsModal from '../../components/matches/MatchStatsModal.vue'
 import DeleteMatchModal from '../../components/matches/DeleteMatchModal.vue'
 import MatchTabs from './components/MatchTabs.vue'
 import CreateMatchModal from './components/CreateMatchModal.vue'
@@ -93,11 +90,6 @@ const {
     newMatch,
     openCreateModal,
     createMatch,
-    selectedMatch,
-    modalTab,
-    statsForm,
-    openStatsModal,
-    saveMatchStats,
     upcomingMatches,
     completedMatches,
     filteredMatches,

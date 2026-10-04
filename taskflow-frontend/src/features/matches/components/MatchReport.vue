@@ -1,76 +1,33 @@
 <template>
-    <div
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
-    >
-        <div
-            class="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-5"
-        >
-            <!-- Zaglavlje Modala -->
+    <form @submit.prevent="handleSave" class="space-y-6">
+        <fieldset :disabled="isSaving" class="min-w-0 space-y-6">
             <div
-                class="flex justify-between items-center pb-3 border-b border-gray-200 dark:border-gray-700"
+                class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 sm:p-6"
             >
                 <div>
-                    <h3 class="text-base font-bold text-gray-900 dark:text-white">
+                    <h1 class="text-2xl font-black text-gray-900 dark:text-white">
                         Zapisnik Utakmice
-                    </h3>
-                    <p class="text-xs text-indigo-600 dark:text-indigo-400 font-medium">
-                        {{ match.team?.name }} vs {{ match.opponent }}
+                    </h1>
+                    <p class="mt-2 text-base text-indigo-600 dark:text-indigo-400 font-semibold">
+                        {{ match.is_home ? match.team?.name : match.opponent }}
+                        <span class="px-2 font-mono">{{ statsForm.home_score }} : {{ statsForm.away_score }}</span>
+                        {{ match.is_home ? match.opponent : match.team?.name }}
                     </p>
                 </div>
-                <button
-                    @click="$emit('close')"
-                    class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-lg cursor-pointer"
-                >
-                    ✕
-                </button>
+                <span class="text-sm text-gray-600 dark:text-gray-400">{{ formatDate(match.scheduled_at) }}</span>
             </div>
 
-            <!-- Navigacija Kroz Tabove Modala -->
-            <div
-                class="flex space-x-1 bg-white/80 dark:bg-gray-900/80 p-1.5 rounded-xl border border-gray-200/60 dark:border-gray-700/60"
+            <nav
+                aria-label="Sekcije zapisnika"
+                class="flex flex-wrap gap-2 text-sm font-semibold"
             >
-                <button
-                    @click="currentTab = 'info'"
-                    :class="
-                        currentTab === 'info'
-                            ? 'bg-indigo-600 text-white font-bold'
-                            : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-                    "
-                    class="flex-1 py-2 text-xs rounded-lg transition cursor-pointer flex items-center justify-center gap-1.5"
-                >
-                    <span>📅</span>
-                    <span>Info & Status</span>
-                </button>
+                <a href="#match-info" class="rounded-xl bg-white dark:bg-gray-800 px-4 py-2 text-indigo-700 dark:text-indigo-300 border border-gray-200 dark:border-gray-700">Info & Status</a>
+                <a href="#match-squad" class="rounded-xl bg-white dark:bg-gray-800 px-4 py-2 text-indigo-700 dark:text-indigo-300 border border-gray-200 dark:border-gray-700">Sastav ({{ attendedCount }})</a>
+                <a href="#match-stats" class="rounded-xl bg-white dark:bg-gray-800 px-4 py-2 text-indigo-700 dark:text-indigo-300 border border-gray-200 dark:border-gray-700">Strelci & Asistencije</a>
+            </nav>
 
-                <button
-                    @click="currentTab = 'squad'"
-                    :class="
-                        currentTab === 'squad'
-                            ? 'bg-indigo-600 text-white font-bold'
-                            : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-                    "
-                    class="flex-1 py-2 text-xs rounded-lg transition cursor-pointer flex items-center justify-center gap-1.5"
-                >
-                    <span>👥</span>
-                    <span>Sastav ({{ attendedCount }})</span>
-                </button>
-
-                <button
-                    @click="currentTab = 'stats'"
-                    :class="
-                        currentTab === 'stats'
-                            ? 'bg-indigo-600 text-white font-bold'
-                            : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-                    "
-                    class="flex-1 py-2 text-xs rounded-lg transition cursor-pointer flex items-center justify-center gap-1.5"
-                >
-                    <span>⚽</span>
-                    <span>Strelci & Asistencije</span>
-                </button>
-            </div>
-
-            <!-- TAB 1: INFO & STATUS UTKMICE -->
-            <div v-if="currentTab === 'info'" class="space-y-4 py-2">
+            <section id="match-info" class="scroll-mt-24 space-y-4 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 sm:p-6">
+                <h2 class="text-lg font-bold text-gray-900 dark:text-white">Info & Status</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
                         <label
@@ -98,6 +55,8 @@
                             v-model.number="statsForm.home_score"
                             type="number"
                             min="0"
+                            required
+                            aria-label="Domaći golovi"
                             class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-xs text-gray-900 dark:text-white font-mono font-bold text-center"
                         />
                     </div>
@@ -111,6 +70,8 @@
                             v-model.number="statsForm.away_score"
                             type="number"
                             min="0"
+                            required
+                            aria-label="Gostujući golovi"
                             class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-xs text-gray-900 dark:text-white font-mono font-bold text-center"
                         />
                     </div>
@@ -138,10 +99,10 @@
                             }}</span>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <!-- TAB 2: SASTAV / PRISUSTVO -->
-            <div v-if="currentTab === 'squad'" class="space-y-3">
+            <section id="match-squad" class="scroll-mt-24 space-y-4 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 sm:p-6">
+                <h2 class="text-lg font-bold text-gray-900 dark:text-white">Sastav ({{ attendedCount }})</h2>
                 <div class="flex justify-between items-center px-1">
                     <span class="text-xs text-gray-600 dark:text-gray-400"
                     >Štikliraj igrače koji su igrali na ovoj utakmici:</span
@@ -157,7 +118,7 @@
                     </button>
                 </div>
 
-                <div class="max-h-[40vh] overflow-y-auto space-y-1.5 pr-1">
+                <div class="grid grid-cols-1 gap-2 lg:grid-cols-2">
                     <div
                         v-if="!statsForm.players.length"
                         class="text-center py-8 bg-white/40 dark:bg-gray-900/40 rounded-xl border border-gray-200 dark:border-gray-800"
@@ -181,6 +142,7 @@
                         <div class="flex items-center gap-3">
                             <input
                                 type="checkbox"
+                                :aria-label="`Igrao: ${player.name}`"
                                 v-model="player.attended"
                                 class="w-4 h-4 text-indigo-600 rounded bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-600"
                                 @click.stop
@@ -214,13 +176,12 @@
                         </span>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <!-- TAB 3: STRELCI I ASISTENTI -->
-            <div v-if="currentTab === 'stats'" class="space-y-3">
+            <section id="match-stats" class="scroll-mt-24 space-y-4 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 sm:p-6">
                 <div class="flex items-center justify-between px-1">
                     <div>
-                        <p class="text-sm font-bold text-gray-900 dark:text-white">Ucinak Na Utakmici</p>
+                        <h2 class="text-lg font-bold text-gray-900 dark:text-white">Učinak na utakmici</h2>
                         <p class="text-[11px] text-gray-600 dark:text-gray-400">Igrači koji su postigli gol ili asistirali</p>
                     </div>
                     <button
@@ -235,7 +196,7 @@
 
                 <div
                     v-if="!isEditingStats"
-                    class="grid max-h-[40vh] grid-cols-1 gap-3 overflow-y-auto pr-1 sm:grid-cols-2"
+                    class="grid grid-cols-1 gap-4 md:grid-cols-2"
                 >
                     <div v-if="scorers.length" class="overflow-hidden rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/[0.08] to-white/80 dark:to-gray-900/80 shadow-lg shadow-black/10">
                         <div class="flex items-center justify-between border-b border-emerald-500/15 px-4 py-3">
@@ -243,12 +204,12 @@
                                 <span class="flex h-9 w-9 items-center justify-center rounded-xl border border-emerald-400/20 bg-emerald-400/10 text-lg">⚽</span>
                                 <div>
                                     <h4 class="text-sm font-bold text-gray-900 dark:text-white">Golovi</h4>
-                                    <p class="text-[10px] uppercase tracking-wider text-emerald-700/70 dark:text-emerald-300/70">{{ scorers.length }} gol{{ scorers.length === 1 ? "" : "ova" }}</p>
+                                    <p class="text-[10px] uppercase tracking-wider text-emerald-700/70 dark:text-emerald-300/70">{{ totalGoals }} gol{{ totalGoals === 1 ? "" : "ova" }}</p>
                                 </div>
                             </div>
                             <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-700/70 dark:text-emerald-300/70">Postignuto</span>
                         </div>
-                        <div class="divide-y divide-white/[0.06] px-4">
+                        <div class="divide-y divide-gray-200 dark:divide-white/[0.06] px-4">
                             <div
                                 v-for="player in scorers"
                                 :key="player.id"
@@ -268,12 +229,12 @@
                                 <span class="flex h-9 w-9 items-center justify-center rounded-xl border border-sky-400/20 bg-sky-400/10 text-lg">🎯</span>
                                 <div>
                                     <h4 class="text-sm font-bold text-gray-900 dark:text-white">Asistencije</h4>
-                                    <p class="text-[10px] uppercase tracking-wider text-sky-700/70 dark:text-sky-300/70">{{ assisters.length }} asistencij{{ assisters.length === 1 ? "a" : "e" }}</p>
+                                    <p class="text-[10px] uppercase tracking-wider text-sky-700/70 dark:text-sky-300/70">{{ totalAssists }} asistencij{{ totalAssists === 1 ? "a" : "e" }}</p>
                                 </div>
                             </div>
                             <span class="text-[10px] font-bold uppercase tracking-wider text-sky-700/70 dark:text-sky-300/70">Kreirano</span>
                         </div>
-                        <div class="divide-y divide-white/[0.06] px-4">
+                        <div class="divide-y divide-gray-200 dark:divide-white/[0.06] px-4">
                             <div
                                 v-for="player in assisters"
                                 :key="player.id"
@@ -289,16 +250,16 @@
 
                     <div v-if="!contributingPlayers.length" class="col-span-full rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50 px-6 py-10 text-center">
                         <span class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-xl">⚽</span>
-                        <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">No contributions yet</p>
-                        <p class="mt-1 text-xs text-gray-500">Add goals or assists to see players listed here.</p>
+                        <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">Još nema zabeleženog učinka</p>
+                        <p class="mt-1 text-xs text-gray-500">Unesite golove ili asistencije za prikaz igrača.</p>
                     </div>
                 </div>
 
-                <div v-else-if="attendedPlayers.length" class="max-h-[40vh] overflow-y-auto space-y-2 pr-1">
+                <div v-else-if="attendedPlayers.length" class="grid grid-cols-1 gap-3 lg:grid-cols-2">
                     <div
                         v-for="player in attendedPlayers"
                         :key="player.id"
-                        class="flex items-center justify-between bg-white/80 dark:bg-gray-900/80 p-3 rounded-xl border border-gray-200/60 dark:border-gray-700/60"
+                        class="flex flex-wrap gap-3 items-center justify-between bg-white/80 dark:bg-gray-900/80 p-4 rounded-xl border border-gray-200/60 dark:border-gray-700/60"
                     >
                         <div>
                             <p class="text-xs font-bold text-gray-900 dark:text-white">{{ player.name }}</p>
@@ -311,6 +272,8 @@
                                 <input
                                     type="number"
                                     min="0"
+                                    required
+                                    :aria-label="`Golovi: ${player.name}`"
                                     v-model.number="player.goals"
                                     class="w-12 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-center text-xs py-1.5 text-gray-900 dark:text-white font-mono font-bold"
                                 />
@@ -320,6 +283,8 @@
                                 <input
                                     type="number"
                                     min="0"
+                                    required
+                                    :aria-label="`Asistencije: ${player.name}`"
                                     v-model.number="player.assists"
                                     class="w-12 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-center text-xs py-1.5 text-gray-900 dark:text-white font-mono font-bold"
                                 />
@@ -329,30 +294,30 @@
                 </div>
                 <div v-else-if="isEditingStats" class="text-center py-8 bg-white/40 dark:bg-gray-900/40 rounded-xl border border-gray-200 dark:border-gray-800">
                     <p class="text-xs text-gray-500 italic">
-                        Nijedan igrač nije označen kao prisutan. Prvo označite sastav u tabu "Sastav".
+                        Nijedan igrač nije označen kao prisutan. Prvo označite igrače u sekciji "Sastav".
                     </p>
                 </div>
-            </div>
+            </section>
 
-            <!-- Akcije na dnu -->
             <div
-                class="flex justify-end gap-3 pt-3 border-t border-gray-200 dark:border-gray-700"
+                class="flex justify-end gap-3 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4"
             >
                 <button
+                    type="button"
                     @click="$emit('close')"
                     class="px-4 py-2 text-xs font-bold text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white cursor-pointer"
                 >
                     Odustani
                 </button>
                 <button
-                    @click="handleSave"
+                    type="submit"
                     class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-5 py-2 rounded-xl transition cursor-pointer"
                 >
-                    Sačuvaj Zapisnik
+                    {{ isSaving ? "Čuvanje..." : "Sačuvaj Zapisnik" }}
                 </button>
             </div>
-        </div>
-    </div>
+        </fieldset>
+    </form>
 </template>
 
 <script setup>
@@ -367,9 +332,12 @@ const props = defineProps({
         type: Object,
         required: true,
     },
+    isSaving: {
+        type: Boolean,
+        default: false,
+    },
 });
 
-const currentTab = ref("info");
 const isEditingStats = ref(false);
 
 const RSVP_LABELS = {
@@ -393,6 +361,9 @@ const scorers = computed(() =>
 const assisters = computed(() =>
     contributingPlayers.value.filter((player) => player.assists > 0),
 );
+
+const totalGoals = computed(() => scorers.value.reduce((total, player) => total + Number(player.goals), 0));
+const totalAssists = computed(() => assisters.value.reduce((total, player) => total + Number(player.assists), 0));
 
 const attendedCount = computed(() => attendedPlayers.value.length);
 

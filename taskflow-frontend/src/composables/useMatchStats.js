@@ -2,9 +2,12 @@
 import { ref } from 'vue'
 import api from '../services/api'
 
-export function useMatchStats(onSuccessCallback) {
+export function useMatchStats() {
     const selectedMatch = ref(null)
-    const modalTab = ref("info")
+    const isSaving = ref(false)
+    const saveError = ref('')
+    const savedMessage = ref('')
+    const savedForm = ref('')
     const statsForm = ref({
         status: "scheduled",
         home_score: 0,
@@ -12,9 +15,10 @@ export function useMatchStats(onSuccessCallback) {
         players: [],
     })
 
-    const openStatsModal = (match) => {
+    const initializeMatch = (match) => {
         selectedMatch.value = match
-        modalTab.value = "info"
+        saveError.value = ''
+        savedMessage.value = ''
 
         // Sastav se gradi od stvarnog roster-a ekipe (tabela `players`).
         const roster = match.team?.players || []
@@ -45,23 +49,33 @@ export function useMatchStats(onSuccessCallback) {
                 }
             }),
         }
+        savedForm.value = JSON.stringify(statsForm.value)
     }
 
     const saveMatchStats = async () => {
+        if (isSaving.value) return
+        isSaving.value = true
+        saveError.value = ''
+        savedMessage.value = ''
         try {
-            await api.put(`/matches/${selectedMatch.value.id}/stats`, statsForm.value)
-            selectedMatch.value = null
-            if (onSuccessCallback) await onSuccessCallback()
+            const response = await api.put(`/matches/${selectedMatch.value.id}/stats`, statsForm.value)
+            initializeMatch(response.data.data)
+            savedMessage.value = response.data.message || 'Zapisnik je uspešno sačuvan.'
         } catch (err) {
-            alert(err.response?.data?.message || "Greška pri čuvanju zapisnika")
+            saveError.value = err.response?.data?.message || "Greška pri čuvanju zapisnika"
+        } finally {
+            isSaving.value = false
         }
     }
 
     return {
         selectedMatch,
-        modalTab,
+        isSaving,
+        saveError,
+        savedMessage,
+        savedForm,
         statsForm,
-        openStatsModal,
+        initializeMatch,
         saveMatchStats
     }
 }

@@ -9,6 +9,7 @@ import TrainingsView from "../views/TrainingsView.vue"
 import TeamsView from "../views/TeamsView.vue"
 import PlayerProfileView from "../views/PlayerProfileView.vue"
 import MatchesView from "../views/MatchesView.vue"
+import MatchStatsView from "../views/MatchStatsView.vue"
 import CalendarView from "../views/CalendarView.vue"
 import RsvpConfirmationView from "../views/RsvpConfirmationView.vue"
 import TacticsView from "../views/TacticsView.vue"
@@ -89,6 +90,12 @@ const routes = [
         path: '/matches',
         name: 'matches',
         component: MatchesView,
+        meta: { requiresAuth: true, subscriptionRequired: true, feature: 'matches' }
+    },
+    {
+        path: '/matches/:id/stats',
+        name: 'match-stats',
+        component: MatchStatsView,
         meta: { requiresAuth: true, subscriptionRequired: true, feature: 'matches' }
     },
     {
