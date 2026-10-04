@@ -254,7 +254,7 @@ Aktivni katalog paketa čita se iz `subscription_plans`; GET zahtevi ga ne sinhr
 docker compose exec -T -w /var/www/html/src app php artisan test
 ```
 
-Trenutno stanje: **53 testa, 198 asercija.**
+Trenutno stanje: **55 testova, 216 asercija.**
 
 ## API
 
