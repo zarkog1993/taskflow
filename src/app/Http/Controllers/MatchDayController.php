@@ -18,11 +18,12 @@ class MatchDayController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $query = MatchDay::with([
-            'team.players',
-            'players',
-            'invitedPlayers',
-        ])->orderBy('scheduled_at', 'desc');
+        $relations = ['team.players', 'invitedPlayers'];
+        if ($request->user()->isSuperAdmin() || $request->user()->hasFeature('advanced_stats')) {
+            $relations[] = 'players';
+        }
+
+        $query = MatchDay::with($relations)->orderBy('scheduled_at', 'desc');
 
         if (!$request->user()->isSuperAdmin()) {
             $query->whereHas('team', fn ($teamQuery) => $teamQuery->where('club_id', $request->user()->club_id));

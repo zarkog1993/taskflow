@@ -32,6 +32,7 @@
 
             <div class="flex items-center gap-2">
                 <router-link
+                    v-if="canViewStats"
                     :to="{ name: 'match-stats', params: { id: match.id } }"
                     class="bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-700 dark:text-indigo-300 border border-indigo-500/30 text-xs font-bold px-4 py-2.5 rounded-xl transition cursor-pointer flex items-center gap-2"
                 >
@@ -65,11 +66,22 @@
 
 <script setup>
 import { computed } from "vue"
+import { useAuthStore } from "../../stores/auth"
 
 defineEmits(['delete'])
 
 const props = defineProps({
     match: { type: Object, required: true }
+})
+
+const authStore = useAuthStore()
+const canViewStats = computed(() => {
+    const user = authStore.user
+    return Boolean(
+        user?.is_admin
+        || user?.roles?.some(role => ['admin', 'super-admin'].includes(role.slug))
+        || user?.subscription_features?.includes('advanced_stats')
+    )
 })
 
 const scorersText = computed(() =>
