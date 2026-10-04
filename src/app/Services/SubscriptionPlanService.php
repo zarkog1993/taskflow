@@ -33,7 +33,9 @@ class SubscriptionPlanService
 
     public function find(string $slug): SubscriptionPlan
     {
-        return $this->all()->firstWhere('slug', $slug)
+        $this->all();
+
+        return SubscriptionPlan::query()->where('slug', $slug)->first()
             ?? throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException(
                 'Subscription plan not found.',
             );

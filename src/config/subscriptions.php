@@ -7,7 +7,7 @@ return [
             'price' => '10€',
             'max_teams' => 1,
             'max_players' => 25,
-            'features' => ['club_profile'],
+            'features' => ['club_profile', 'players', 'teams'],
         ],
         'standard' => [
             'name' => 'Standard',
