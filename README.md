@@ -246,13 +246,15 @@ U ponudi su Basic, Standard i Premium paketi. Stari `pro` i `unlimited` zapisi o
 
 **Važno:** `subscriptions` tabela nosi sopstvenu kopiju liste funkcionalnosti — `Subscription::hasFeature()` čita `subscriptions.features`, a ne plan. Izmena paketa se zato ne odražava na postojeće pretplatnike dok im se lista ponovo ne prepiše iz plana.
 
+Aktivni katalog paketa čita se iz `subscription_plans`; GET zahtevi ga ne sinhronizuju niti menjaju. Migracije postavljaju početne pakete, a `pro` i `unlimited` ostaju neaktivni zbog postojećih pretplata i istorije.
+
 ## Testiranje
 
 ```bash
 docker compose exec -T -w /var/www/html/src app php artisan test
 ```
 
-Trenutno stanje: **49 testova, 176 asercija.**
+Trenutno stanje: **51 test, 191 asercija.**
 
 ## API
 

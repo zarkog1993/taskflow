@@ -4,45 +4,36 @@ namespace App\Services;
 
 use App\Models\SubscriptionPlan;
 use Illuminate\Support\Collection;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SubscriptionPlanService
 {
     public function all(): Collection
     {
-        $configuredPlans = config('subscriptions.plans', []);
-        $configuredSlugs = array_keys($configuredPlans);
+        $configuredOrder = array_flip(array_keys(config('subscriptions.plans', [])));
 
-        SubscriptionPlan::query()
-            ->whereNotIn('slug', $configuredSlugs)
-            ->update(['is_active' => false]);
-
-        return collect($configuredPlans)->map(function (array $plan, string $slug) {
-            return SubscriptionPlan::query()->updateOrCreate(
-                ['slug' => $slug],
-                [
-                    'name' => $plan['name'],
-                    'price' => $this->numericPrice($plan['price']),
-                    'max_teams' => $plan['max_teams'],
-                    'max_players' => $plan['max_players'],
-                    'features' => array_values($plan['features']),
-                    'is_active' => true,
-                ],
-            );
-        })->values();
+        return SubscriptionPlan::query()
+            ->where('is_active', true)
+            ->get()
+            ->sortBy(fn (SubscriptionPlan $plan) => [
+                isset($configuredOrder[$plan->slug]) ? 0 : 1,
+                $configuredOrder[$plan->slug] ?? $plan->slug,
+            ])
+            ->values();
     }
 
-    public function find(string $slug): SubscriptionPlan
+    public function findActive(string $slug): SubscriptionPlan
     {
-        $this->all();
+        return SubscriptionPlan::query()
+            ->where('slug', $slug)
+            ->where('is_active', true)
+            ->first()
+            ?? throw new NotFoundHttpException('Active subscription plan not found.');
+    }
 
+    public function findBySlug(string $slug): SubscriptionPlan
+    {
         return SubscriptionPlan::query()->where('slug', $slug)->first()
-            ?? throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException(
-                'Subscription plan not found.',
-            );
-    }
-
-    private function numericPrice(int|string $price): int
-    {
-        return (int) preg_replace('/[^\d]/', '', (string) $price);
+            ?? throw new NotFoundHttpException('Subscription plan not found.');
     }
 }
