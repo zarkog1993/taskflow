@@ -12,7 +12,7 @@ Najvažnija domenska odluka: **`users` i `players` su različiti entiteti.** `us
 
 - **Backend:** PHP 8.3+, Laravel 13, Sanctum, Eloquent, MySQL; Redis je uključen u Docker okruženje.
 - **Frontend:** Vue 3, Vite, Pinia, Vue Router, Tailwind CSS 4 i Axios.
-- **Testovi:** PHPUnit / Laravel test runner; trenutni skup ima 55 testova i 216 asercija.
+- **Testovi:** PHPUnit / Laravel test runner; trenutni skup ima 60 testova i 237 asercija.
 - **CI:** GitHub Actions pokreće backend testove sa SQLite; frontend build nije deo workflow-a.
 
 Backend je organizovan oko `routes/api.php`, HTTP kontrolera i middleware-a, modela, servisa, policies i API resources. Frontend je grupisan po funkcionalnosti u `taskflow-frontend/src/features/`, uz zajedničke stores, composables, services i komponente.
@@ -51,6 +51,7 @@ Nedavne izmene su zatvorile nekoliko ranije identifikovanih problema:
 - Taktika se čuva kao jedna aktivna formacija po ekipi; pristup je zaštićen `tactics` feature-om i proverom pristupa timu.
 - Katalog pretplata se čita iz aktivnih zapisa u bazi bez menjanja podataka pri GET zahtevima; neaktivni `pro` i `unlimited` paketi ostaju dostupni za istorijske pretplate.
 - Potpisani RSVP odgovori na trening ulaze u analitiku posećenosti; regresioni testovi proveravaju prihvaćene, odbijene i buduće pozivnice.
+- Planer sastava za zakazane utakmice koristi samo potvrđene RSVP igrače i čuva predlog odvojeno od zvaničnog zapisnika.
 - Zastarele tabele za task manager i stari modeli prisustva očišćeni su migracijama.
 
 ## Preporučeni sledeći koraci
@@ -61,4 +62,4 @@ Nedavne izmene su zatvorile nekoliko ranije identifikovanih problema:
 
 ## Predlog interesantnog feature-a
 
-**Planer sastava utakmice:** predložiti početnu postavu i rezerve na osnovu RSVP-a, dostupnosti i pozicija, pa omogućiti treneru da predlog rasporedi na postojećoj taktičkoj tabli. Prva verzija može da koristi transparentna pravila umesto AI-ja, a trener uvek potvrđuje konačan sastav. To povezuje već postojeće roster, RSVP, zapisnik i formacije.
+**Dalje unapređenje planera sastava:** predložiti početnu postavu i rezerve na osnovu dostupnosti i pozicija, pa omogućiti treneru da pregleda i potvrdi predlog. Trenutni planer omogućava ručni izbor potvrđenih igrača i raspored na taktičkoj tabli.

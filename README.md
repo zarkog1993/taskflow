@@ -28,7 +28,7 @@ TaskFlow je SaaS platforma za upravljanje fudbalskim klubovima — timovi, igra�
 | **Timovi** | Starosne kategorije, roster igrača, članovi stručnog štaba |
 | **Igrači** | Kartoni igrača, pozicije, brojevi dresova, fotografije, statistika |
 | **Treninzi** | Zakazivanje termina, slanje pozivnica, RSVP odgovori igrača |
-| **Utakmice** | Zakazivanje, zasebni tabovi za zakazane/odigrane/otkazane mečeve; Premium zapisnik sa sastavom, golovima i asistencijama |
+| **Utakmice** | Zakazivanje, zasebni tabovi za zakazane/odigrane/otkazane mečeve; planer predloga sastava za potvrđene igrače; Premium zapisnik sa sastavom, golovima i asistencijama |
 | **Statistika** | Automatsko računanje odigranih utakmica, golova i asistencija iz zapisnika |
 | **Analitika** | Prosečna posećenost treninga, top strelci, filteri po timu i periodu, pretraga igrača |
 | **Finansije** | Evidencija uplata igrača, pregled po timu, grupne uplate |
@@ -254,7 +254,7 @@ Aktivni katalog paketa čita se iz `subscription_plans`; GET zahtevi ga ne sinhr
 docker compose exec -T -w /var/www/html/src app php artisan test
 ```
 
-Trenutno stanje: **55 testova, 216 asercija.**
+Trenutno stanje: **60 testova, 237 asercija.**
 
 ## API
 
@@ -284,6 +284,7 @@ Svi odgovori su u JSON formatu. Zaštićene rute zahtevaju zaglavlje `Authorizat
 | `GET` `POST` | `/teams` | Lista i kreiranje timova |
 | `GET` `PUT` `DELETE` | `/teams/{team}` | Detalji, izmena, brisanje tima |
 | `GET` `PUT` | `/teams/{team}/tactics` | Učitavanje i čuvanje taktike ekipe (Premium) |
+| `GET` `PUT` | `/matches/{match}/lineup` | Učitavanje i čuvanje predloga sastava za zakazanu utakmicu (Premium); ne menja zapisnik |
 | `GET` `POST` | `/players` | Lista i kreiranje igrača |
 | `GET` `PUT` `PATCH` `DELETE` | `/players/{player}` | Detalji, izmena i brisanje igrača |
 | `GET` `POST` | `/training-sessions` | Lista i zakazivanje treninga |

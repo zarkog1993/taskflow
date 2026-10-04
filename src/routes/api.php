@@ -5,6 +5,7 @@ use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\EventInvitationController;
 use App\Http\Controllers\MatchDayController;
+use App\Http\Controllers\MatchLineupController;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\UserController;
@@ -72,6 +73,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/matches', [MatchDayController::class, 'store'])->middleware('subscription.feature:matches');
     Route::put('/matches/{match}/status', [MatchDayController::class, 'updateStatus'])->middleware('subscription.feature:matches');
     Route::put('/matches/{match}/stats', [MatchDayController::class, 'updateStats'])->middleware('subscription.feature:advanced_stats');
+    Route::get('/matches/{match}/lineup', [MatchLineupController::class, 'show'])->middleware('subscription.feature:tactics');
+    Route::put('/matches/{match}/lineup', [MatchLineupController::class, 'update'])->middleware('subscription.feature:tactics');
     Route::put('/matches/{match}', [MatchDayController::class, 'update'])->middleware('subscription.feature:matches');
     Route::delete('/matches/{match}', [MatchDayController::class, 'destroy'])->middleware('subscription.feature:matches');
 

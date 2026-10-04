@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class MatchDay extends Model
@@ -53,5 +54,10 @@ class MatchDay extends Model
         return $this->morphToMany(Player::class, 'invitable', 'event_invitations')
             ->withPivot('status', 'responded_at')
             ->withTimestamps();
+    }
+
+    public function lineup(): HasOne
+    {
+        return $this->hasOne(MatchLineup::class, 'match_day_id');
     }
 }

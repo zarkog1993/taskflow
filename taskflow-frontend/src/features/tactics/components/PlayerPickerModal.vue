@@ -1,6 +1,6 @@
 <template>
     <div class="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
-        <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-3xl w-full max-w-lg p-6 shadow-2xl space-y-4">
+        <div class="max-h-[calc(100dvh-2rem)] overflow-y-auto bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-3xl w-full max-w-lg p-4 sm:p-6 shadow-2xl space-y-4">
             <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-800 pb-3">
                 <div>
             <span class="text-[10px] font-mono font-bold uppercase text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950 px-2 py-0.5 rounded border border-indigo-200 dark:border-indigo-800">
