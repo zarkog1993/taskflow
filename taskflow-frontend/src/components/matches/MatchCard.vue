@@ -13,6 +13,12 @@
                     >
             {{ match.is_home ? "Domaćin" : "Gost" }}
           </span>
+                    <span
+                        v-if="match.status === 'canceled'"
+                        class="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-rose-50 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800"
+                    >
+                        Otkazana
+                    </span>
                 </div>
 
                 <h3 class="text-xl font-black text-gray-900 dark:text-white">
