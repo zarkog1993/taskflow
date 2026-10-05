@@ -28,7 +28,7 @@
                         </div>
                         <div>
                             <div class="text-xs font-bold text-gray-900 dark:text-white">{{ player.name }}</div>
-                            <div class="text-[10px] text-gray-600 dark:text-gray-400 font-mono">{{ player.primary_position || 'N/A' }}</div>
+                            <div class="text-[10px] text-gray-600 dark:text-gray-400 font-mono">{{ player.primary_position || 'Nije navedeno' }}</div>
                         </div>
                     </div>
                     <span class="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950 px-2 py-1 rounded border border-indigo-200 dark:border-indigo-800">Postavi</span>

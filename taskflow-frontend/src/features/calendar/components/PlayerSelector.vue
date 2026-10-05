@@ -32,7 +32,7 @@
                     <span class="text-xs font-bold text-gray-900 dark:text-white">{{ player.name }}</span>
                 </div>
                 <span class="text-[10px] text-gray-600 dark:text-gray-400 font-mono">
-                    #{{ player.player_profile?.jersey_number || "-" }} • {{ player.player_profile?.primary_position || "N/A" }}
+                    #{{ player.player_profile?.jersey_number || "-" }} • {{ player.player_profile?.primary_position || "Nije navedeno" }}
                 </span>
             </div>
         </div>

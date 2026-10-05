@@ -24,7 +24,7 @@ export function useOnboardingPage() {
         const token = getToken()
 
         if (!token) {
-            error.value = 'Nedostaje onboarding token u URL-u.'
+            error.value = 'Nedostaje bezbednosni token za registraciju.'
             loading.value = false
             return
         }
@@ -48,7 +48,7 @@ export function useOnboardingPage() {
 
             selectedPlan.value = plans.value[0]?.slug || plans.value[0]?.type || 'basic'
         } catch (err) {
-            error.value = err.response?.data?.message || 'Onboarding link je nevažeći ili je istekao.'
+            error.value = err.response?.data?.message || 'Veza za registraciju nije važeća ili je istekla.'
         } finally {
             loading.value = false
         }
@@ -64,10 +64,10 @@ export function useOnboardingPage() {
                 plan_type: selectedPlan.value
             })
 
-            message.value = 'Paket je uspješno odabran! Vaša pretplata čeka odobrenje administratora.'
+            message.value = 'Paket je uspešno izabran! Vaša pretplata čeka odobrenje administratora.'
             setTimeout(() => router.push({ name: 'subscription-pending' }), 1800)
         } catch (err) {
-            error.value = err.response?.data?.message || 'Nije moguće odabrati ovaj paket.'
+            error.value = err.response?.data?.message || 'Nije moguće izabrati ovaj paket.'
         } finally {
             submitting.value = false
         }

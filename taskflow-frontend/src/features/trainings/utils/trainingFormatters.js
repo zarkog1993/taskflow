@@ -2,7 +2,7 @@
 
 export function getDayName(dateStr) {
     if (!dateStr) return ''
-    return new Date(dateStr).toLocaleDateString('sr-RS', { weekday: 'short' })
+    return new Date(dateStr).toLocaleDateString('sr-Latn-RS', { weekday: 'short' })
 }
 
 export function getDayNumber(dateStr) {
@@ -12,7 +12,7 @@ export function getDayNumber(dateStr) {
 
 export function formatTime(dateStr) {
     if (!dateStr) return ''
-    return new Date(dateStr).toLocaleTimeString('sr-RS', { hour: '2-digit', minute: '2-digit' })
+    return new Date(dateStr).toLocaleTimeString('sr-Latn-RS', { hour: '2-digit', minute: '2-digit' })
 }
 
 // Laravel serijalizuje relaciju `invitedPlayers` kao `invited_players`.
@@ -37,7 +37,7 @@ export function getRsvpCounts(session) {
 
 export function formatRespondedAt(dateStr) {
     if (!dateStr) return ''
-    return new Date(dateStr).toLocaleString('sr-RS', {
+    return new Date(dateStr).toLocaleString('sr-Latn-RS', {
         day: '2-digit',
         month: '2-digit',
         hour: '2-digit',

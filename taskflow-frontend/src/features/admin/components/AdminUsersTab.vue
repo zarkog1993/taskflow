@@ -7,7 +7,7 @@
                 <th class="p-2">Email</th>
                 <th class="p-2">Klub</th>
                 <th class="p-2">Uloga</th>
-                <th class="p-2">Actions</th>
+                <th class="p-2">Akcije</th>
             </tr>
             </thead>
             <tbody class="divide-y divide-gray-200/50 dark:divide-gray-700/50">
@@ -17,7 +17,7 @@
                 <td class="p-2 text-indigo-600 dark:text-indigo-400">{{ u.club?.name || 'Bez kluba' }}</td>
                 <td class="p-2">
                         <span class="px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 font-bold uppercase text-[10px]">
-                            {{ u.roles?.[0]?.name || 'Player' }}
+                            {{ roleLabel(u.roles?.[0]?.name) }}
                         </span>
                 </td>
                 <td class="p-2">
@@ -25,7 +25,7 @@
                         @click="$emit('delete', u)"
                         class="rounded border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950 px-2 py-1 font-bold text-red-700 dark:text-red-300"
                     >
-                        Delete
+                        Obriši
                     </button>
                 </td>
             </tr>
@@ -35,6 +35,10 @@
 </template>
 
 <script setup>
+import { getRoleLabel } from '../../users/utils/roleLabel'
+
+const roleLabel = getRoleLabel
+
 defineProps({
     users: {
         type: Array,

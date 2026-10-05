@@ -21,13 +21,13 @@
                 aria-label="Sekcije zapisnika"
                 class="flex flex-wrap gap-2 text-sm font-semibold"
             >
-                <a href="#match-info" class="rounded-xl bg-white dark:bg-gray-800 px-4 py-2 text-indigo-700 dark:text-indigo-300 border border-gray-200 dark:border-gray-700">Info & Status</a>
+                <a href="#match-info" class="rounded-xl bg-white dark:bg-gray-800 px-4 py-2 text-indigo-700 dark:text-indigo-300 border border-gray-200 dark:border-gray-700">Podaci i status</a>
                 <a href="#match-squad" class="rounded-xl bg-white dark:bg-gray-800 px-4 py-2 text-indigo-700 dark:text-indigo-300 border border-gray-200 dark:border-gray-700">Sastav ({{ attendedCount }})</a>
                 <a href="#match-stats" class="rounded-xl bg-white dark:bg-gray-800 px-4 py-2 text-indigo-700 dark:text-indigo-300 border border-gray-200 dark:border-gray-700">Strelci & Asistencije</a>
             </nav>
 
             <section id="match-info" class="scroll-mt-24 space-y-4 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 sm:p-6">
-                <h2 class="text-lg font-bold text-gray-900 dark:text-white">Info & Status</h2>
+                <h2 class="text-lg font-bold text-gray-900 dark:text-white">Podaci i status</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
                         <label
@@ -273,7 +273,7 @@
                                 </p>
                                 <p class="text-[10px] text-gray-600 dark:text-gray-400">
                                     #{{ player.jersey_number || "-" }} •
-                                    {{ player.position || "N/A" }}
+                                    {{ player.position || "Nije navedeno" }}
                                     <span
                                         v-if="player.rsvp_status"
                                         :class="RSVP_LABELS[player.rsvp_status]?.class"

@@ -41,8 +41,10 @@ export function useTrainingsPage() {
     })
 
     const editAttendees = computed(() => sessionToEdit.value
-        ? getInvitedPlayers(sessionToEdit.value).filter(player => player.pivot?.status === 'accepted')
+        ? getInvitedPlayers(sessionToEdit.value)
         : [])
+    const attendeesWithNotes = computed(() => editAttendees.value
+        .filter(player => player.pivot?.status === 'accepted'))
     const canManageSessions = computed(() => {
         const user = authStore.user
         return Boolean(user?.is_admin || user?.roles?.some(role =>
@@ -54,7 +56,7 @@ export function useTrainingsPage() {
     const currentMonth = computed(() => currentDate.value.getMonth())
 
     const currentMonthName = computed(() => {
-        return currentDate.value.toLocaleString('sr-RS', { month: 'long' })
+        return currentDate.value.toLocaleString('sr-Latn-RS', { month: 'long' })
     })
 
     const monthlySessions = computed(() => {
@@ -127,7 +129,7 @@ export function useTrainingsPage() {
             description: session.description || '',
             status: session.status,
             team_id: session.team_id,
-            player_observations: Object.fromEntries(editAttendees.value.map(player => [
+            player_observations: Object.fromEntries(attendeesWithNotes.value.map(player => [
                 player.id,
                 player.pivot?.training_observation || ''
             ]))
