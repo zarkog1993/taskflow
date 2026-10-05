@@ -2,6 +2,8 @@
 <template>
     <div
         class="bg-gray-100/90 dark:bg-gray-800/90 border border-gray-200/80 dark:border-gray-700/80 hover:border-indigo-500/50 rounded-2xl p-4 transition shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-4"
+        :class="canEdit && 'cursor-pointer'"
+        @click="openEdit"
     >
         <!-- Datum i Vreme -->
         <div class="flex min-w-0 items-center gap-4 sm:min-w-[200px]">
@@ -57,7 +59,7 @@
             <div class="flex items-center gap-2">
                 <button
                     v-if="canEdit"
-                    @click="$emit('edit', session)"
+                    @click.stop="$emit('edit', session)"
                     :aria-label="`Izmeni trening ${session.title}`"
                     title="Izmeni trening"
                     class="p-2 bg-indigo-50/60 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900 border border-indigo-200/80 dark:border-indigo-800/80 text-indigo-700 dark:text-indigo-300 rounded-xl transition cursor-pointer"
@@ -67,7 +69,7 @@
                     </svg>
                 </button>
                 <button
-                    @click="$emit('delete', session)"
+                    @click.stop="$emit('delete', session)"
                     title="Obriši trening"
                     class="p-2 bg-rose-50/60 dark:bg-rose-950/60 hover:bg-rose-100 dark:hover:bg-rose-900 border border-rose-200/80 dark:border-rose-800/80 text-rose-700 dark:text-rose-300 hover:text-gray-900 dark:hover:text-white rounded-xl transition cursor-pointer"
                 >
@@ -92,7 +94,12 @@ const props = defineProps({
     canEdit: { type: Boolean, default: false }
 })
 
-defineEmits(['delete', 'edit'])
+const emit = defineEmits(['delete', 'edit'])
 
 const rsvp = computed(() => getRsvpCounts(props.session))
+
+const openEdit = () => {
+    if (props.canEdit) emit('edit', props.session)
+}
+
 </script>

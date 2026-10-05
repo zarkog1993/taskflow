@@ -35,13 +35,22 @@
                 <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 flex items-center justify-center text-lg">🏃</div>
             </div>
 
-            <!-- Slobodni Igrači -->
+            <!-- Aktivne Selekcije -->
             <div class="bg-gray-100/80 dark:bg-gray-800/80 border border-gray-200/80 dark:border-gray-700/80 p-5 rounded-2xl flex justify-between items-center shadow-lg">
                 <div>
-                    <span class="text-[10px] font-bold uppercase text-gray-600 dark:text-gray-400 tracking-wider">SLOBODNI IGRAČI</span>
-                    <div class="text-2xl font-black text-amber-700 dark:text-amber-400 mt-1 font-mono">{{ freePlayersCount }}</div>
+                    <span class="text-[10px] font-bold uppercase text-gray-600 dark:text-gray-400 tracking-wider">AKTIVNE SELEKCIJE</span>
+                    <div v-if="teams.length" class="mt-2 flex flex-wrap gap-1.5">
+                        <span
+                            v-for="team in teams"
+                            :key="team.id"
+                            class="rounded-lg border border-indigo-200 bg-indigo-50 px-2 py-1 text-[11px] font-semibold text-indigo-800 dark:border-indigo-800 dark:bg-indigo-950 dark:text-indigo-300"
+                        >
+                            {{ team.name }}
+                        </span>
+                    </div>
+                    <span v-else class="mt-1 block text-[11px] text-gray-600 dark:text-gray-400">Nema aktivnih timova</span>
                 </div>
-                <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-400 flex items-center justify-center text-lg">📋</div>
+                <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950 border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-400 flex items-center justify-center text-lg">🛡️</div>
             </div>
         </div>
 

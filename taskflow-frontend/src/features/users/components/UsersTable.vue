@@ -30,7 +30,7 @@
                         {{ user.club?.name || 'Bez kluba' }}
                     </span>
                     <span class="rounded bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 px-2 py-1">
-                        {{ user.roles?.[0]?.name || 'Player' }}
+                        {{ roleLabel(user.roles?.[0]?.name) }}
                     </span>
                 </div>
             </article>
@@ -59,7 +59,7 @@
                     </td>
                     <td class="py-3 px-2">
                             <span class="px-2.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 font-mono font-bold uppercase text-[10px]">
-                                {{ user.roles?.[0]?.name || 'Player' }}
+                                {{ roleLabel(user.roles?.[0]?.name) }}
                             </span>
                     </td>
                     <td class="py-3 px-2 text-right">
@@ -80,6 +80,8 @@
 </template>
 
 <script setup>
+import { getRoleLabel as roleLabel } from '../utils/roleLabel'
+
 defineProps({
     users: {
         type: Array,

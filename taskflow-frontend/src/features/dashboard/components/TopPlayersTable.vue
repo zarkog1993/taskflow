@@ -1,6 +1,6 @@
 <template>
     <section class="rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm">
-        <h3 class="mb-4 text-base font-bold text-slate-900 dark:text-white">Top igrači po golovima i učinku</h3>
+        <h3 class="mb-4 text-base font-bold text-slate-900 dark:text-white">Najbolji igrači po golovima i učinku</h3>
 
         <div class="overflow-x-auto">
             <table class="min-w-[560px] w-full text-left border-collapse">
@@ -24,7 +24,7 @@
                         </router-link>
                     </td>
                     <td class="py-3 px-4 text-center font-mono text-slate-600 dark:text-slate-400">
-                        {{ player.primary_position || 'N/A' }}
+                        {{ player.primary_position || 'Nije navedeno' }}
                     </td>
                     <td class="py-3 px-4 text-center">
                         <span class="inline-flex min-w-8 justify-center rounded-md bg-emerald-50 px-2 py-1 text-sm font-bold text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300">{{ player.matches_played || 0 }}</span>

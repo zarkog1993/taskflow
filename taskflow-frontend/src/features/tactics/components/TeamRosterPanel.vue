@@ -14,7 +14,7 @@
                     </div>
                     <div>
                         <div class="text-xs font-bold text-gray-900 dark:text-white">{{ player.name }}</div>
-                        <div class="text-[10px] text-gray-600 dark:text-gray-400 font-mono">{{ player.primary_position || 'N/A' }}</div>
+                        <div class="text-[10px] text-gray-600 dark:text-gray-400 font-mono">{{ player.primary_position || 'Nije navedeno' }}</div>
                     </div>
                 </div>
                 <span class="text-[10px] font-bold px-2 py-1 rounded bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">Dostupan</span>

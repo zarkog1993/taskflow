@@ -66,17 +66,34 @@
                         <p class="mt-1 text-[11px] text-gray-600 dark:text-gray-400">Beleške su dostupne samo za igrače koji su potvrdili dolazak.</p>
                     </div>
                     <div v-if="attendees.length" class="space-y-3">
-                        <label v-for="attendee in attendees" :key="attendee.id" class="block">
-                            <span class="mb-1 block text-xs font-semibold text-gray-900 dark:text-white">{{ attendee.name }}</span>
-                            <textarea
-                                v-model="form.player_observations[attendee.id]"
-                                rows="2"
-                                :placeholder="`Zapažanje za ${attendee.name}...`"
-                                class="w-full resize-y rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3 text-xs text-gray-900 dark:text-white"
-                            ></textarea>
-                        </label>
+                        <article v-for="attendee in attendees" :key="attendee.id" class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-900/70 p-3">
+                            <div class="flex flex-wrap items-center justify-between gap-2">
+                                <span class="text-xs font-semibold text-gray-900 dark:text-white">{{ attendee.name }}</span>
+                                <span
+                                    :class="[
+                                        'rounded-md border px-2 py-0.5 text-[10px] font-bold',
+                                        attendee.pivot?.status === 'accepted'
+                                            ? 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-400'
+                                            : attendee.pivot?.status === 'declined'
+                                                ? 'border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-800 dark:bg-rose-950 dark:text-rose-400'
+                                                : 'border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-400'
+                                    ]"
+                                >
+                                    {{ responseLabel(attendee.pivot?.status) }}
+                                </span>
+                            </div>
+                            <label v-if="attendee.pivot?.status === 'accepted'" class="mt-3 block">
+                                <span class="mb-1 block text-[10px] font-bold uppercase text-gray-600 dark:text-gray-400">Zapažanje</span>
+                                <textarea
+                                    v-model="form.player_observations[attendee.id]"
+                                    rows="2"
+                                    :placeholder="`Zapažanje za ${attendee.name}...`"
+                                    class="w-full resize-y rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3 text-xs text-gray-900 dark:text-white"
+                                ></textarea>
+                            </label>
+                        </article>
                     </div>
-                    <p v-else class="rounded-xl border border-dashed border-gray-200 dark:border-gray-700 p-4 text-center text-xs text-gray-600 dark:text-gray-400">Još nijedan igrač nije potvrdio dolazak na ovaj trening.</p>
+                    <p v-else class="rounded-xl border border-dashed border-gray-200 dark:border-gray-700 p-4 text-center text-xs text-gray-600 dark:text-gray-400">Nijedan igrač još nije pozvan na ovaj trening.</p>
                 </section>
 
                 <div class="flex justify-end gap-3 pt-3 border-t border-gray-200 dark:border-gray-700">
@@ -114,6 +131,11 @@ const formDate = defineModel('formDate', { default: '' })
 const formHours = defineModel('formHours', { default: '18' })
 const formMinutes = defineModel('formMinutes', { default: '00' })
 const dateMissing = ref(false)
+const responseLabel = (status) => ({
+    accepted: 'Potvrdio dolazak',
+    declined: 'Odbio poziv',
+    pending: 'Čeka odgovor'
+}[status] || 'Čeka odgovor')
 
 const handleSubmit = () => {
     dateMissing.value = !formDate.value
