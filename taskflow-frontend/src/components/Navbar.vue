@@ -17,7 +17,7 @@
                         class="text-xs font-semibold px-3 py-2 rounded-xl transition shrink-0"
                         :class="$route.path === dashboardRoute || $route.path === '/dashboard' ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100/60 dark:hover:bg-slate-800/60'"
                     >
-                        Početna Stranica
+                        Početna
                     </router-link>
 
                     <router-link
@@ -185,7 +185,7 @@
                     class="flex min-h-[44px] items-center rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-800/60 dark:text-slate-200 dark:hover:bg-slate-800"
                     :class="isActive(dashboardRoute) || $route.path === '/' ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400' : ''"
                 >
-                    Početna Stranica
+                    Početna
                 </router-link>
                 <router-link
                     v-if="hasFeature('matches') && !isSuperAdmin"

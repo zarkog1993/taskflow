@@ -15,7 +15,7 @@
                         v-model="searchQuery"
                         type="search"
                         placeholder="Pretraži igrače..."
-                        class="min-h-[44px] w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl pl-8 pr-8 py-2 text-xs text-gray-900 dark:text-white outline-none focus:border-emerald-500 sm:w-52 placeholder:text-slate-500"
+                        class="min-h-11 w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl pl-8 pr-8 py-2 text-xs text-gray-900 dark:text-white outline-none focus:border-emerald-500 sm:w-52 placeholder:text-slate-500"
                     />
                     <button
                         v-if="searchQuery"
@@ -30,7 +30,7 @@
 
                 <AppSelect
                     v-model="selectedTeamId"
-                    class="min-h-[44px] w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-gray-900 dark:text-white outline-none focus:border-emerald-500 cursor-pointer sm:w-auto"
+                    class="min-h-11 w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-gray-900 dark:text-white outline-none focus:border-emerald-500 cursor-pointer sm:w-auto"
                 >
                     <option value="all">Sve selekcije</option>
                     <option v-for="team in teams" :key="team.id" :value="team.id">
