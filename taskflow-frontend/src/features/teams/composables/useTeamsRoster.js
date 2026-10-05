@@ -1,9 +1,12 @@
 // Composable koji objedinjuje podatke i akcije za stranicu upravljanja ekipama.
 import { ref, reactive, computed } from 'vue'
+import { useAuthStore } from '../../../stores/auth'
 import { fetchTeams, createTeam } from '../../../services/teamsService'
 import { fetchPlayers, assignPlayerToTeam as assignPlayerToTeamApi, removePlayerFromTeam as removePlayerFromTeamApi } from '../../../services/playersService'
+import { getAgeGroupForAge, getAgeGroupLimit, getPlayerAge } from '../../players/utils/playerAge'
 
 export function useTeamsRoster() {
+    const authStore = useAuthStore()
     const teams = ref([])
     const allPlayers = ref([])
     const isSubmitting = ref(false)
@@ -16,10 +19,59 @@ export function useTeamsRoster() {
     // Dohvatanje timova i svih igrača sa backenda
     const fetchData = async () => {
         try {
-            const [teamsData, playersData] = await Promise.all([
+            let [teamsData, playersData] = await Promise.all([
                 fetchTeams(),
                 fetchPlayers()
             ])
+
+            const user = authStore.user
+            const canPromotePlayers = user?.is_admin || user?.roles?.some(role =>
+                ['admin', 'super-admin', 'club-admin'].includes(role.slug)
+            )
+
+            if (canPromotePlayers) {
+                const playerCounts = new Map()
+                for (const player of playersData) {
+                    if (player.team_id) {
+                        const teamId = Number(player.team_id)
+                        playerCounts.set(teamId, (playerCounts.get(teamId) || 0) + 1)
+                    }
+                }
+
+                let didPromotePlayer = false
+                for (const player of playersData) {
+                    const currentTeam = teamsData.find(team => Number(team.id) === Number(player.team_id))
+                    const age = getPlayerAge(player)
+                    const ageLimit = getAgeGroupLimit(currentTeam?.age_group)
+                    if (!currentTeam || age === null || ageLimit === null || age <= ageLimit) continue
+
+                    const destinationAgeGroup = getAgeGroupForAge(age)
+                    const destinationTeams = teamsData
+                        .filter(team => String(team.age_group).toLowerCase() === destinationAgeGroup
+                            && Number(team.club_id) === Number(currentTeam.club_id))
+                        .sort((first, second) =>
+                            (playerCounts.get(Number(first.id)) || 0) - (playerCounts.get(Number(second.id)) || 0)
+                            || Number(first.id) - Number(second.id)
+                        )
+                    const destinationTeam = destinationTeams[0]
+
+                    if (!destinationTeam) continue
+
+                    try {
+                        await assignPlayerToTeamApi(player.id, destinationTeam.id)
+                        playerCounts.set(Number(currentTeam.id), Math.max(0, (playerCounts.get(Number(currentTeam.id)) || 1) - 1))
+                        playerCounts.set(Number(destinationTeam.id), (playerCounts.get(Number(destinationTeam.id)) || 0) + 1)
+                        didPromotePlayer = true
+                    } catch (error) {
+                        console.error(`Automatsko premeštanje igrača ${player.id} nije uspelo:`, error)
+                    }
+                }
+
+                if (didPromotePlayer) {
+                    [teamsData, playersData] = await Promise.all([fetchTeams(), fetchPlayers()])
+                }
+            }
+
             teams.value = teamsData
             allPlayers.value = playersData
         } catch (err) {

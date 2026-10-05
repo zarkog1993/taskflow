@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 
 class PlayerController extends Controller
 {
@@ -110,7 +111,7 @@ class PlayerController extends Controller
             'jersey_number' => 'nullable|integer',
             'height' => 'nullable|integer',
             'weight' => 'nullable|integer',
-            'date_of_birth' => 'nullable|date',
+            'date_of_birth' => 'nullable|date|before_or_equal:today',
             'preferred_foot' => 'nullable|string|in:right,left,both',
             'physical_status' => 'nullable|string',
             'medical_notes' => 'nullable|string',
@@ -124,6 +125,16 @@ class PlayerController extends Controller
 
         if (array_key_exists('team_id', $validated) && $validated['team_id'] !== null) {
             $team = $this->resolveAuthorizedTeam($request, $validated['team_id']);
+            $dateOfBirth = array_key_exists('date_of_birth', $validated)
+                ? $validated['date_of_birth']
+                : $player->date_of_birth?->format('Y-m-d');
+
+            if ($dateOfBirth && !$this->isEligibleForAgeGroup($dateOfBirth, $team->age_group)) {
+                throw ValidationException::withMessages([
+                    'team_id' => 'Igrač ne može biti raspoređen u mlađu kategoriju od one koja odgovara njegovom uzrastu.',
+                ]);
+            }
+
             $validated['team_id'] = $team->id;
             $validated['club_id'] = $team->club_id;
             $validated['seniority'] = $this->seniorityFromAgeGroup($team->age_group);
@@ -208,5 +219,25 @@ class PlayerController extends Controller
         }
 
         return strtoupper($ageGroup);
+    }
+
+    private function isEligibleForAgeGroup(string $dateOfBirth, string $teamAgeGroup): bool
+    {
+        $birthDate = new \DateTimeImmutable($dateOfBirth);
+        $age = (int) $birthDate->diff(new \DateTimeImmutable('today'))->format('%y');
+        $minimumAgeGroup = match (true) {
+            $age <= 9 => 'u9',
+            $age <= 11 => 'u11',
+            $age <= 13 => 'u13',
+            $age <= 15 => 'u15',
+            $age <= 17 => 'u17',
+            $age <= 19 => 'u19',
+            default => 'senior',
+        };
+        $ageGroups = ['u9', 'u11', 'u13', 'u15', 'u17', 'u19', 'senior'];
+        $teamIndex = array_search($teamAgeGroup, $ageGroups, true);
+        $minimumIndex = array_search($minimumAgeGroup, $ageGroups, true);
+
+        return $teamIndex !== false && $minimumIndex !== false && $teamIndex >= $minimumIndex;
     }
 }

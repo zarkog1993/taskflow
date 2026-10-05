@@ -101,6 +101,41 @@ class ClubTeamAccessTest extends TestCase
             ->assertNotFound();
     }
 
+    public function test_player_can_move_to_age_appropriate_or_older_team_but_not_a_younger_category(): void
+    {
+        [$owner, $seniorTeam] = $this->createClubOwner('Age Group Club');
+        $u15Team = Team::create([
+            'club_id' => $seniorTeam->club_id,
+            'name' => 'Age Group U15',
+            'age_group' => 'u15',
+        ]);
+        $u17Team = Team::create([
+            'club_id' => $seniorTeam->club_id,
+            'name' => 'Age Group U17',
+            'age_group' => 'u17',
+        ]);
+        $player = Player::create([
+            'club_id' => $seniorTeam->club_id,
+            'team_id' => $seniorTeam->id,
+            'name' => 'Sixteen Year Old',
+            'primary_position' => 'CM',
+            'date_of_birth' => now()->subYears(16)->toDateString(),
+        ]);
+
+        $this->actingAs($owner, 'sanctum')
+            ->putJson("/api/players/{$player->id}", ['team_id' => $u15Team->id])
+            ->assertUnprocessable();
+
+        $this->actingAs($owner, 'sanctum')
+            ->putJson("/api/players/{$player->id}", ['team_id' => $u17Team->id])
+            ->assertOk();
+
+        $this->assertDatabaseHas('players', [
+            'id' => $player->id,
+            'team_id' => $u17Team->id,
+        ]);
+    }
+
     public function test_club_admin_cannot_schedule_training_or_match_for_another_club(): void
     {
         [$owner] = $this->createClubOwner('Own Club');

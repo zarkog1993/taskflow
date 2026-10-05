@@ -1,14 +1,19 @@
 // Composable koji učitava profil igrača i upravlja formom za izmenu podataka.
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { fetchPlayer, updatePlayerMultipart } from '../../../services/playersService'
+import { fetchTeams } from '../../../services/teamsService'
+import { getAgeGroupForAge, getPlayerAge } from '../utils/playerAge'
+import { formatAgeGroup } from '../utils/playerFormatters'
 
 export function usePlayerProfile(playerId) {
     const player = ref(null)
+    const teams = ref([])
     const showEditModal = ref(false)
     const isSubmitting = ref(false)
 
     const editForm = reactive({
         name: '',
+        team_id: '',
         email: '',
         primary_position: 'CM',
         height: null,
@@ -18,6 +23,32 @@ export function usePlayerProfile(playerId) {
         jersey_number: null,
         coach_notes: ''
     })
+
+    const eligibleTeams = computed(() => {
+        const age = getPlayerAge({ date_of_birth: editForm.date_of_birth })
+        if (age === null) return teams.value
+
+        const ageGroups = ['u9', 'u11', 'u13', 'u15', 'u17', 'u19', 'senior']
+        const minimumIndex = ageGroups.indexOf(getAgeGroupForAge(age))
+
+        return teams.value.filter(team => {
+            const belongsToPlayerClub = Number(team.club_id) === Number(player.value?.club_id)
+            const isAgeAppropriate = ageGroups.indexOf(String(team.age_group).toLowerCase()) >= minimumIndex
+            return belongsToPlayerClub && isAgeAppropriate
+        })
+    })
+
+    const isSelectedTeamEligible = computed(() => eligibleTeams.value.some(team =>
+        String(team.id) === String(editForm.team_id)
+    ))
+
+    const fetchTeamOptions = async () => {
+        try {
+            teams.value = await fetchTeams()
+        } catch (err) {
+            console.error('Greška pri učitavanju timova za izmenu igrača:', err)
+        }
+    }
 
     const fetchPlayerProfile = async () => {
         try {
@@ -38,6 +69,7 @@ export function usePlayerProfile(playerId) {
     const openEditModal = () => {
         if (!player.value) return
         editForm.name = player.value.name || ''
+        editForm.team_id = String(player.value.team_id || player.value.team?.id || '')
         editForm.email = player.value.email || ''
         editForm.primary_position = player.value.primary_position || 'CM'
         editForm.height = player.value.height || null
@@ -58,6 +90,7 @@ export function usePlayerProfile(playerId) {
             formData.append('_method', 'PUT')
             formData.append('name', editForm.name)
             formData.append('primary_position', editForm.primary_position)
+            if (editForm.team_id) formData.append('team_id', editForm.team_id)
 
             if (editForm.email) formData.append('email', editForm.email)
             if (editForm.jersey_number) formData.append('jersey_number', editForm.jersey_number)
@@ -89,10 +122,15 @@ export function usePlayerProfile(playerId) {
 
     return {
         player,
+        teams,
+        eligibleTeams,
+        isSelectedTeamEligible,
+        formatAgeGroup,
         showEditModal,
         isSubmitting,
         editForm,
         fetchPlayerProfile,
+        fetchTeamOptions,
         getStat,
         openEditModal,
         handleUpdatePlayer,

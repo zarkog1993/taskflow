@@ -17,7 +17,7 @@
                         <AppSelect v-model="selectedPlayerId" class="flex-1 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-xs text-gray-900 dark:text-white outline-none focus:border-indigo-500 cursor-pointer">
                             <option :value="null" disabled>Izaberite igratča bez ekipe...</option>
                             <option v-for="p in unassignedPlayers" :key="p.id" :value="p.id">
-                                {{ p.name }} (#{{ p.jersey_number || '-' }} - {{ p.primary_position }})
+                                {{ p.name }} · {{ formatPlayerAge(p) }} (#{{ p.jersey_number || '-' }} - {{ p.primary_position }})
                             </option>
                         </AppSelect>
                         <button @click="$emit('assign')" :disabled="!selectedPlayerId" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-2 rounded-xl transition disabled:opacity-50 cursor-pointer">
@@ -36,8 +36,13 @@
                                     #{{ player.jersey_number || '-' }}
                                 </div>
                                 <div>
-                                    <p class="text-xs font-bold text-gray-900 dark:text-white">{{ player.name }}</p>
-                                    <p class="text-[10px] text-gray-600 dark:text-gray-400">{{ player.primary_position }}</p>
+                                    <router-link
+                                        :to="{ name: 'player-profile', params: { id: player.id }, query: { edit: '1' } }"
+                                        class="text-xs font-bold text-gray-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded"
+                                    >
+                                        {{ player.name }}
+                                    </router-link>
+                                    <p class="text-[10px] text-gray-600 dark:text-gray-400">{{ formatPlayerAge(player) }} · {{ player.primary_position || 'Pozicija nije uneta' }}</p>
                                 </div>
                             </div>
                             <button @click="$emit('remove', player.id)" class="text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300 text-xs font-bold px-2 py-1 rounded bg-rose-50/60 dark:bg-rose-950/60 border border-rose-200/80 dark:border-rose-800/80 cursor-pointer">
@@ -59,6 +64,8 @@
 </template>
 
 <script setup>
+import { formatPlayerAge } from '../../players/utils/playerAge'
+
 defineProps({
     team: {
         type: Object,
