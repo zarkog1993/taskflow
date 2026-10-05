@@ -17,6 +17,11 @@ class AnalyticsController extends Controller
      */
     private const ATTENDED_STATUS = 'accepted';
 
+    /**
+     * Get analytics data for the specified team and date range.
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function index(Request $request): JsonResponse
     {
         $validated = $request->validate([

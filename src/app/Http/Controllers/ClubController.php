@@ -7,11 +7,21 @@ use Illuminate\Http\Request;
 
 class ClubController extends Controller
 {
+    /**
+     * Get the authenticated user's club information.
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function show(Request $request): JsonResponse
     {
         return response()->json(['data' => $request->user()->club]);
     }
 
+    /**
+     * Update the authenticated user's club information.
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function update(Request $request): JsonResponse
     {
         $club = $request->user()->club;

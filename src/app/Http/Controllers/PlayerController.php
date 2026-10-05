@@ -15,6 +15,11 @@ use Illuminate\Support\Facades\Storage;
 
 class PlayerController extends Controller
 {
+    /**
+     * Display a listing of the players.
+     * @param Request $request
+     * @return AnonymousResourceCollection
+     */
     public function index(Request $request): AnonymousResourceCollection
     {
         $players = Player::with('team')
@@ -26,7 +31,11 @@ class PlayerController extends Controller
             ->get();
         return PlayerResource::collection($players);
     }
-
+    /**
+     * Store a newly created player in storage.
+     * @param StorePlayerRequest $request
+     * @return JsonResponse
+     */
     public function store(StorePlayerRequest $request): JsonResponse
     {
         abort_unless(
@@ -68,6 +77,12 @@ class PlayerController extends Controller
         ], 201);
     }
 
+    /**
+     * Display the specified player.
+     * @param Request $request
+     * @param Player $player
+     * @return JsonResponse
+     */
     public function show(Request $request, Player $player): JsonResponse
     {
         $this->authorizePlayer($request, $player);
@@ -77,6 +92,12 @@ class PlayerController extends Controller
         ]);
     }
 
+    /**
+     * Update the specified player in storage.
+     * @param Request $request
+     * @param Player $player
+     * @return JsonResponse
+     */
     public function update(Request $request, Player $player): JsonResponse
     {
         $this->authorizePlayer($request, $player);
@@ -124,7 +145,12 @@ class PlayerController extends Controller
             'data' => new PlayerResource($player->load('team'))
         ]);
     }
-
+    /**
+     * Remove the specified player from storage.
+     * @param Request $request
+     * @param Player $player
+     * @return JsonResponse
+     */
     public function destroy(Request $request, Player $player): JsonResponse
     {
         $this->authorizePlayer($request, $player);
@@ -137,6 +163,12 @@ class PlayerController extends Controller
         return response()->json(['message' => 'Igrač je uspešno obrisan.']);
     }
 
+    /**
+     * Resolve the authorized team for the current user.
+     * @param Request $request
+     * @param int|null $teamId
+     * @return Team
+     */
     private function resolveAuthorizedTeam(Request $request, ?int $teamId): Team
     {        $query = Team::query();
 
@@ -149,6 +181,12 @@ class PlayerController extends Controller
             : $query->oldest('id')->firstOrFail();
     }
 
+    /**
+     * Authorize access to a specific player for the current user.
+     * @param Request $request
+     * @param Player $player
+     * @return void
+     */
     private function authorizePlayer(Request $request, Player $player): void
     {
         abort_unless(
@@ -160,6 +198,8 @@ class PlayerController extends Controller
 
     /**
      * Kategorija igrača se izvodi iz starosne grupe ekipe (u19 -> U19, senior -> Seniori).
+     * @param string|null $ageGroup
+     * @return string
      */
     private function seniorityFromAgeGroup(?string $ageGroup): string
     {

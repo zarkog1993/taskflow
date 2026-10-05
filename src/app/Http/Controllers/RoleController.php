@@ -7,6 +7,10 @@ use Illuminate\Http\JsonResponse;
 
 class RoleController extends Controller
 {
+    /**
+     * Display a listing of the roles.
+     * @return JsonResponse
+     */
     public function index(): JsonResponse
     {
         return response()->json([

@@ -15,6 +15,12 @@ class MatchLineupController extends Controller
 {
     private const array FORMATIONS = ['4-3-3', '4-4-2', '4-2-3-1', '3-5-2'];
 
+    /**
+     * Display the lineup for a specific match day.
+     * @param Request $request
+     * @param MatchDay $match
+     * @return JsonResponse
+     */
     public function show(Request $request, MatchDay $match): JsonResponse
     {
         $this->authorizeMatch($request, $match, false);
@@ -69,6 +75,12 @@ class MatchLineupController extends Controller
         ]);
     }
 
+    /**
+     * Update the lineup for a specific match day.
+     * @param Request $request
+     * @param MatchDay $match
+     * @return JsonResponse
+     */
     public function update(Request $request, MatchDay $match): JsonResponse
     {
         $this->authorizeMatch($request, $match, true);
@@ -125,6 +137,13 @@ class MatchLineupController extends Controller
         ]);
     }
 
+    /**
+     * Authorize access to a specific match for viewing or updating.
+     * @param Request $request
+     * @param MatchDay $match
+     * @param bool $forUpdate
+     * @return void
+     */
     private function authorizeMatch(Request $request, MatchDay $match, bool $forUpdate): void
     {
         $match->loadMissing('team');
@@ -132,6 +151,11 @@ class MatchLineupController extends Controller
         Gate::authorize($forUpdate ? 'update' : 'view', $match->team);
     }
 
+    /**
+     * Ensure that the match is scheduled before allowing lineup modifications.
+     * @param MatchDay $match
+     * @return void
+     */
     private function ensureScheduled(MatchDay $match): void
     {
         abort_unless($match->status === 'scheduled', 409, 'Planer je dostupan samo za zakazane utakmice.');

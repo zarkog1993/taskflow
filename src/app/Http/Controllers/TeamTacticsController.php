@@ -13,6 +13,11 @@ class TeamTacticsController extends Controller
 {
     private const array FORMATIONS = ['4-3-3', '4-4-2', '4-2-3-1', '3-5-2'];
 
+    /**
+     * Display the tactics of the specified team.
+     * @param Team $team
+     * @return JsonResponse
+     */
     public function show(Team $team): JsonResponse
     {
         Gate::authorize('view', $team);
@@ -22,6 +27,12 @@ class TeamTacticsController extends Controller
         ]);
     }
 
+    /**
+     * Update the tactics of the specified team.
+     * @param Request $request
+     * @param Team $team
+     * @return JsonResponse
+     */
     public function update(Request $request, Team $team): JsonResponse
     {
         Gate::authorize('update', $team);

@@ -21,7 +21,7 @@ class AuthController extends Controller
     /**
      * Register a new user.
      *
-     * @param RegisterRequest $registerRequest
+     * @param RegisterRequest $request
      * @return JsonResponse
      */
     public function register(RegisterRequest $request): JsonResponse
@@ -50,7 +50,12 @@ class AuthController extends Controller
             ->setStatusCode(200); // Za login vraćamo 200 OK
     }
 
-    public function me(Request $request)
+    /**
+     * Get the authenticated user's information.
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function me(Request $request): JsonResponse
     {
         $user = $request->user()->load(['roles', 'club.teams']);
 
@@ -68,6 +73,11 @@ class AuthController extends Controller
         ]);
     }
 
+    /**
+     * Logout the authenticated user.
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function logout(Request $request): JsonResponse
     {
         $this->authService->logout($request->user());

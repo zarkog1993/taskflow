@@ -13,7 +13,12 @@ class EventInvitationController extends Controller
     public function __construct(private EventInvitationService $invitationService) {}
 
     /**
-     * RSVP odgovor igrača iz email pozivnice (potpisan link, bez prijave).
+     * Handle the RSVP response of a player from an email invitation (signed link, no login required).
+     * @param string $type
+     * @param int $event
+     * @param Player $player
+     * @param string $status
+     * @return RedirectResponse
      */
     public function respond(string $type, int $event, Player $player, string $status): RedirectResponse
     {

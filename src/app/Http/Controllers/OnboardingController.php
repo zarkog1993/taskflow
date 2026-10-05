@@ -14,6 +14,10 @@ class OnboardingController extends Controller
     {
     }
 
+    /**
+     * Get a list of available subscription plans.
+     * @return JsonResponse
+     */
     public function getPlans(): JsonResponse
     {
         return response()->json([
@@ -21,6 +25,11 @@ class OnboardingController extends Controller
         ]);
     }
 
+    /**
+     * Show the onboarding details for a specific token.
+     * @param string $token
+     * @return JsonResponse
+     */
     public function show(string $token): JsonResponse
     {
         $club = $this->onboardingService->findByToken($token);
@@ -32,6 +41,12 @@ class OnboardingController extends Controller
         ]);
     }
 
+    /**
+     * Select a subscription plan for the onboarding process.
+     * @param Request $request
+     * @param string $token
+     * @return JsonResponse
+     */
     public function select(Request $request, string $token): JsonResponse
     {
         $validated = $request->validate([
@@ -50,6 +65,11 @@ class OnboardingController extends Controller
         ], 202);
     }
 
+    /**
+     * Complete the onboarding process and create the club.
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
@@ -68,6 +88,12 @@ class OnboardingController extends Controller
         ], 202);
     }
 
+    /**
+     * Update the status of a subscription.
+     * @param Request $request
+     * @param Subscription $subscription
+     * @return JsonResponse
+     */
     public function updateSubscription(Request $request, Subscription $subscription): JsonResponse
     {
         abort_unless($request->user()->isSuperAdmin(), 403);

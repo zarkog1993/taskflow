@@ -36,6 +36,8 @@ class UserController extends Controller
 
     /**
      * Display a listing of the users.
+     * @param Request $request
+     * @return JsonResponse
      */
     public function index(Request $request)
     {
@@ -46,6 +48,11 @@ class UserController extends Controller
         );
     }
 
+    /**
+     * Display the super admin dashboard.
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function superAdminDashboard(Request $request): JsonResponse
     {
         // Provera da li je Super Admin
@@ -112,7 +119,7 @@ class UserController extends Controller
         ], 201);
     }
 
-        /**
+    /**
      * Display the specified user.
      * @param User $user
      * @return JsonResponse
@@ -142,9 +149,12 @@ class UserController extends Controller
     }
 
     /**
-     * Uklanja korisnika iz baze.
+     * Remove the specified user from storage.
+     * @param Request $request
+     * @param User $user
+     * @return JsonResponse
      */
-    public function destroy(Request $request, User $user)
+    public function destroy(Request $request, User $user): JsonResponse
     {
         Gate::authorize('delete', $user);
 
@@ -153,6 +163,11 @@ class UserController extends Controller
         return response()->json(null, 204);
     }
 
+    /**
+     * Display an overview of all clubs for the super admin.
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function adminClubsOverview(Request $request): JsonResponse
     {
         if (!$request->user()->isSuperAdmin()) {

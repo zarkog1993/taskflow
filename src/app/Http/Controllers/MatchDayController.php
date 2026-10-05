@@ -16,6 +16,11 @@ class MatchDayController extends Controller
         private PlayerStatsService $playerStats,
     ) {}
 
+    /**
+     * Get a list of match days, optionally including advanced stats for authorized users.
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function index(Request $request): JsonResponse
     {
         $relations = ['team.players', 'invitedPlayers'];
@@ -32,6 +37,11 @@ class MatchDayController extends Controller
         return response()->json(['data' => $query->get()]);
     }
 
+    /**
+     * Store a newly created match day and invite attendees.
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function store(Request $request): \Illuminate\Http\JsonResponse
     {
         $validated = $request->validate([
@@ -59,6 +69,12 @@ class MatchDayController extends Controller
         return response()->json(['message' => 'Utakmica uspešno zakazana.', 'data' => $matchDay->load('invitedPlayers')], 201);
     }
 
+    /**
+     * Update the statistics for a specific match day.
+     * @param Request $request
+     * @param MatchDay $match
+     * @return JsonResponse
+     */
     public function updateStats(Request $request, MatchDay $match): JsonResponse
     {
         $this->authorizeClubAccess($request, $match);

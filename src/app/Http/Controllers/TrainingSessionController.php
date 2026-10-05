@@ -94,6 +94,12 @@ class TrainingSessionController extends Controller
         return response()->json(['data' => $updated]);
     }
 
+    /**
+     * Update the specified training session.
+     * @param Request $request
+     * @param TrainingSession $trainingSession
+     * @return JsonResponse
+     */
     public function update(Request $request, TrainingSession $trainingSession): JsonResponse
     {
         Gate::authorize('update', $trainingSession);
@@ -124,7 +130,7 @@ class TrainingSessionController extends Controller
     }
 
     /**
-     * Delete a training session.
+     * Delete the specified training session.
      * @param TrainingSession $trainingSession
      * @return JsonResponse
      */

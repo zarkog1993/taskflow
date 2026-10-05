@@ -47,6 +47,12 @@ class TeamController extends Controller
         return response()->json(['data' => $teams]);
     }
 
+    /**
+     * Display the specified team.
+     * @param Request $request
+     * @param Team $team
+     * @return JsonResponse
+     */
     public function show(Request $request, Team $team): JsonResponse
     {
         Gate::authorize('view', $team);
@@ -82,6 +88,12 @@ class TeamController extends Controller
         return response()->json(['data' => $team], 201);
     }
 
+    /**
+     * Update the specified team.
+     * @param Request $request
+     * @param Team $team
+     * @return JsonResponse
+     */
     public function update(Request $request, Team $team): JsonResponse
     {
         Gate::authorize('update', $team);
@@ -94,6 +106,11 @@ class TeamController extends Controller
         return response()->json(['data' => $team->fresh(['club', 'players'])]);
     }
 
+    /**
+     * Delete the specified team.
+     * @param Team $team
+     * @return JsonResponse
+     */
     public function destroy(Team $team): JsonResponse
     {
         Gate::authorize('delete', $team);
