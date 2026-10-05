@@ -58,6 +58,24 @@
                     </AppSelect>
                 </div>
 
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-600 dark:text-gray-400 mb-1">Tim / kategorija *</label>
+                    <AppSelect v-model="form.team_id" required class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2.5 text-xs text-gray-900 dark:text-white outline-none focus:border-indigo-500 cursor-pointer">
+                        <option v-if="currentTeam && !teamSelectionValid" :value="String(currentTeam.id)" disabled>
+                            {{ currentTeam.name }} · nije dozvoljena za uzrast
+                        </option>
+                        <option v-for="team in eligibleTeams" :key="team.id" :value="String(team.id)">
+                            {{ team.name }} · {{ formatAgeGroup(team.age_group) }}
+                        </option>
+                    </AppSelect>
+                    <p v-if="!teamSelectionValid" class="mt-1 text-[10px] font-semibold text-rose-600 dark:text-rose-400">
+                        Izaberite tim koji odgovara uzrastu igrača ili stariju kategoriju.
+                    </p>
+                    <p v-else-if="!form.date_of_birth" class="mt-1 text-[10px] text-gray-600 dark:text-gray-400">
+                        Unesite datum rođenja da bi izbor kategorija bio ograničen prema uzrastu.
+                    </p>
+                </div>
+
                 <!-- Visina, Težina i Datum Rođenja -->
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     <div>
@@ -102,7 +120,7 @@
                 <!-- Akcije -->
                 <div class="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200/70 dark:border-gray-700/70 shrink-0">
                     <button type="button" @click="$emit('close')" class="px-4 py-2 text-xs font-semibold text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition cursor-pointer">Odustani</button>
-                    <button type="submit" :disabled="isSubmitting" class="px-5 py-2.5 text-xs bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg transition border border-indigo-500/30 cursor-pointer disabled:opacity-50">
+                    <button type="submit" :disabled="isSubmitting || !teamSelectionValid" class="px-5 py-2.5 text-xs bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg transition border border-indigo-500/30 cursor-pointer disabled:opacity-50">
                         <span v-if="isSubmitting" class="animate-spin">⏳</span>
                         <span>Sačuvaj Promene</span>
                     </button>
@@ -121,6 +139,10 @@ defineProps({
         type: Object,
         required: true
     },
+    eligibleTeams: { type: Array, default: () => [] },
+    currentTeam: { type: Object, default: null },
+    teamSelectionValid: { type: Boolean, default: true },
+    formatAgeGroup: { type: Function, required: true },
     currentPhotoUrl: {
         type: String,
         default: ''

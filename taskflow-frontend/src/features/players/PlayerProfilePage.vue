@@ -31,6 +31,10 @@
         <EditPlayerModal
             v-if="showEditModal && player"
             :form="editForm"
+            :eligible-teams="eligibleTeams"
+            :current-team="player.team"
+            :team-selection-valid="isSelectedTeamEligible"
+            :format-age-group="formatAgeGroup"
             :current-photo-url="player.photo_url"
             :is-submitting="isSubmitting"
             @close="showEditModal = false"
@@ -41,7 +45,7 @@
 
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { fetchMatches } from '../../services/matchesService'
 import EditPlayerModal from './components/EditPlayerModal.vue'
 import PlayerHeader from './components/player/PlayerHeader.vue'
@@ -54,12 +58,17 @@ import PlayerStatistics from './components/player/PlayerStatistics.vue'
 import { usePlayerProfile } from './composables/usePlayerProfile'
 
 const route = useRoute()
+const router = useRouter()
 const {
     player,
+    eligibleTeams,
+    isSelectedTeamEligible,
+    formatAgeGroup,
     showEditModal,
     isSubmitting,
     editForm,
     fetchPlayerProfile,
+    fetchTeamOptions,
     openEditModal,
     handleUpdatePlayer,
     formatFoot
@@ -92,8 +101,14 @@ const loadRecentMatches = async () => {
     }
 }
 
-onMounted(() => {
-    fetchPlayerProfile()
+onMounted(async () => {
+    await Promise.all([fetchPlayerProfile(), fetchTeamOptions()])
+    if (route.query.edit === '1' && player.value) {
+        openEditModal()
+        const query = { ...route.query }
+        delete query.edit
+        router.replace({ query })
+    }
     loadRecentMatches()
 })
 
