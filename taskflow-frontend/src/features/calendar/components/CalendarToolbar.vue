@@ -9,33 +9,33 @@
             </div>
             <button
                 @click="$emit('create')"
-                class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-lg shadow-indigo-600/30 cursor-pointer"
+                class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-3 sm:py-2.5 rounded-xl transition shadow-lg shadow-indigo-600/30 cursor-pointer"
             >
                 + Zakaži Događaj
             </button>
         </div>
 
         <!-- Navigacija Kroz Mesec -->
-        <div class="bg-gray-100/80 dark:bg-gray-800/80 border border-gray-200/80 dark:border-gray-700/80 rounded-2xl p-4 flex justify-between items-center">
+        <div class="bg-gray-100/80 dark:bg-gray-800/80 border border-gray-200/80 dark:border-gray-700/80 rounded-2xl p-3 sm:p-4 flex justify-between items-center gap-2">
             <button
                 @click="$emit('prev')"
-                class="bg-white dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs px-3 py-1.5 rounded-xl border border-gray-200 dark:border-gray-700 transition cursor-pointer"
+                class="min-h-[44px] sm:min-h-0 bg-white dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs px-2 sm:px-3 py-1.5 rounded-xl border border-gray-200 dark:border-gray-700 transition cursor-pointer"
             >
                 ← Prethodni
             </button>
-            <h2 class="text-base font-bold text-gray-900 dark:text-white uppercase tracking-wider capitalize">
+            <h2 class="min-w-0 text-center text-sm sm:text-base font-bold text-gray-900 dark:text-white uppercase tracking-wider capitalize">
                 {{ currentMonthName }} {{ currentYear }}
             </h2>
             <button
                 @click="$emit('next')"
-                class="bg-white dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs px-3 py-1.5 rounded-xl border border-gray-200 dark:border-gray-700 transition cursor-pointer"
+                class="min-h-[44px] sm:min-h-0 bg-white dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs px-2 sm:px-3 py-1.5 rounded-xl border border-gray-200 dark:border-gray-700 transition cursor-pointer"
             >
                 Sledeći →
             </button>
         </div>
 
         <!-- Legenda -->
-        <div class="flex gap-4 text-xs">
+        <div class="flex flex-wrap gap-x-4 gap-y-2 text-xs">
             <div class="flex items-center gap-2">
                 <span class="w-3 h-3 rounded-full bg-indigo-500 border border-indigo-400"></span>
                 <span class="text-gray-700 dark:text-gray-300">Trening</span>

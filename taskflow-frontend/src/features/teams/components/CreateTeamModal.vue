@@ -1,6 +1,6 @@
 <template>
     <div class="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
-        <div class="bg-gray-100 dark:bg-gray-800 border border-gray-200/80 dark:border-gray-700/80 rounded-2xl w-full max-w-md p-6 shadow-2xl space-y-5">
+        <div class="max-h-[calc(100dvh-2rem)] overflow-y-auto bg-gray-100 dark:bg-gray-800 border border-gray-200/80 dark:border-gray-700/80 rounded-2xl w-full max-w-md p-5 sm:p-6 shadow-2xl space-y-5">
             <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-3">
                 <h3 class="text-lg font-black text-gray-900 dark:text-white">Dodaj Novu Ekipu</h3>
                 <button @click="$emit('close')" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white font-bold">✕</button>

@@ -7,7 +7,7 @@
                 <h1 class="text-2xl font-black text-gray-900 dark:text-white">Utakmice & Zapisnici</h1>
                 <p class="text-xs text-gray-600 dark:text-gray-400">Pregled zakazanih mečeva, sastava i statistike igrača</p>
             </div>
-            <button @click="openCreateModal" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-lg cursor-pointer">
+            <button @click="openCreateModal" class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-3 sm:py-2.5 rounded-xl transition shadow-lg cursor-pointer">
                 + Zakaži Utakmicu
             </button>
         </div>
@@ -21,11 +21,11 @@
                 :canceled-count="canceledMatches.length"
             />
 
-            <div class="flex items-center gap-2 pb-2">
+            <div class="flex w-full items-center justify-between gap-2 pb-2 sm:w-auto sm:justify-start">
                 <label class="text-[10px] font-bold uppercase text-gray-600 dark:text-gray-400 tracking-wider">Mesec</label>
                 <AppSelect
                     v-model="selectedMonth"
-                    class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-xs text-gray-900 dark:text-white outline-none focus:border-indigo-500 cursor-pointer"
+                    class="min-h-[44px] w-44 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-xs text-gray-900 dark:text-white outline-none focus:border-indigo-500 cursor-pointer"
                 >
                     <option value="all">Svi meseci</option>
                     <option v-for="option in monthOptions" :key="option.value" :value="option.value">

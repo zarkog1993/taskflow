@@ -1,6 +1,6 @@
 <template>
     <div class="bg-gray-100/80 dark:bg-gray-800/80 border border-gray-200/80 dark:border-gray-700/80 rounded-2xl p-4 overflow-x-auto">
-        <table class="w-full text-left border-collapse text-xs">
+        <table class="min-w-[760px] w-full text-left border-collapse text-xs">
             <thead>
             <tr class="border-b border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 uppercase font-bold text-[10px]">
                 <th class="p-2">Ime</th>

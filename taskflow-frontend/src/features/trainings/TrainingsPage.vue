@@ -8,20 +8,20 @@
                 <p class="text-xs text-gray-600 dark:text-gray-400 mt-0.5">Pregled svih zakazanih treninga i evidencija prisustva</p>
             </div>
 
-            <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+            <div class="grid w-full grid-cols-2 items-center gap-2 sm:flex sm:w-auto sm:justify-end sm:gap-3">
                 <button
                     @click="trainingStore.fetchSessions()"
                     :disabled="trainingStore.loading"
                     title="Osveži odgovore na pozivnice"
-                    class="p-2.5 bg-white dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-200/80 dark:border-gray-700/80 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white rounded-xl transition text-xs cursor-pointer disabled:opacity-50"
+                    class="min-h-[44px] min-w-[44px] bg-white dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-200/80 dark:border-gray-700/80 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white rounded-xl transition text-xs cursor-pointer disabled:opacity-50 sm:min-h-0 sm:min-w-0 sm:p-2.5"
                 >
                     {{ trainingStore.loading ? '⏳' : '↻' }}
                 </button>
 
                 <!-- Izbor meseca -->
-                <div class="flex items-center bg-white dark:bg-gray-900 rounded-xl p-1 border border-gray-200/80 dark:border-gray-700/80">
+                <div class="min-w-0 flex items-center justify-between bg-white dark:bg-gray-900 rounded-xl p-1 border border-gray-200/80 dark:border-gray-700/80">
                     <button @click="changeMonth(-1)" class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition cursor-pointer">←</button>
-                    <span class="px-3 text-xs font-bold text-gray-900 dark:text-white min-w-[120px] text-center capitalize">
+                    <span class="min-w-0 flex-1 px-1 sm:px-3 text-[11px] sm:text-xs font-bold text-gray-900 dark:text-white text-center capitalize">
             {{ currentMonthName }} {{ currentYear }}
           </span>
                     <button @click="changeMonth(1)" class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition cursor-pointer">→</button>
@@ -29,7 +29,7 @@
 
                 <button
                     @click="showCreateModal = true"
-                    class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-lg transition flex items-center gap-1.5 border border-indigo-500/30 cursor-pointer"
+                    class="col-span-2 w-full justify-center bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-3 sm:py-2.5 rounded-xl shadow-lg transition flex items-center gap-1.5 border border-indigo-500/30 cursor-pointer sm:col-span-1 sm:w-auto"
                 >
                     <span>➕</span> Zakaži Trening
                 </button>

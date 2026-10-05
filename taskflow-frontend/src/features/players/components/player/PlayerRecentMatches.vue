@@ -3,7 +3,7 @@
         <h2 class="mb-3 border-b border-slate-200 dark:border-slate-800 pb-3 text-sm font-bold text-gray-900 dark:text-white">Nedavne utakmice</h2>
         <p v-if="error" class="text-xs text-amber-700 dark:text-amber-300">{{ error }}</p>
         <div v-else-if="matches.length" class="overflow-x-auto">
-            <table class="w-full min-w-[27rem] text-left text-xs">
+            <table class="min-w-[560px] w-full text-left text-xs">
                 <thead class="text-[10px] uppercase tracking-wide text-slate-500">
                     <tr>
                         <th class="py-2 pr-3 font-semibold">Protivnik</th>

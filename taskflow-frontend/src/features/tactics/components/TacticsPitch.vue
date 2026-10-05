@@ -16,16 +16,24 @@
             <div
                 v-for="spot in fieldSpots"
                 :key="spot.id"
+                role="button"
+                tabindex="0"
                 draggable="true"
                 @dragstart="$emit('drag-start', $event, spot)"
                 @click="$emit('spot-click', spot)"
-                class="absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-transform hover:scale-110 z-10 group"
+                @keydown.enter.prevent="$emit('spot-click', spot)"
+                @keydown.space.prevent="$emit('spot-click', spot)"
+                :aria-label="`${spot.position}: ${spot.player?.name || spot.roleName}${selectedPlayer ? `, postavi ${selectedPlayer.name}` : ', izaberi igrača'}`"
+                class="absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer touch-manipulation transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 z-10 group"
                 :style="{ left: spot.x + '%', top: spot.y + '%' }"
             >
                 <div class="flex flex-col items-center">
                     <div
                         class="w-9 h-9 sm:w-11 sm:h-11 border-2 font-black text-[10px] sm:text-xs rounded-full flex items-center justify-center shadow-2xl relative transition"
-                        :class="spot.player ? 'bg-indigo-600 border-white text-white' : 'bg-gray-100/90 dark:bg-gray-800/90 border-dashed border-gray-500 text-gray-600 dark:text-gray-400'"
+                        :class="[
+                            spot.player ? 'bg-indigo-600 border-white text-white' : 'bg-gray-100/90 dark:bg-gray-800/90 border-dashed border-gray-500 text-gray-600 dark:text-gray-400',
+                            selectedPlayer ? 'ring-2 ring-emerald-500 ring-offset-2 ring-offset-white dark:ring-offset-gray-900' : '',
+                        ]"
                     >
                         #{{ spot.player?.jersey_number || spot.defaultNumber || '?' }}
                         <span class="absolute -bottom-1 -right-1 bg-emerald-500 text-gray-950 text-[9px] font-extrabold px-1 rounded border border-white">
@@ -49,7 +57,11 @@ defineProps({
     fieldSpots: {
         type: Array,
         default: () => []
-    }
+    },
+    selectedPlayer: {
+        type: Object,
+        default: null
+    },
 })
 
 defineEmits(['drop', 'drag-start', 'spot-click'])

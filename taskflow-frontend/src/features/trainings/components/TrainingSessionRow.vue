@@ -4,7 +4,7 @@
         class="bg-gray-100/90 dark:bg-gray-800/90 border border-gray-200/80 dark:border-gray-700/80 hover:border-indigo-500/50 rounded-2xl p-4 transition shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-4"
     >
         <!-- Datum i Vreme -->
-        <div class="flex items-center gap-4 min-w-[200px]">
+        <div class="flex min-w-0 items-center gap-4 sm:min-w-[200px]">
             <div class="bg-indigo-50/80 dark:bg-indigo-950/80 border border-indigo-200/80 dark:border-indigo-800/80 rounded-xl px-3 py-2 text-center min-w-[65px]">
                 <div class="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase">{{ getDayName(session.scheduled_at) }}</div>
                 <div class="text-lg font-black text-gray-900 dark:text-white">{{ getDayNumber(session.scheduled_at) }}</div>
@@ -16,8 +16,8 @@
         </div>
 
         <!-- Naziv i Opis -->
-        <div class="flex-1">
-            <div class="flex items-center gap-2 mb-1">
+        <div class="min-w-0 flex-1">
+            <div class="flex flex-wrap items-center gap-2 mb-1">
         <span
             :class="[
             'text-[10px] font-bold uppercase px-2 py-0.5 rounded-md border',
@@ -26,7 +26,7 @@
         >
           {{ session.type === 'match' ? '⚽ Utakmica' : '🏃‍♂️ Trening' }}
         </span>
-                <h3 class="text-base font-bold text-gray-900 dark:text-white">{{ session.title }}</h3>
+                <h3 class="break-words text-base font-bold text-gray-900 dark:text-white">{{ session.title }}</h3>
             </div>
             <p class="text-xs text-gray-600 dark:text-gray-400 line-clamp-1">
                 {{ session.description || 'Nema unetog opisa za ovaj trening.' }}

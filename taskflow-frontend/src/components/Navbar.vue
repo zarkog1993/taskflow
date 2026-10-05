@@ -1,12 +1,12 @@
 <template>
     <header class="bg-white/95 dark:bg-slate-900/95 border-b border-slate-200 dark:border-slate-800 backdrop-blur sticky top-0 z-50 transition-colors duration-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2 sm:gap-4">
 
             <!-- LEVA STRANA: Logo & Glavna Navigacija -->
             <div class="flex items-center gap-6 min-w-0">
                 <router-link :to="dashboardRoute" class="flex items-center gap-2 shrink-0">
           <span class="text-xl font-extrabold tracking-tight text-emerald-700 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition">
-            Pravi Fudbal
+            ProTrainer
           </span>
                 </router-link>
 
@@ -94,10 +94,11 @@
             </div>
 
             <!-- DESNA STRANA: Profil, Super Admin oznaka, Kalendar, Logout -->
-            <div class="flex items-center gap-3 shrink-0">
+            <div class="flex shrink-0 items-center gap-2 sm:gap-3">
 
                 <!-- Kalendar dugme -->
                 <router-link
+                    v-if="authStore.isAuthenticated"
                     to="/calendar"
                     class="text-xs font-semibold px-3 py-2 rounded-xl transition flex items-center gap-1.5"
                     :class="$route.path === '/calendar' ? 'bg-emerald-500 text-slate-950 font-bold' : 'bg-slate-100/80 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60'"
@@ -110,7 +111,7 @@
                 <router-link
                     v-if="isSuperAdmin && authStore.isAuthenticated"
                     to="/super-admin"
-                    class="text-[11px] font-bold px-2.5 py-1.5 rounded-lg bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30 hover:bg-amber-500/20 transition flex items-center gap-1.5"
+                    class="hidden sm:flex text-[11px] font-bold px-2.5 py-1.5 rounded-lg bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30 hover:bg-amber-500/20 transition items-center gap-1.5"
                 >
                     <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
                     <span>Super Admin</span>
@@ -142,10 +143,14 @@
                     <!-- Mobilni meni dugme -->
                     <button
                         @click="mobileMenuOpen = !mobileMenuOpen"
-                        class="lg:hidden text-slate-700 dark:text-slate-300 p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+                        type="button"
+                        :aria-expanded="mobileMenuOpen"
+                        aria-controls="mobile-navigation"
+                        :aria-label="mobileMenuOpen ? 'Zatvori meni' : 'Otvori meni'"
+                        class="lg:hidden text-slate-700 dark:text-slate-300 p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition"
                     >
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="mobileMenuOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'"></path>
                         </svg>
                     </button>
                 </template>
@@ -162,116 +167,156 @@
         </div>
 
         <!-- Mobilni Padajući Meni -->
-        <div
-            v-if="mobileMenuOpen && authStore.isAuthenticated && canManage"
-            class="lg:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 pt-3 pb-5 space-y-2 shadow-2xl"
+        <nav
+            v-if="mobileMenuOpen && authStore.isAuthenticated"
+            id="mobile-navigation"
+            aria-label="Glavna navigacija"
+            class="lg:hidden max-h-[calc(100dvh-4rem)] overflow-y-auto bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 pt-3 pb-5 shadow-2xl"
         >
-            <div class="pb-3 border-b border-slate-200 dark:border-slate-800 mb-2">
+            <div class="pb-3 border-b border-slate-200 dark:border-slate-800 mb-3">
                 <div class="text-sm font-bold text-gray-900 dark:text-white">{{ authStore.user?.name }}</div>
-                <div class="text-xs text-slate-600 dark:text-slate-400">{{ authStore.user?.email }}</div>
+                <div class="text-xs text-slate-600 dark:text-slate-400 break-all">{{ authStore.user?.email }}</div>
             </div>
 
+            <div v-if="canManage" class="grid grid-cols-2 gap-2">
+                <router-link
+                    :to="dashboardRoute"
+                    @click="mobileMenuOpen = false"
+                    class="flex min-h-[44px] items-center rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-800/60 dark:text-slate-200 dark:hover:bg-slate-800"
+                    :class="isActive(dashboardRoute) || $route.path === '/' ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400' : ''"
+                >
+                    Dashboard
+                </router-link>
+                <router-link
+                    v-if="hasFeature('matches') && !isSuperAdmin"
+                    to="/matches"
+                    @click="mobileMenuOpen = false"
+                    class="flex min-h-[44px] items-center rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-800/60 dark:text-slate-200 dark:hover:bg-slate-800"
+                    :class="$route.path.startsWith('/matches') ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400' : ''"
+                >
+                    Utakmice
+                </router-link>
+                <router-link
+                    v-if="hasFeature('teams') && !isSuperAdmin"
+                    to="/trainings"
+                    @click="mobileMenuOpen = false"
+                    class="flex min-h-[44px] items-center rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-800/60 dark:text-slate-200 dark:hover:bg-slate-800"
+                    :class="$route.path === '/trainings' ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400' : ''"
+                >
+                    Treninzi
+                </router-link>
+                <router-link
+                    v-if="hasFeature('tactics') && !isSuperAdmin"
+                    to="/tactics"
+                    @click="mobileMenuOpen = false"
+                    class="flex min-h-[44px] items-center rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-800/60 dark:text-slate-200 dark:hover:bg-slate-800"
+                    :class="$route.path === '/tactics' ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400' : ''"
+                >
+                    Taktika
+                </router-link>
+                <router-link
+                    v-if="hasFeature('advanced_stats') && !isSuperAdmin"
+                    to="/analytics"
+                    @click="mobileMenuOpen = false"
+                    class="flex min-h-[44px] items-center rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-800/60 dark:text-slate-200 dark:hover:bg-slate-800"
+                    :class="$route.path === '/analytics' ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400' : ''"
+                >
+                    Analitika
+                </router-link>
+                <router-link
+                    v-if="hasFeature('teams') && !isSuperAdmin"
+                    to="/teams"
+                    @click="mobileMenuOpen = false"
+                    class="flex min-h-[44px] items-center rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-800/60 dark:text-slate-200 dark:hover:bg-slate-800"
+                    :class="$route.path.startsWith('/teams') ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400' : ''"
+                >
+                    Moj Tim
+                </router-link>
+                <router-link
+                    v-if="hasFeature('players')"
+                    to="/players"
+                    @click="mobileMenuOpen = false"
+                    class="flex min-h-[44px] items-center rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-800/60 dark:text-slate-200 dark:hover:bg-slate-800"
+                    :class="$route.path.startsWith('/players') ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400' : ''"
+                >
+                    Igrači
+                </router-link>
+                <router-link
+                    to="/finances"
+                    @click="mobileMenuOpen = false"
+                    class="flex min-h-[44px] items-center rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-800/60 dark:text-slate-200 dark:hover:bg-slate-800"
+                    :class="$route.path === '/finances' ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400' : ''"
+                >
+                    Finansije
+                </router-link>
+                <router-link
+                    to="/calendar"
+                    @click="mobileMenuOpen = false"
+                    class="flex min-h-[44px] items-center rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-800/60 dark:text-slate-200 dark:hover:bg-slate-800"
+                    :class="$route.path === '/calendar' ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400' : ''"
+                >
+                    📅 Kalendar
+                </router-link>
+                <router-link
+                    v-if="isSuperAdmin"
+                    to="/users"
+                    @click="mobileMenuOpen = false"
+                    class="flex min-h-[44px] items-center rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-800/60 dark:text-slate-200 dark:hover:bg-slate-800"
+                    :class="$route.path === '/users' ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400' : ''"
+                >
+                    Korisnici
+                </router-link>
+                <router-link
+                    v-if="isSuperAdmin"
+                    to="/super-admin"
+                    @click="mobileMenuOpen = false"
+                    class="flex min-h-[44px] items-center rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm font-semibold text-amber-700 transition dark:text-amber-300"
+                    :class="$route.path === '/super-admin' ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400' : ''"
+                >
+                    Super Admin
+                </router-link>
+            </div>
             <router-link
-                v-if="hasFeature('tactics')"
+                v-else
+                to="/calendar"
                 @click="mobileMenuOpen = false"
-                :to="dashboardRoute"
-                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 py-2 px-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                class="flex min-h-[44px] items-center rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-800/60 dark:text-slate-200 dark:hover:bg-slate-800"
+                :class="$route.path === '/calendar' ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400' : ''"
             >
-                Dashboard
-            </router-link>
-
-            <router-link
-                v-if="hasFeature('matches')"
-                @click="mobileMenuOpen = false"
-                to="/matches"
-                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 py-2 px-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition"
-            >
-                Utakmice & Zapisnik
-            </router-link>
-
-            <router-link
-                v-if="hasFeature('teams')"
-                @click="mobileMenuOpen = false"
-                to="/trainings"
-                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 py-2 px-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition"
-            >
-                Trening Sesije
-            </router-link>
-
-            <router-link
-                @click="mobileMenuOpen = false"
-                to="/tactics"
-                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 py-2 px-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition"
-            >
-                Taktika
-            </router-link>
-
-            <router-link
-                v-if="hasFeature('teams')"
-                @click="mobileMenuOpen = false"
-                to="/teams"
-                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 py-2 px-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition"
-            >
-                Moj Tim
-            </router-link>
-
-            <router-link
-                v-if="hasFeature('players')"
-                @click="mobileMenuOpen = false"
-                to="/players"
-                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 py-2 px-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition"
-            >
-                Igrači / Registar
-            </router-link>
-
-            <router-link
-                v-if="isAdmin"
-                @click="mobileMenuOpen = false"
-                to="/users"
-                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 py-2 px-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition"
-            >
-                Korisnici
-            </router-link>
-
-            <router-link
-                v-if="isSuperAdmin"
-                @click="mobileMenuOpen = false"
-                to="/super-admin"
-                class="block text-sm font-bold text-amber-700 dark:text-amber-400 py-2 px-3 rounded-xl bg-amber-500/10 border border-amber-500/20"
-            >
-                Super Admin Control Panel
+                📅 Kalendar
             </router-link>
 
             <button
+                type="button"
                 @click="authStore.logout"
-                class="w-full text-left text-sm font-semibold text-rose-600 dark:text-rose-400 py-2 px-3 rounded-xl hover:bg-rose-50/30 dark:hover:bg-rose-950/30 transition mt-2 border border-rose-200/40 dark:border-rose-900/40"
+                class="mt-3 w-full min-h-[44px] text-left text-sm font-semibold text-rose-600 dark:text-rose-400 py-2 px-3 rounded-xl hover:bg-rose-50/30 dark:hover:bg-rose-950/30 transition border border-rose-200/40 dark:border-rose-900/40"
             >
                 Odjavi se
             </button>
-        </div>
+        </nav>
     </header>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import ThemeToggle from '../components/ThemeToggle.vue'
 
 const authStore = useAuthStore()
+const route = useRoute()
 const mobileMenuOpen = ref(false)
+const isActive = (path) => route.path === path || (path !== '/' && route.path.startsWith(`${path}/`))
+
+watch(() => route.path, () => {
+    mobileMenuOpen.value = false
+})
 
 // Provera Super Admin uloge
 const isSuperAdmin = computed(() => {
     const user = authStore.user || JSON.parse(localStorage.getItem('user') || '{}')
     if (!user) return false
     return user.is_admin === 1 || user.is_admin === '1' || user.is_admin === true || user.roles?.some(r => r.slug === 'super-admin')
-})
-
-// Provera običnog ili klupskog admina
-const isAdmin = computed(() => {
-    const user = authStore.user || JSON.parse(localStorage.getItem('user') || '{}')
-    if (!user) return false
-    return user.is_admin || user.roles?.some(r => ['admin', 'club-admin', 'super-admin'].includes(r.slug))
 })
 
 // Dinamičko preusmeravanje za Dashboard

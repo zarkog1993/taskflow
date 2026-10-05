@@ -1,9 +1,9 @@
 <template>
-    <div class="flex gap-2 border-b border-gray-200/80 dark:border-gray-700/80 pb-2">
+    <div class="grid grid-cols-1 gap-2 border-b border-gray-200/80 dark:border-gray-700/80 pb-2 sm:grid-cols-3">
         <button
             @click="$emit('update:activeTab', 'clubs')"
             :class="[
-                'px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer',
+                'min-h-[44px] px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer',
                 activeTab === 'clubs' ? 'bg-emerald-500 text-gray-950 shadow-lg' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
             ]"
         >
@@ -12,7 +12,7 @@
         <button
             @click="$emit('update:activeTab', 'users')"
             :class="[
-                'px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer',
+                'min-h-[44px] px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer',
                 activeTab === 'users' ? 'bg-emerald-500 text-gray-950 shadow-lg' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
             ]"
         >
@@ -21,7 +21,7 @@
         <button
             @click="$emit('update:activeTab', 'subscriptions')"
             :class="[
-                'px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer',
+                'min-h-[44px] px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer',
                 activeTab === 'subscriptions' ? 'bg-emerald-500 text-gray-950 shadow-lg' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
             ]"
         >

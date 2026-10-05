@@ -1,6 +1,6 @@
 <template>
     <div class="fixed inset-0 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div class="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+        <div class="max-h-[calc(100dvh-2rem)] overflow-y-auto bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-5 sm:p-6 w-full max-w-md shadow-2xl">
             <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-1">Ažuriraj Učinak i Status</h3>
             <p class="text-xs text-indigo-600 dark:text-indigo-400 font-semibold mb-4">{{ player?.name }}</p>
 

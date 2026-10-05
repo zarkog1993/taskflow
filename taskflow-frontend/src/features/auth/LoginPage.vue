@@ -1,13 +1,13 @@
 <template>
     <div
-        class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white p-4 transition-colors duration-200 relative"
+        class="min-h-dvh flex items-center justify-center bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white p-4 transition-colors duration-200 relative"
     >
         <div class="absolute top-4 right-4">
             <ThemeToggle />
         </div>
 
         <div
-            class="max-w-md w-full bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-200 dark:border-gray-700"
+            class="max-w-md w-full bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-5 sm:p-8 border border-gray-200 dark:border-gray-700"
         >
             <div class="text-center mb-8">
                 <h1 class="text-3xl font-bold tracking-tight text-indigo-600 dark:text-indigo-400">
