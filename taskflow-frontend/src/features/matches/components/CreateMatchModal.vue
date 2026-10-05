@@ -1,7 +1,7 @@
 <!-- Modal za zakazivanje nove utakmice. -->
 <template>
     <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md">
-        <form @submit.prevent="handleSubmit" class="w-full max-w-lg space-y-4 rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 p-6">
+        <form @submit.prevent="handleSubmit" class="max-h-[calc(100dvh-2rem)] w-full max-w-lg space-y-4 overflow-y-auto rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 p-5 sm:p-6">
             <div class="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-3">
                 <h2 class="text-lg font-black text-gray-900 dark:text-white">Zakaži Utakmicu</h2>
                 <button type="button" @click="$emit('close')" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">✕</button>

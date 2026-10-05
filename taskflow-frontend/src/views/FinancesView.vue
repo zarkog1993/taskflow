@@ -4,7 +4,7 @@
         <div class="bg-gray-100/60 dark:bg-gray-800/60 p-6 rounded-2xl border border-gray-200/60 dark:border-gray-700/60 backdrop-blur-md shadow-xl space-y-6">
             <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
                 <div>
-                    <h1 class="text-3xl font-black text-gray-900 dark:text-white tracking-tight flex items-center gap-3">
+                    <h1 class="flex items-center gap-2 text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">
                         <span>💳</span> Finansije i Članarine
                     </h1>
                     <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">
@@ -120,8 +120,58 @@
         </div>
 
         <!-- Tabela -->
-        <div v-else-if="rows.length > 0" class="overflow-x-auto rounded-2xl border border-gray-200/60 dark:border-gray-700/60 bg-gray-100/40 dark:bg-gray-800/40">
-            <table class="w-full text-left text-sm text-gray-700 dark:text-gray-300">
+        <div v-else-if="rows.length > 0" class="overflow-hidden rounded-2xl border border-gray-200/60 dark:border-gray-700/60 bg-gray-100/40 dark:bg-gray-800/40">
+            <div class="space-y-3 p-3 sm:hidden">
+                <article
+                    v-for="row in rows"
+                    :key="row.player_id"
+                    class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-900/80 p-3"
+                >
+                    <div class="flex min-w-0 items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <p class="truncate text-sm font-bold text-gray-900 dark:text-white">{{ row.player_name }}</p>
+                            <p v-if="!selectedTeamId" class="truncate text-xs text-gray-500">{{ row.team_name }}</p>
+                            <p class="mt-1 text-xs text-gray-600 dark:text-gray-400 font-mono">
+                                #{{ row.jersey_number ?? '-' }} · {{ row.position || 'Igrač' }}
+                            </p>
+                        </div>
+                        <span
+                            :class="statusBadgeClass(row.status)"
+                            class="shrink-0 rounded-full border px-2 py-1 text-[10px] font-bold uppercase"
+                        >
+                            {{ STATUS_LABELS[row.status] }}
+                        </span>
+                    </div>
+                    <label class="mt-3 flex items-center justify-between gap-3 text-xs font-semibold text-gray-700 dark:text-gray-300">
+                        Iznos (RSD)
+                        <input
+                            type="number"
+                            min="0"
+                            step="100"
+                            v-model.number="row.amount"
+                            @change="persistRow(row)"
+                            :disabled="savingIds.has(row.player_id)"
+                            class="min-h-[44px] w-32 rounded-lg border border-gray-200 bg-gray-50 px-2.5 text-sm font-semibold text-emerald-700 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-950 dark:text-emerald-400"
+                        />
+                    </label>
+                    <div class="mt-3 grid grid-cols-3 gap-2">
+                        <button
+                            v-for="action in STATUS_ACTIONS"
+                            :key="action.value"
+                            type="button"
+                            @click="setStatus(row, action.value)"
+                            :disabled="savingIds.has(row.player_id)"
+                            :class="row.status === action.value ? action.activeClass : action.idleClass"
+                            class="min-h-10 rounded-lg border border-gray-200 px-1 py-2 text-[10px] font-semibold dark:border-gray-700 disabled:opacity-50"
+                        >
+                            {{ action.label }}
+                        </button>
+                    </div>
+                </article>
+            </div>
+
+            <div class="hidden overflow-x-auto sm:block">
+            <table class="min-w-[720px] w-full text-left text-sm text-gray-700 dark:text-gray-300">
                 <thead class="bg-white/80 dark:bg-gray-900/80 text-xs uppercase text-gray-600 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
                     <tr>
                         <th class="py-3 px-4">Igrač</th>
@@ -176,6 +226,7 @@
                     </tr>
                 </tbody>
             </table>
+            </div>
         </div>
 
         <!-- Prazno stanje -->

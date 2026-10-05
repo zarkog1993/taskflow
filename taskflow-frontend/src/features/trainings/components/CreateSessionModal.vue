@@ -1,7 +1,7 @@
 <!-- Modal za zakazivanje novog treninga. -->
 <template>
     <div class="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
-        <div class="bg-gray-100 dark:bg-gray-800 border border-gray-200/80 dark:border-gray-700/80 rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden">
+        <div class="max-h-[calc(100dvh-2rem)] w-full max-w-xl overflow-y-auto rounded-2xl bg-gray-100 dark:bg-gray-800 border border-gray-200/80 dark:border-gray-700/80 shadow-2xl">
             <div class="p-6 bg-white dark:bg-gray-900 border-b border-gray-200/70 dark:border-gray-700/70 relative">
                 <button @click="$emit('close')" class="absolute top-5 right-5 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">✕</button>
                 <h3 class="text-2xl font-black text-gray-900 dark:text-white">Zakaži Novi Trening</h3>

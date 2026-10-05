@@ -8,14 +8,14 @@
             </div>
 
             <!-- FILTERI -->
-            <div class="flex items-center gap-3">
+            <div class="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:items-center sm:gap-3">
                 <div class="relative">
                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-500 pointer-events-none">🔍</span>
                     <input
                         v-model="searchQuery"
                         type="search"
                         placeholder="Pretraži igrače..."
-                        class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl pl-8 pr-8 py-2 text-xs text-gray-900 dark:text-white outline-none focus:border-emerald-500 w-52 placeholder:text-slate-500"
+                        class="min-h-[44px] w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl pl-8 pr-8 py-2 text-xs text-gray-900 dark:text-white outline-none focus:border-emerald-500 sm:w-52 placeholder:text-slate-500"
                     />
                     <button
                         v-if="searchQuery"
@@ -30,7 +30,7 @@
 
                 <AppSelect
                     v-model="selectedTeamId"
-                    class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-gray-900 dark:text-white outline-none focus:border-emerald-500 cursor-pointer"
+                    class="min-h-[44px] w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-gray-900 dark:text-white outline-none focus:border-emerald-500 cursor-pointer sm:w-auto"
                 >
                     <option value="all">Sve selekcije</option>
                     <option v-for="team in teams" :key="team.id" :value="team.id">
@@ -121,7 +121,7 @@
                         </button>
                     </div>
 
-                    <table v-else class="w-full text-left border-collapse text-xs">
+                    <table v-else class="min-w-[780px] w-full text-left border-collapse text-xs">
                         <thead>
                         <tr class="border-b border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 font-bold uppercase text-[10px]">
                             <th class="p-3">#</th>

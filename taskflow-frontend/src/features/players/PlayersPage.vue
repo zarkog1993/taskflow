@@ -9,7 +9,7 @@
 
             <button
                 @click="showCreatePlayerModal = true"
-                class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2 border border-indigo-500/30 cursor-pointer"
+                class="w-full sm:w-auto justify-center bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-3 sm:py-2.5 rounded-xl shadow-lg transition flex items-center gap-2 border border-indigo-500/30 cursor-pointer"
             >
                 <span>➕</span> DODAJ NOVOG IGRAČA
             </button>
@@ -23,13 +23,13 @@
                     v-model="searchQuery"
                     type="text"
                     placeholder="Pretraži po imenu, poziciji..."
-                    class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl pl-9 pr-4 py-2 text-xs text-gray-900 dark:text-white outline-none focus:border-indigo-500 transition"
+                    class="min-h-[44px] w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl pl-9 pr-4 py-2 text-xs text-gray-900 dark:text-white outline-none focus:border-indigo-500 transition"
                 />
             </div>
 
             <AppSelect
                 v-model="selectedSeniority"
-                class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white text-xs font-bold rounded-xl px-3 py-2 outline-none focus:border-indigo-500 cursor-pointer"
+                class="w-full sm:w-auto bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white text-xs font-bold rounded-xl px-3 py-2 outline-none focus:border-indigo-500 cursor-pointer"
             >
                 <option value="all">Sve kategorije</option>
                 <option v-for="option in seniorityOptions" :key="option" :value="option">

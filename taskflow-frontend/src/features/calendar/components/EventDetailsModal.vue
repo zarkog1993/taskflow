@@ -1,7 +1,7 @@
 <!-- Modal sa detaljima događaja i pregledom odziva/prisustva pozvanih igrača. -->
 <template>
     <div class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6 w-full max-w-lg shadow-2xl space-y-6">
+        <div class="max-h-[calc(100dvh-2rem)] overflow-y-auto bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-4 sm:p-6 w-full max-w-lg shadow-2xl space-y-6">
             <!-- Zaglavlje Modala -->
             <div class="flex justify-between items-start border-b border-gray-200 dark:border-gray-800 pb-4">
                 <div>

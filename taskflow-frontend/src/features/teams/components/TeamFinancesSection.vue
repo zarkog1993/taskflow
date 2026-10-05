@@ -50,7 +50,7 @@
 
             <!-- Tabela sa igračima -->
             <div v-else-if="players && players.length > 0" class="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-800">
-                <table class="w-full text-left text-sm text-gray-700 dark:text-gray-300">
+                <table class="min-w-[640px] w-full text-left text-sm text-gray-700 dark:text-gray-300">
                     <thead class="bg-gray-100/80 dark:bg-gray-800/80 text-xs uppercase text-gray-600 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
                         <tr>
                             <th class="py-3 px-4">Igrač</th>

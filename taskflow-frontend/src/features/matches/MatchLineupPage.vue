@@ -47,6 +47,16 @@
             {{ errorMessage || successMessage }}
         </p>
 
+        <div
+            v-if="selectedPlayer"
+            class="flex items-center justify-between gap-3 rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-3 text-xs text-indigo-900 dark:border-indigo-800 dark:bg-indigo-950/60 dark:text-indigo-100"
+        >
+            <span class="min-w-0 break-words">Izabran je <strong>{{ selectedPlayer.name }}</strong>. Dodirni poziciju na terenu za postavljanje ili zamenu.</span>
+            <button type="button" class="min-h-10 shrink-0 font-bold underline" @click="selectedPlayerId = null">
+                Otkaži
+            </button>
+        </div>
+
         <div v-if="isLoading" class="rounded-2xl bg-gray-100 dark:bg-gray-800 p-8 text-center text-sm text-gray-600 dark:text-gray-400">
             Učitavanje sastava i potvrđenih igrača...
         </div>
@@ -54,9 +64,10 @@
         <div v-else-if="match" class="grid grid-cols-1 lg:grid-cols-4 gap-6">
             <TacticsPitch
                 :field-spots="fieldSpots"
+                :selected-player="selectedPlayer"
                 @drop="onDropOnPitch"
                 @drag-start="onDragStart"
-                @spot-click="openPlayerPicker"
+                @spot-click="handleSpotClick"
             />
 
             <aside class="bg-gray-100/80 dark:bg-gray-800/80 border border-gray-200/80 dark:border-gray-700/80 rounded-3xl p-5 shadow-xl space-y-4">
@@ -65,7 +76,7 @@
                         Potvrdili dolazak ({{ confirmedPlayers.length }})
                     </h2>
                     <p class="text-[11px] text-gray-600 dark:text-gray-400 mt-1">
-                        Izaberi do 11 startera na terenu, a ostale potvrđene igrače možeš označiti kao rezerve.
+                        Izaberi igrača, pa dodirni poziciju na terenu. Izaberi startera i drugu poziciju da zameniš mesta.
                     </p>
                 </div>
 
@@ -77,7 +88,7 @@
                         v-for="player in confirmedPlayers"
                         :key="player.id"
                         class="flex items-center justify-between gap-2 rounded-xl border p-3"
-                        :class="playerStatusClass(player)"
+                        :class="[playerStatusClass(player), selectedPlayerId === Number(player.id) ? 'ring-2 ring-indigo-500' : '']"
                     >
                         <div class="min-w-0 flex-1">
                             <p class="truncate text-xs font-bold text-gray-900 dark:text-white">{{ player.name }}</p>
@@ -87,18 +98,18 @@
                         </div>
                         <button
                             type="button"
-                            :disabled="isSaving || (!assignedPlayerIds.has(Number(player.id)) && !isOnBench(player) && !hasOpenSpot)"
+                            :disabled="isSaving"
                             @click="handlePlayerAction(player)"
-                            class="shrink-0 rounded-lg border border-gray-300 dark:border-gray-600 px-2 py-1 text-[10px] font-bold text-gray-700 dark:text-gray-300 disabled:opacity-50"
+                            class="min-h-10 shrink-0 rounded-lg border border-gray-300 dark:border-gray-600 px-2 py-1 text-[10px] font-bold text-gray-700 dark:text-gray-300 disabled:opacity-50"
                         >
                             {{ playerActionLabel(player) }}
                         </button>
                         <button
-                            v-if="!assignedPlayerIds.has(Number(player.id)) && !isOnBench(player)"
+                            v-if="assignedPlayerIds.has(Number(player.id)) || !isOnBench(player)"
                             type="button"
                             :disabled="isSaving"
                             @click="addToBench(player)"
-                            class="shrink-0 rounded-lg border border-amber-300 dark:border-amber-800 px-2 py-1 text-[10px] font-bold text-amber-700 dark:text-amber-300 disabled:opacity-50"
+                            class="min-h-10 shrink-0 rounded-lg border border-amber-300 dark:border-amber-800 px-2 py-1 text-[10px] font-bold text-amber-700 dark:text-amber-300 disabled:opacity-50"
                         >
                             Rezerva
                         </button>
@@ -138,6 +149,7 @@ const selectedFormation = ref('4-3-3')
 const fieldSpots = ref(createDefaultFieldSpots())
 const benchPlayerIds = ref([])
 const activeSpotForSelection = ref(null)
+const selectedPlayerId = ref(null)
 const searchQuery = ref('')
 const draggedSpot = ref(null)
 const isLoading = ref(true)
@@ -155,7 +167,9 @@ const filteredConfirmedPlayers = computed(() => {
 const assignedPlayerIds = computed(
     () => new Set(fieldSpots.value.map(spot => Number(spot.player?.id)).filter(Boolean)),
 )
-const hasOpenSpot = computed(() => fieldSpots.value.some(spot => !spot.player))
+const selectedPlayer = computed(() =>
+    confirmedPlayers.value.find(player => Number(player.id) === Number(selectedPlayerId.value)) || null,
+)
 
 const fetchLineup = async () => {
     try {
@@ -207,37 +221,50 @@ const openPlayerPicker = (spot) => {
     searchQuery.value = ''
 }
 
+const handleSpotClick = (spot) => {
+    if (!selectedPlayer.value) {
+        openPlayerPicker(spot)
+        return
+    }
+
+    assignPlayerToSpotAt(selectedPlayer.value, spot)
+    selectedPlayerId.value = null
+    errorMessage.value = ''
+}
+
 const closePlayerPicker = () => {
     activeSpotForSelection.value = null
 }
 
 const assignPlayerToSpot = (player) => {
     if (!activeSpotForSelection.value) return
-    fieldSpots.value.forEach(spot => {
-        if (Number(spot.player?.id) === Number(player.id)) spot.player = null
-    })
-    benchPlayerIds.value = benchPlayerIds.value.filter(id => Number(id) !== Number(player.id))
-    activeSpotForSelection.value.player = player
+    assignPlayerToSpotAt(player, activeSpotForSelection.value)
+    selectedPlayerId.value = null
     activeSpotForSelection.value = null
 }
 
-const assignPlayerToFirstOpenSpot = (player) => {
-    const openSpot = fieldSpots.value.find(spot => !spot.player)
-    if (!openSpot) {
-        errorMessage.value = 'Početni sastav je popunjen. Izaberi poziciju na terenu koju želiš da zameniš.'
-        return
+const assignPlayerToSpotAt = (player, spot) => {
+    const playerId = Number(player.id)
+    const sourceSpot = fieldSpots.value.find(fieldSpot =>
+        fieldSpot !== spot && Number(fieldSpot.player?.id) === playerId,
+    )
+
+    if (sourceSpot) {
+        const displacedPlayer = spot.player
+        spot.player = player
+        sourceSpot.player = displacedPlayer || null
+        if (displacedPlayer) {
+            benchPlayerIds.value = benchPlayerIds.value.filter(id => Number(id) !== Number(displacedPlayer.id))
+        }
+    } else {
+        const displacedPlayer = spot.player
+        if (displacedPlayer && Number(displacedPlayer.id) !== playerId) {
+            benchPlayerIds.value = [...new Set([...benchPlayerIds.value, Number(displacedPlayer.id)])]
+        }
+        spot.player = player
     }
 
-    errorMessage.value = ''
-    assignPlayerToSpotAt(player, openSpot)
-}
-
-const assignPlayerToSpotAt = (player, spot) => {
-    fieldSpots.value.forEach(fieldSpot => {
-        if (Number(fieldSpot.player?.id) === Number(player.id)) fieldSpot.player = null
-    })
-    benchPlayerIds.value = benchPlayerIds.value.filter(id => Number(id) !== Number(player.id))
-    spot.player = player
+    benchPlayerIds.value = benchPlayerIds.value.filter(id => Number(id) !== playerId)
 }
 
 const suggestStartingLineup = () => {
@@ -326,6 +353,7 @@ const playerStatusClass = (player) => {
 
 const toggleBench = (player) => {
     const playerId = Number(player.id)
+    if (Number(selectedPlayerId.value) === playerId) selectedPlayerId.value = null
     if (assignedPlayerIds.value.has(playerId)) {
         fieldSpots.value.forEach(spot => {
             if (Number(spot.player?.id) === playerId) spot.player = null
@@ -341,23 +369,24 @@ const toggleBench = (player) => {
 
 const addToBench = (player) => {
     const playerId = Number(player.id)
-    if (assignedPlayerIds.value.has(playerId) || isOnBench(player)) return
-
-    benchPlayerIds.value = [...benchPlayerIds.value, playerId]
-}
-
-const handlePlayerAction = (player) => {
-    if (assignedPlayerIds.value.has(Number(player.id))) {
+    if (assignedPlayerIds.value.has(playerId)) {
         toggleBench(player)
         return
     }
+    if (isOnBench(player)) return
 
-    assignPlayerToFirstOpenSpot(player)
+    benchPlayerIds.value = [...benchPlayerIds.value, playerId]
+    if (Number(selectedPlayerId.value) === playerId) selectedPlayerId.value = null
+}
+
+const handlePlayerAction = (player) => {
+    const playerId = Number(player.id)
+    selectedPlayerId.value = Number(selectedPlayerId.value) === playerId ? null : playerId
+    errorMessage.value = ''
 }
 
 const playerActionLabel = (player) => {
-    if (assignedPlayerIds.value.has(Number(player.id))) return 'Rezerva'
-    return 'U početni sastav'
+    return Number(selectedPlayerId.value) === Number(player.id) ? 'Otkaži izbor' : 'Izaberi'
 }
 
 const saveLineup = async () => {

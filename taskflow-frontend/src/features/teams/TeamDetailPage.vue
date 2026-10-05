@@ -2,7 +2,7 @@
     <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
         <!-- Navigacija i Zaglavlje Ekipe -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gray-100/60 dark:bg-gray-800/60 p-6 rounded-2xl border border-gray-200/60 dark:border-gray-700/60 backdrop-blur-md shadow-xl">
-            <div class="flex items-center space-x-4">
+            <div class="flex min-w-0 flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-4">
                 <router-link
                     to="/teams"
                     class="p-2.5 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white rounded-xl transition text-xs font-semibold flex items-center gap-2 border border-gray-200 dark:border-gray-700"
@@ -13,9 +13,9 @@
                     Nazad na Ekipe
                 </router-link>
 
-                <div v-if="team">
-                    <div class="flex items-center gap-3">
-                        <h2 class="text-3xl font-black text-gray-900 dark:text-white tracking-tight">{{ team.name }}</h2>
+                <div v-if="team" class="min-w-0">
+                    <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                        <h2 class="break-words text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">{{ team.name }}</h2>
                         <span class="text-xs font-mono font-bold uppercase text-indigo-600 dark:text-indigo-400 bg-indigo-600/20 px-3 py-1 rounded-lg border border-indigo-500/30">
                           {{ team.category || team.age_group || 'Seniori' }}
                         </span>
@@ -25,18 +25,18 @@
             </div>
 
             <!-- Prekidač Između Tabova Stranice -->
-            <div v-if="team" class="flex bg-white/80 dark:bg-gray-900/80 p-1 rounded-xl border border-gray-200 dark:border-gray-700 text-xs">
+            <div v-if="team" class="flex w-full sm:w-auto bg-white/80 dark:bg-gray-900/80 p-1 rounded-xl border border-gray-200 dark:border-gray-700 text-xs">
                 <button 
                     @click="activeMainTab = 'roster'"
                     :class="activeMainTab === 'roster' ? 'bg-indigo-600 text-white font-bold shadow-md' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'"
-                    class="px-4 py-2 rounded-lg transition flex items-center gap-2"
+                    class="min-w-0 flex-1 justify-center px-2 sm:px-4 py-2 rounded-lg transition flex items-center gap-1.5 sm:gap-2"
                 >
                     <span>🏃</span> Igrački Sastav
                 </button>
                 <button 
                     @click="activeMainTab = 'finances'"
                     :class="activeMainTab === 'finances' ? 'bg-indigo-600 text-white font-bold shadow-md' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'"
-                    class="px-4 py-2 rounded-lg transition flex items-center gap-2"
+                    class="min-w-0 flex-1 justify-center px-2 sm:px-4 py-2 rounded-lg transition flex items-center gap-1.5 sm:gap-2"
                 >
                     <span>💳</span> Članarine & Finansije
                 </button>

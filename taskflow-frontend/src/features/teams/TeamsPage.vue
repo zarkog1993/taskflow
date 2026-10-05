@@ -9,7 +9,7 @@
 
             <button
                 @click="showCreateTeamModal = true"
-                class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2 border border-indigo-500/30 cursor-pointer"
+                class="w-full sm:w-auto justify-center bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-3 sm:py-2.5 rounded-xl shadow-lg transition flex items-center gap-2 border border-indigo-500/30 cursor-pointer"
             >
                 <span>➕</span> NOVA EKIPA
             </button>

@@ -1,5 +1,5 @@
 <template>
-    <div class="min-h-screen bg-white dark:bg-slate-900 text-gray-900 dark:text-white flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="min-h-dvh bg-white dark:bg-slate-900 text-gray-900 dark:text-white flex flex-col justify-center py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
         <div class="sm:mx-auto sm:w-full sm:max-w-md text-center mb-8">
             <h2 class="text-3xl font-extrabold text-indigo-600 dark:text-indigo-400">TaskFlow Sport</h2>
             <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">Registrujte vaš klub i započnite upravljanje</p>
@@ -16,7 +16,7 @@
                             type="text"
                             required
                             placeholder="Petar Petrović"
-                            class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-gray-900 dark:text-white outline-none focus:border-indigo-500"
+                            class="min-h-[44px] w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-gray-900 dark:text-white outline-none focus:border-indigo-500"
                         />
                     </div>
 
@@ -32,7 +32,7 @@
                         />
                     </div>
 
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
                             <label class="block text-[10px] font-bold uppercase text-slate-600 dark:text-slate-400 mb-1">Grad</label>
                             <input v-model="form.city" type="text" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-gray-900 dark:text-white outline-none focus:border-indigo-500" />

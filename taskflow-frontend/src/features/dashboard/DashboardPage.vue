@@ -3,14 +3,14 @@
         <!-- Dobrodošlica i Zaglavlje -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gray-100/60 dark:bg-gray-800/60 p-6 rounded-2xl border border-gray-200/60 dark:border-gray-700/60 backdrop-blur-md shadow-xl">
             <div>
-                <h2 class="text-3xl font-black text-gray-900 dark:text-white tracking-tight">Dobrodošli nazad, {{ authStore.user?.name || 'Trener' }} 👋</h2>
+                <h2 class="break-words text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">Dobrodošli nazad, {{ authStore.user?.name || 'Trener' }} 👋</h2>
                 <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">Pregled stanja u akademiji, predstojećih utakmica i statistike tima</p>
             </div>
 
             <div class="flex items-center space-x-3">
                 <router-link
                     to="/trainings"
-                    class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold uppercase tracking-wider px-4 py-3 rounded-xl shadow-lg transition flex items-center gap-2"
+                    class="w-full sm:w-auto justify-center bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold uppercase tracking-wider px-4 py-3 rounded-xl shadow-lg transition flex items-center gap-2"
                 >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                     Zakaži Događaj

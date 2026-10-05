@@ -3,7 +3,7 @@
         <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Top Igrači po Golovima i Učinku</h3>
 
         <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
+            <table class="min-w-[560px] w-full text-left border-collapse">
                 <thead>
                 <tr class="bg-white/60 dark:bg-gray-900/60 border-b border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 uppercase text-[10px]">
                     <th class="py-3 px-4">Igrač</th>
