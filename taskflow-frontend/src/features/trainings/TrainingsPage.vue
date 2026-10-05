@@ -28,7 +28,7 @@
                 </div>
 
                 <button
-                    @click="showCreateModal = true"
+                    @click="handleOpenCreateModal"
                     class="col-span-2 w-full justify-center bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-3 sm:py-2.5 rounded-xl shadow-lg transition flex items-center gap-1.5 border border-indigo-500/30 cursor-pointer sm:col-span-1 sm:w-auto"
                 >
                     <span>➕</span> Zakaži Trening
@@ -60,7 +60,9 @@
                 v-for="session in monthlySessions"
                 :key="session.id"
                 :session="session"
+                :can-edit="canManageSessions"
                 @delete="handleDeleteSession"
+                @edit="handleEditSession"
             />
         </div>
 
@@ -73,14 +75,18 @@
 
         <!-- MODAL 1: Zakazivanje Novog Treninga -->
         <CreateSessionModal
-            v-if="showCreateModal"
-            :form="newSession"
+            v-if="showCreateModal || sessionToEdit"
+            :form="sessionToEdit ? editSessionForm : newSession"
             :teams="teams"
+            :session="sessionToEdit"
+            :attendees="editAttendees"
+            :is-editing="Boolean(sessionToEdit)"
+            :is-saving="isSavingSession"
             v-model:form-date="formDate"
             v-model:form-hours="formHours"
             v-model:form-minutes="formMinutes"
-            @close="showCreateModal = false"
-            @submit="handleCreateSession"
+            @close="showCreateModal = false; sessionToEdit = null"
+            @submit="sessionToEdit ? handleUpdateSession() : handleCreateSession()"
         />
 
         <!-- MODAL 2: Potvrda Brisanja Treninga -->
@@ -108,13 +114,21 @@ const {
     formHours,
     formMinutes,
     showCreateModal,
+    canManageSessions,
+    sessionToEdit,
+    editSessionForm,
+    editAttendees,
+    isSavingSession,
     currentYear,
     currentMonthName,
     monthlySessions,
     nextUpcomingSession,
     averageMonthlyAttendance,
     changeMonth,
+    handleOpenCreateModal,
     handleCreateSession,
+    handleEditSession,
+    handleUpdateSession,
     sessionToDelete,
     isDeleting,
     handleDeleteSession,

@@ -4,16 +4,20 @@
         <div class="max-h-[calc(100dvh-2rem)] w-full max-w-xl overflow-y-auto rounded-2xl bg-gray-100 dark:bg-gray-800 border border-gray-200/80 dark:border-gray-700/80 shadow-2xl">
             <div class="p-6 bg-white dark:bg-gray-900 border-b border-gray-200/70 dark:border-gray-700/70 relative">
                 <button @click="$emit('close')" class="absolute top-5 right-5 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">✕</button>
-                <h3 class="text-2xl font-black text-gray-900 dark:text-white">Zakaži Novi Trening</h3>
+                <h3 class="text-2xl font-black text-gray-900 dark:text-white">{{ isEditing ? 'Izmeni Trening' : 'Zakaži Novi Trening' }}</h3>
             </div>
 
             <form @submit.prevent="handleSubmit" class="p-6 space-y-4">
-                <div>
+                <div v-if="!isEditing">
                     <label class="block text-xs font-bold uppercase text-gray-600 dark:text-gray-400 mb-1">Ekipa</label>
                     <AppSelect v-model="form.team_id" required class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2.5 text-xs text-gray-900 dark:text-white">
                         <option disabled value="">Izaberite ekipu</option>
                         <option v-for="team in teams" :key="team.id" :value="team.id">{{ team.name }}</option>
                     </AppSelect>
+                </div>
+                <div v-else>
+                    <label class="block text-xs font-bold uppercase text-gray-600 dark:text-gray-400 mb-1">Ekipa</label>
+                    <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2.5 text-xs text-gray-900 dark:text-white">{{ session?.team?.name || 'Ekipa' }}</div>
                 </div>
                 <div>
                     <label class="block text-xs font-bold uppercase text-gray-600 dark:text-gray-400 mb-1">Naslov / Tema</label>
@@ -56,9 +60,28 @@
                     <textarea v-model="form.description" rows="3" placeholder="Uputstva za igrače..." class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-xs text-gray-900 dark:text-white resize-none"></textarea>
                 </div>
 
+                <section v-if="isEditing" class="space-y-3 border-t border-gray-200 dark:border-gray-700 pt-4">
+                    <div>
+                        <h4 class="text-xs font-bold uppercase text-gray-700 dark:text-gray-300">Zapažanja po igraču</h4>
+                        <p class="mt-1 text-[11px] text-gray-600 dark:text-gray-400">Beleške su dostupne samo za igrače koji su potvrdili dolazak.</p>
+                    </div>
+                    <div v-if="attendees.length" class="space-y-3">
+                        <label v-for="attendee in attendees" :key="attendee.id" class="block">
+                            <span class="mb-1 block text-xs font-semibold text-gray-900 dark:text-white">{{ attendee.name }}</span>
+                            <textarea
+                                v-model="form.player_observations[attendee.id]"
+                                rows="2"
+                                :placeholder="`Zapažanje za ${attendee.name}...`"
+                                class="w-full resize-y rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3 text-xs text-gray-900 dark:text-white"
+                            ></textarea>
+                        </label>
+                    </div>
+                    <p v-else class="rounded-xl border border-dashed border-gray-200 dark:border-gray-700 p-4 text-center text-xs text-gray-600 dark:text-gray-400">Još nijedan igrač nije potvrdio dolazak na ovaj trening.</p>
+                </section>
+
                 <div class="flex justify-end gap-3 pt-3 border-t border-gray-200 dark:border-gray-700">
                     <button type="button" @click="$emit('close')" class="px-4 py-2 text-xs font-bold text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">Odustani</button>
-                    <button type="submit" class="px-5 py-2 text-xs bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl">Sačuvaj</button>
+                    <button type="submit" :disabled="isSaving" class="px-5 py-2 text-xs bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl disabled:opacity-50">{{ isSaving ? 'Čuvanje...' : isEditing ? 'Sačuvaj izmene' : 'Sačuvaj' }}</button>
                 </div>
             </form>
         </div>
@@ -77,7 +100,11 @@ defineProps({
     teams: {
         type: Array,
         default: () => []
-    }
+    },
+    isEditing: { type: Boolean, default: false },
+    session: { type: Object, default: null },
+    attendees: { type: Array, default: () => [] },
+    isSaving: { type: Boolean, default: false }
 })
 
 const emit = defineEmits(['close', 'submit'])

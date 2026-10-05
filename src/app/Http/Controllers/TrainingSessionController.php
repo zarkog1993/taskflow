@@ -9,6 +9,8 @@ use App\Services\TrainingSessionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class TrainingSessionController extends Controller
 {
@@ -112,7 +114,27 @@ class TrainingSessionController extends Controller
             'status' => ['sometimes', 'in:planned,in_progress,completed'],
             'scheduled_at' => ['sometimes', 'required', 'date'],
             'location' => ['nullable', 'string', 'max:255'],
+            'player_observations' => ['sometimes', 'array'],
+            'player_observations.*' => ['nullable', 'string', 'max:5000'],
         ]);
+
+        $playerObservations = $validated['player_observations'] ?? null;
+        unset($validated['player_observations']);
+
+        if ($playerObservations !== null) {
+            $attendedPlayerIds = $trainingSession->invitedPlayers()
+                ->wherePivot('status', 'accepted')
+                ->pluck('players.id')
+                ->map(fn ($id) => (int) $id)
+                ->all();
+            $invalidPlayerIds = array_diff(array_map('intval', array_keys($playerObservations)), $attendedPlayerIds);
+
+            if ($invalidPlayerIds) {
+                throw ValidationException::withMessages([
+                    'player_observations' => 'Zapažanja mogu biti sačuvana samo za igrače koji su potvrdili dolazak.',
+                ]);
+            }
+        }
 
         if (isset($validated['team_id'])) {
             $team = Team::findOrFail($validated['team_id']);
@@ -124,9 +146,17 @@ class TrainingSessionController extends Controller
             $validated['club_id'] = $team->club_id;
         }
 
-        $trainingSession->update($validated);
+        DB::transaction(function () use ($trainingSession, $validated, $playerObservations) {
+            $trainingSession->update($validated);
 
-        return response()->json(['data' => $trainingSession->fresh(['team', 'creator'])]);
+            foreach ($playerObservations ?? [] as $playerId => $observation) {
+                $trainingSession->invitedPlayers()->updateExistingPivot($playerId, [
+                    'training_observation' => $observation,
+                ]);
+            }
+        });
+
+        return response()->json(['data' => $trainingSession->fresh(['team', 'creator', 'invitedPlayers'])]);
     }
 
     /**
