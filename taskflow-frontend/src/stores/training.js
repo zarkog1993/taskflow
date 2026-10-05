@@ -56,6 +56,21 @@ export const useTrainingStore = defineStore('training', {
             }
         },
 
+        async updateSession(sessionId, sessionData) {
+            this.error = null
+            try {
+                const response = await api.put(`/training-sessions/${sessionId}`, sessionData)
+                const updated = response.data.data || response.data
+                const index = this.sessions.findIndex(session => session.id === sessionId)
+                if (index !== -1) this.sessions.splice(index, 1, updated)
+                return true
+            } catch (err) {
+                this.error = err.response?.data?.message || 'Greška pri izmeni treninga.'
+                window.alert(this.error)
+                return false
+            }
+        },
+
         async deleteSession(sessionId) {
             try {
                 await api.delete(`/training-sessions/${sessionId}`);

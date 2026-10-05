@@ -53,7 +53,7 @@ class TrainingSession extends Model
     public function invitedPlayers(): MorphToMany
     {
         return $this->morphToMany(Player::class, 'invitable', 'event_invitations')
-            ->withPivot('status', 'responded_at')
+            ->withPivot('status', 'responded_at', 'training_observation')
             ->withTimestamps();
     }
 }

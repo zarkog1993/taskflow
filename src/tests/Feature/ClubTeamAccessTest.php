@@ -8,6 +8,7 @@ use App\Models\Player;
 use App\Models\Role;
 use App\Models\Subscription;
 use App\Models\Team;
+use App\Models\TrainingSession;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
@@ -117,6 +118,80 @@ class ClubTeamAccessTest extends TestCase
             'is_home' => true,
             'scheduled_at' => now()->addDay()->toDateTimeString(),
         ])->assertForbidden();
+    }
+
+    public function test_club_admin_can_update_training_and_save_observations_for_attendees(): void
+    {
+        [$owner, $team] = $this->createClubOwner('Training Notes Club');
+        $player = Player::create([
+            'club_id' => $team->club_id,
+            'team_id' => $team->id,
+            'name' => 'Attending Player',
+            'primary_position' => 'CM',
+        ]);
+        $session = TrainingSession::create([
+            'club_id' => $team->club_id,
+            'team_id' => $team->id,
+            'created_by' => $owner->id,
+            'title' => 'Original session',
+            'type' => 'training',
+            'status' => 'planned',
+            'scheduled_at' => now()->addDay(),
+        ]);
+        $session->invitedPlayers()->attach($player->id, ['status' => 'accepted']);
+
+        $this->actingAs($owner, 'sanctum')
+            ->putJson("/api/training-sessions/{$session->id}", [
+                'title' => 'Updated session',
+                'description' => 'Passing and movement drills',
+                'player_observations' => [$player->id => 'Good movement off the ball'],
+            ])
+            ->assertOk()
+            ->assertJsonPath('data.title', 'Updated session')
+            ->assertJsonPath('data.description', 'Passing and movement drills')
+            ->assertJsonPath('data.invited_players.0.pivot.training_observation', 'Good movement off the ball');
+
+        $this->assertDatabaseHas('event_invitations', [
+            'invitable_type' => 'training',
+            'invitable_id' => $session->id,
+            'player_id' => $player->id,
+            'training_observation' => 'Good movement off the ball',
+        ]);
+    }
+
+    public function test_training_observations_are_rejected_for_players_who_did_not_attend(): void
+    {
+        [$owner, $team] = $this->createClubOwner('Training Notes Club');
+        $player = Player::create([
+            'club_id' => $team->club_id,
+            'team_id' => $team->id,
+            'name' => 'Pending Player',
+            'primary_position' => 'CM',
+        ]);
+        $session = TrainingSession::create([
+            'club_id' => $team->club_id,
+            'team_id' => $team->id,
+            'created_by' => $owner->id,
+            'title' => 'Training session',
+            'type' => 'training',
+            'status' => 'planned',
+            'scheduled_at' => now()->addDay(),
+        ]);
+        $session->invitedPlayers()->attach($player->id, ['status' => 'pending']);
+
+        $this->actingAs($owner, 'sanctum')
+            ->putJson("/api/training-sessions/{$session->id}", [
+                'player_observations' => [$player->id => 'Should not be saved'],
+            ])
+            ->assertUnprocessable();
+
+        $this->assertDatabaseHas('event_invitations', [
+            'invitable_type' => 'training',
+            'invitable_id' => $session->id,
+            'player_id' => $player->id,
+            'status' => 'pending',
+            'training_observation' => null,
+        ]);
     }
 
     private function createClubOwner(string $clubName): array

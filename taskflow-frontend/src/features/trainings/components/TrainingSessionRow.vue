@@ -54,16 +54,28 @@
                 </div>
             </div>
 
-            <!-- Dugme za Brisanje Treninga -->
-            <button
-                @click="$emit('delete', session)"
-                title="Obriši trening"
-                class="p-2 bg-rose-50/60 dark:bg-rose-950/60 hover:bg-rose-100 dark:hover:bg-rose-900 border border-rose-200/80 dark:border-rose-800/80 text-rose-700 dark:text-rose-300 hover:text-gray-900 dark:hover:text-white rounded-xl transition cursor-pointer"
-            >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-            </button>
+            <div class="flex items-center gap-2">
+                <button
+                    v-if="canEdit"
+                    @click="$emit('edit', session)"
+                    :aria-label="`Izmeni trening ${session.title}`"
+                    title="Izmeni trening"
+                    class="p-2 bg-indigo-50/60 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900 border border-indigo-200/80 dark:border-indigo-800/80 text-indigo-700 dark:text-indigo-300 rounded-xl transition cursor-pointer"
+                >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.67a4.5 4.5 0 0 1-1.897 1.13L6 18.5l.7-2.685a4.5 4.5 0 0 1 1.13-1.897l9.032-9.431ZM19.5 7.125 16.875 4.5" />
+                    </svg>
+                </button>
+                <button
+                    @click="$emit('delete', session)"
+                    title="Obriši trening"
+                    class="p-2 bg-rose-50/60 dark:bg-rose-950/60 hover:bg-rose-100 dark:hover:bg-rose-900 border border-rose-200/80 dark:border-rose-800/80 text-rose-700 dark:text-rose-300 hover:text-gray-900 dark:hover:text-white rounded-xl transition cursor-pointer"
+                >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                </button>
+            </div>
         </div>
     </div>
 </template>
@@ -76,10 +88,11 @@ const props = defineProps({
     session: {
         type: Object,
         required: true
-    }
+    },
+    canEdit: { type: Boolean, default: false }
 })
 
-defineEmits(['delete'])
+defineEmits(['delete', 'edit'])
 
 const rsvp = computed(() => getRsvpCounts(props.session))
 </script>
