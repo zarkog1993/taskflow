@@ -16,6 +16,7 @@ const selectedTeamId = ref('all')
 const searchQuery = ref('')
 const dateFrom = ref('')
 const dateTo = ref('')
+const activeStatFilter = ref(null)
 
 const teams = ref([])
 const players = ref([])
@@ -79,12 +80,23 @@ export function useAnalytics() {
             )
         }
 
+        if (activeStatFilter.value === 'goals') {
+            result = result.filter(player => Number(player.goals) > 0)
+        } else if (activeStatFilter.value === 'assists') {
+            result = result.filter(player => Number(player.assists) > 0)
+        }
+
         return result
     })
+
+    const toggleStatFilter = (filter) => {
+        activeStatFilter.value = activeStatFilter.value === filter ? null : filter
+    }
 
     const resetFilters = () => {
         searchQuery.value = ''
         selectedTeamId.value = 'all'
+        activeStatFilter.value = null
     }
 
     return {
@@ -97,6 +109,8 @@ export function useAnalytics() {
         players,
         summary,
         filteredPlayers,
+        activeStatFilter,
+        toggleStatFilter,
         resetFilters,
         fetchAnalytics
     }

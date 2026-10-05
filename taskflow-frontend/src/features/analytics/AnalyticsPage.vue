@@ -48,23 +48,33 @@
         <template v-else>
             <!-- METRIKE NA OSNOVU REALNIH PODATAKA (KPI) -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 p-4 rounded-2xl flex items-center justify-between shadow-lg">
+                <button
+                    type="button"
+                    @click="toggleStatFilter('goals')"
+                    :aria-pressed="activeStatFilter === 'goals'"
+                    class="w-full text-left bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 p-4 rounded-2xl flex items-center justify-between shadow-lg transition hover:border-emerald-400 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 cursor-pointer"
+                >
                     <div>
                         <span class="text-[10px] font-bold uppercase text-slate-600 dark:text-slate-400 tracking-wider">Ukupno Golova</span>
                         <div class="text-2xl font-black text-emerald-700 dark:text-emerald-400 mt-1 font-mono">{{ summary.total_goals || 0 }}</div>
                         <span class="text-[10px] text-slate-600 dark:text-slate-400">Na {{ summary.total_matches || 0 }} utakmica</span>
                     </div>
                     <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 flex items-center justify-center text-lg">⚽</div>
-                </div>
+                </button>
 
-                <div class="bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 p-4 rounded-2xl flex items-center justify-between shadow-lg">
+                <button
+                    type="button"
+                    @click="toggleStatFilter('assists')"
+                    :aria-pressed="activeStatFilter === 'assists'"
+                    class="w-full text-left bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 p-4 rounded-2xl flex items-center justify-between shadow-lg transition hover:border-indigo-400 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer"
+                >
                     <div>
                         <span class="text-[10px] font-bold uppercase text-slate-600 dark:text-slate-400 tracking-wider">Ukupno Asistencija</span>
                         <div class="text-2xl font-black text-indigo-600 dark:text-indigo-400 mt-1 font-mono">{{ summary.total_assists || 0 }}</div>
                         <span class="text-[10px] text-slate-600 dark:text-slate-400">Ključna dodavanja</span>
                     </div>
                     <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950 border border-indigo-200 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-lg">👟</div>
-                </div>
+                </button>
 
                 <div class="bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 p-4 rounded-2xl flex items-center justify-between shadow-lg">
                     <div>
@@ -89,8 +99,12 @@
             <div class="bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 rounded-2xl p-5 shadow-xl space-y-4">
                 <div class="flex justify-between items-center border-b border-slate-200/60 dark:border-slate-700/60 pb-3">
                     <div>
-                        <h3 class="text-sm font-bold text-gray-900 dark:text-white">Rang Lista Igrača po Indeksu Korisnosti</h3>
-                        <p class="text-[10px] text-slate-600 dark:text-slate-400 mt-0.5">Indeks = (Golovi + Asistencije) / Odigrane Utakmice</p>
+                        <h3 class="text-sm font-bold text-gray-900 dark:text-white">
+                            {{ activeStatFilter === 'goals' ? 'Lista strelaca' : activeStatFilter === 'assists' ? 'Lista asistenata' : 'Rang Lista Igrača po Indeksu Korisnosti' }}
+                        </h3>
+                        <p class="text-[10px] text-slate-600 dark:text-slate-400 mt-0.5">
+                            {{ activeStatFilter === 'goals' ? 'Igrači koji su postigli najmanje jedan gol' : activeStatFilter === 'assists' ? 'Igrači koji su zabeležili najmanje jednu asistenciju' : 'Indeks = (Golovi + Asistencije) / Odigrane Utakmice' }}
+                        </p>
                     </div>
                     <div class="flex items-center gap-2.5">
                         <span class="text-[10px] text-slate-600 dark:text-slate-400 font-mono">
@@ -109,7 +123,7 @@
                     >
                         <div class="text-2xl">🔍</div>
                         <p class="text-xs text-slate-600 dark:text-slate-400">
-                            Nema igrača koji odgovaraju pretrazi
+                            {{ activeStatFilter === 'goals' ? 'Nema strelaca koji odgovaraju filterima' : activeStatFilter === 'assists' ? 'Nema asistenata koji odgovaraju filterima' : 'Nema igrača koji odgovaraju pretrazi' }}
                             <span v-if="searchQuery" class="text-gray-900 dark:text-white font-bold">"{{ searchQuery }}"</span>.
                         </p>
                         <button
@@ -189,6 +203,8 @@ const {
     players,
     summary,
     filteredPlayers,
+    activeStatFilter,
+    toggleStatFilter,
     resetFilters,
     fetchAnalytics
 } = useAnalytics()
