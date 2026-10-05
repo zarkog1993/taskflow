@@ -100,84 +100,6 @@
                     </div>
                 </div>
             </section>
-
-            <section id="match-squad" class="scroll-mt-24 space-y-4 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 sm:p-6">
-                <h2 class="text-lg font-bold text-gray-900 dark:text-white">Sastav ({{ attendedCount }})</h2>
-                <div class="flex justify-between items-center px-1">
-                    <span class="text-xs text-gray-600 dark:text-gray-400"
-                    >Štikliraj igrače koji su igrali na ovoj utakmici:</span
-                    >
-                    <button
-                        type="button"
-                        @click="toggleSelectAllSquad"
-                        class="text-[10px] text-indigo-600 dark:text-indigo-400 hover:underline font-bold cursor-pointer"
-                    >
-                        {{
-                            allSquadSelected ? "Poništi sve" : "Označi sve"
-                        }}
-                    </button>
-                </div>
-
-                <div class="grid grid-cols-1 gap-2 lg:grid-cols-2">
-                    <div
-                        v-if="!statsForm.players.length"
-                        class="text-center py-8 bg-white/40 dark:bg-gray-900/40 rounded-xl border border-gray-200 dark:border-gray-800"
-                    >
-                        <p class="text-xs text-gray-500 italic">
-                            Ekipa nema unetih igrača. Dodajte igrače u sastav ekipe.
-                        </p>
-                    </div>
-
-                    <div
-                        v-for="player in statsForm.players"
-                        :key="player.id"
-                        @click="player.attended = !player.attended"
-                        class="flex items-center justify-between p-3 rounded-xl border cursor-pointer transition select-none"
-                        :class="
-                            player.attended
-                                ? 'bg-indigo-50/70 dark:bg-indigo-950/70 border-indigo-200/60 dark:border-indigo-700/60'
-                                : 'bg-white/60 dark:bg-gray-900/60 border-gray-200 dark:border-gray-800'
-                        "
-                    >
-                        <div class="flex items-center gap-3">
-                            <input
-                                type="checkbox"
-                                :aria-label="`Igrao: ${player.name}`"
-                                v-model="player.attended"
-                                class="w-4 h-4 text-indigo-600 rounded bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-600"
-                                @click.stop
-                            />
-                            <div>
-                                <p class="text-xs font-bold text-gray-900 dark:text-white">
-                                    {{ player.name }}
-                                </p>
-                                <p class="text-[10px] text-gray-600 dark:text-gray-400">
-                                    #{{ player.jersey_number || "-" }} •
-                                    {{ player.position || "N/A" }}
-                                    <span
-                                        v-if="player.rsvp_status"
-                                        :class="RSVP_LABELS[player.rsvp_status]?.class"
-                                        class="ml-1 font-bold"
-                                    >
-                                        • {{ RSVP_LABELS[player.rsvp_status]?.label }}
-                                    </span>
-                                </p>
-                            </div>
-                        </div>
-                        <span
-                            class="text-[10px] font-bold px-2 py-0.5 rounded"
-                            :class="
-                                player.attended
-                                    ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800'
-                                    : 'bg-gray-100 dark:bg-gray-800 text-gray-500'
-                            "
-                        >
-                            {{ player.attended ? "Igrao" : "Nije igrao" }}
-                        </span>
-                    </div>
-                </div>
-            </section>
-
             <section id="match-stats" class="scroll-mt-24 space-y-4 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 sm:p-6">
                 <div class="flex items-center justify-between px-1">
                     <div>
@@ -298,6 +220,84 @@
                     </p>
                 </div>
             </section>
+
+            <section id="match-squad" class="scroll-mt-24 space-y-4 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 sm:p-6">
+                <h2 class="text-lg font-bold text-gray-900 dark:text-white">Sastav ({{ attendedCount }})</h2>
+                <div class="flex justify-between items-center px-1">
+                    <span class="text-xs text-gray-600 dark:text-gray-400"
+                    >Štikliraj igrače koji su igrali na ovoj utakmici:</span
+                    >
+                    <button
+                        type="button"
+                        @click="toggleSelectAllSquad"
+                        class="text-[10px] text-indigo-600 dark:text-indigo-400 hover:underline font-bold cursor-pointer"
+                    >
+                        {{
+                            allSquadSelected ? "Poništi sve" : "Označi sve"
+                        }}
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 gap-2 lg:grid-cols-2">
+                    <div
+                        v-if="!statsForm.players.length"
+                        class="text-center py-8 bg-white/40 dark:bg-gray-900/40 rounded-xl border border-gray-200 dark:border-gray-800"
+                    >
+                        <p class="text-xs text-gray-500 italic">
+                            Ekipa nema unetih igrača. Dodajte igrače u sastav ekipe.
+                        </p>
+                    </div>
+
+                    <div
+                        v-for="player in statsForm.players"
+                        :key="player.id"
+                        @click="player.attended = !player.attended"
+                        class="flex items-center justify-between p-3 rounded-xl border cursor-pointer transition select-none"
+                        :class="
+                            player.attended
+                                ? 'bg-indigo-50/70 dark:bg-indigo-950/70 border-indigo-200/60 dark:border-indigo-700/60'
+                                : 'bg-white/60 dark:bg-gray-900/60 border-gray-200 dark:border-gray-800'
+                        "
+                    >
+                        <div class="flex items-center gap-3">
+                            <input
+                                type="checkbox"
+                                :aria-label="`Igrao: ${player.name}`"
+                                v-model="player.attended"
+                                class="w-4 h-4 text-indigo-600 rounded bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-600"
+                                @click.stop
+                            />
+                            <div>
+                                <p class="text-xs font-bold text-gray-900 dark:text-white">
+                                    {{ player.name }}
+                                </p>
+                                <p class="text-[10px] text-gray-600 dark:text-gray-400">
+                                    #{{ player.jersey_number || "-" }} •
+                                    {{ player.position || "N/A" }}
+                                    <span
+                                        v-if="player.rsvp_status"
+                                        :class="RSVP_LABELS[player.rsvp_status]?.class"
+                                        class="ml-1 font-bold"
+                                    >
+                                        • {{ RSVP_LABELS[player.rsvp_status]?.label }}
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <span
+                            class="text-[10px] font-bold px-2 py-0.5 rounded"
+                            :class="
+                                player.attended
+                                    ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800'
+                                    : 'bg-gray-100 dark:bg-gray-800 text-gray-500'
+                            "
+                        >
+                            {{ player.attended ? "Igrao" : "Nije igrao" }}
+                        </span>
+                    </div>
+                </div>
+            </section>
+
 
             <div
                 class="flex justify-end gap-3 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4"

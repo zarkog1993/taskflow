@@ -65,6 +65,8 @@ export const useAuthStore = defineStore("auth", {
                 this.token = null
                 localStorage.removeItem("token")
                 localStorage.removeItem("user")
+                // Full reload clears all in-memory state from the previous session.
+                window.location.replace("/login")
             }
         }
     }
