@@ -1,11 +1,11 @@
 <template>
-    <div class="bg-gray-100/80 dark:bg-gray-800/80 border border-gray-200/80 dark:border-gray-700/80 rounded-2xl p-6 shadow-xl">
-        <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Top Igrači po Golovima i Učinku</h3>
+    <section class="rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm">
+        <h3 class="mb-4 text-base font-bold text-slate-900 dark:text-white">Top igrači po golovima i učinku</h3>
 
         <div class="overflow-x-auto">
             <table class="min-w-[560px] w-full text-left border-collapse">
                 <thead>
-                <tr class="bg-white/60 dark:bg-gray-900/60 border-b border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 uppercase text-[10px]">
+                <tr class="border-b border-slate-200/80 bg-slate-50 text-slate-600 dark:border-slate-800 dark:bg-slate-950/50 dark:text-slate-400 uppercase text-[10px] font-semibold">
                     <th class="py-3 px-4">Igrač</th>
                     <th class="py-3 px-4 text-center">Pozicija</th>
                     <th class="py-3 px-4 text-center">Utakmice</th>
@@ -13,37 +13,37 @@
                     <th class="py-3 px-4 text-center">Asistencije</th>
                 </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-200/50 dark:divide-gray-700/50 text-xs">
-                <tr v-for="player in players" :key="player.id" class="hover:bg-gray-200/30 dark:hover:bg-gray-700/30 transition">
-                    <td class="py-3 px-4 font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                        <div class="w-6 h-6 rounded-full bg-indigo-600/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-[10px]">
+                <tbody class="divide-y divide-slate-100 text-xs dark:divide-slate-800">
+                <tr v-for="player in players" :key="player.id" class="transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                    <td class="flex items-center gap-2 py-3 px-4 font-semibold text-slate-900 dark:text-white">
+                        <div class="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-100 text-indigo-800 font-bold text-[10px] dark:bg-indigo-950 dark:text-indigo-300">
                             {{ player.name.charAt(0) }}
                         </div>
-                        <router-link :to="`/players/${player.id}`" class="hover:text-indigo-600 dark:hover:text-indigo-400">
+                        <router-link :to="`/players/${player.id}`" class="font-semibold text-slate-900 hover:text-indigo-700 dark:text-white dark:hover:text-indigo-300">
                             {{ player.name }}
                         </router-link>
                     </td>
-                    <td class="py-3 px-4 text-center text-gray-600 dark:text-gray-400 font-mono">
+                    <td class="py-3 px-4 text-center font-mono text-slate-600 dark:text-slate-400">
                         {{ player.primary_position || 'N/A' }}
                     </td>
-                    <td class="py-3 px-4 text-center font-bold text-emerald-700 dark:text-emerald-400">
-                        {{ player.matches_played || 0 }}
+                    <td class="py-3 px-4 text-center">
+                        <span class="inline-flex min-w-8 justify-center rounded-md bg-emerald-50 px-2 py-1 text-sm font-bold text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300">{{ player.matches_played || 0 }}</span>
                     </td>
-                    <td class="py-3 px-4 text-center font-bold text-yellow-700 dark:text-yellow-400">
-                        {{ player.goals || 0 }}
+                    <td class="py-3 px-4 text-center">
+                        <span class="inline-flex min-w-8 justify-center rounded-md bg-amber-50 px-2 py-1 text-sm font-bold text-amber-800 dark:bg-amber-950/60 dark:text-amber-300">{{ player.goals || 0 }}</span>
                     </td>
-                    <td class="py-3 px-4 text-center font-bold text-purple-600 dark:text-purple-400">
-                        {{ player.assists || 0 }}
+                    <td class="py-3 px-4 text-center">
+                        <span class="inline-flex min-w-8 justify-center rounded-md bg-violet-50 px-2 py-1 text-sm font-bold text-violet-800 dark:bg-violet-950/60 dark:text-violet-300">{{ player.assists || 0 }}</span>
                     </td>
                 </tr>
 
                 <tr v-if="players.length === 0">
-                    <td colspan="5" class="text-center py-6 text-gray-500 italic">Nema zabeleženih statistika igrača.</td>
+                    <td colspan="5" class="py-6 text-center italic text-slate-500 dark:text-slate-400">Nema zabeleženih statistika igrača.</td>
                 </tr>
                 </tbody>
             </table>
         </div>
-    </div>
+    </section>
 </template>
 
 <script setup>
