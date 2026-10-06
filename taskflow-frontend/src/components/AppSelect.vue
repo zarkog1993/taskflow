@@ -43,10 +43,11 @@
         <Teleport to="body">
             <div
                 v-if="isOpen"
+                ref="menu"
                 :id="listboxId"
                 role="listbox"
                 :aria-label="attrs['aria-label'] || selectedLabel || placeholder"
-                class="z-[100] overflow-y-auto rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 py-1 text-gray-900 dark:text-white shadow-2xl"
+                class="z-[100] w-max max-w-[calc(100vw-16px)] overflow-y-auto rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 py-1 text-gray-900 dark:text-white shadow-2xl"
                 :style="menuStyle"
             >
                 <button
@@ -62,7 +63,7 @@
                     :class="isSelected(option) ? 'bg-indigo-100/70 dark:bg-indigo-900/70 text-gray-900 dark:text-white' : 'text-gray-800 dark:text-gray-200'"
                     @click="selectOption(option)"
                 >
-                    <span class="block truncate">{{ option.label }}</span>
+                    <span class="block whitespace-normal break-words">{{ option.label }}</span>
                 </button>
             </div>
         </Teleport>
@@ -94,6 +95,7 @@ const attrs = useAttrs()
 const slots = useSlots()
 const root = ref(null)
 const trigger = ref(null)
+const menu = ref(null)
 const nativeSelect = ref(null)
 const isOpen = ref(false)
 const activeIndex = ref(-1)
@@ -145,7 +147,8 @@ const positionMenu = () => {
 
     const margin = 8
     const gap = 4
-    const width = Math.min(rect.width, window.innerWidth - margin * 2)
+    const minWidth = Math.min(rect.width, window.innerWidth - margin * 2)
+    const width = Math.min(Math.max(minWidth, menu.value?.getBoundingClientRect().width ?? minWidth), window.innerWidth - margin * 2)
     const left = Math.max(margin, Math.min(rect.left, window.innerWidth - width - margin))
     const below = window.innerHeight - rect.bottom - margin - gap
     const above = rect.top - margin - gap
@@ -155,7 +158,7 @@ const positionMenu = () => {
     menuStyle.value = {
         position: 'fixed',
         left: `${left}px`,
-        width: `${width}px`,
+        minWidth: `${minWidth}px`,
         maxHeight: `${Math.min(256, availableHeight)}px`,
         ...(openAbove
             ? { bottom: `${window.innerHeight - rect.top + gap}px` }
