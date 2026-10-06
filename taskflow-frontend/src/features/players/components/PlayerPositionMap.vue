@@ -34,14 +34,14 @@ defineProps({
 const getPositionStyle = (pos) => {
     const positions = {
         GK: { left: '8%', top: '50%' },
-        LB: { left: '25%', top: '82%' },
+        LB: { left: '25%', top: '18%' },
         CB: { left: '25%', top: '50%' },
-        RB: { left: '25%', top: '18%' },
+        RB: { left: '25%', top: '82%' },
         DM: { left: '40%', top: '50%' },
         CM: { left: '50%', top: '50%' },
         AM: { left: '65%', top: '50%' },
-        LW: { left: '78%', top: '80%' },
-        RW: { left: '78%', top: '20%' },
+        LW: { left: '78%', top: '20%' },
+        RW: { left: '78%', top: '80%' },
         ST: { left: '85%', top: '50%' },
     }
     return positions[pos] || { left: '50%', top: '50%' }

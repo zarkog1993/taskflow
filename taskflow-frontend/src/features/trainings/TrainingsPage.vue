@@ -42,10 +42,15 @@
                 <div class="text-xs font-bold text-gray-600 dark:text-gray-400 uppercase">Ukupno Treninga</div>
                 <div class="text-2xl font-black text-gray-900 dark:text-white mt-1">{{ monthlySessions.length }}</div>
             </div>
-            <div class="bg-gray-100/60 dark:bg-gray-800/60 border border-gray-200/60 dark:border-gray-700/60 p-4 rounded-2xl">
+            <button
+                type="button"
+                @click="showAttendanceOverview = true"
+                aria-label="Prikaži odziv igrača na treninge ovog meseca"
+                class="bg-gray-100/60 dark:bg-gray-800/60 border border-gray-200/60 dark:border-gray-700/60 hover:border-emerald-500/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 p-4 rounded-2xl text-left transition cursor-pointer"
+            >
                 <div class="text-xs font-bold text-gray-600 dark:text-gray-400 uppercase">Prosečan Odziv</div>
                 <div class="text-2xl font-black text-emerald-700 dark:text-emerald-400 mt-1">{{ averageMonthlyAttendance }}%</div>
-            </div>
+            </button>
             <div class="bg-gray-100/60 dark:bg-gray-800/60 border border-gray-200/60 dark:border-gray-700/60 p-4 rounded-2xl">
                 <div class="text-xs font-bold text-gray-600 dark:text-gray-400 uppercase">Naredni Trening</div>
                 <div class="text-sm font-bold text-indigo-700 dark:text-indigo-300 mt-1 truncate">
@@ -97,6 +102,14 @@
             @close="sessionToDelete = null"
             @confirm="confirmDeleteSession"
         />
+
+        <AttendanceOverviewModal
+            v-if="showAttendanceOverview"
+            :sessions="monthlySessions"
+            :month-name="currentMonthName"
+            :year="currentYear"
+            @close="showAttendanceOverview = false"
+        />
     </div>
 </template>
 
@@ -104,6 +117,7 @@
 import TrainingSessionRow from './components/TrainingSessionRow.vue'
 import CreateSessionModal from './components/CreateSessionModal.vue'
 import DeleteSessionModal from './components/DeleteSessionModal.vue'
+import AttendanceOverviewModal from './components/AttendanceOverviewModal.vue'
 import { useTrainingsPage } from './composables/useTrainingsPage'
 
 const {
@@ -124,6 +138,7 @@ const {
     monthlySessions,
     nextUpcomingSession,
     averageMonthlyAttendance,
+    showAttendanceOverview,
     changeMonth,
     handleOpenCreateModal,
     handleCreateSession,
