@@ -27,6 +27,7 @@ export function useTrainingsPage() {
     const formHours = ref('18')
     const formMinutes = ref('00')
     const showCreateModal = ref(false)
+    const showAttendanceOverview = ref(false)
     const sessionToEdit = ref(null)
     const isSavingSession = ref(false)
     const editSessionForm = reactive({
@@ -185,6 +186,7 @@ export function useTrainingsPage() {
         formHours,
         formMinutes,
         showCreateModal,
+        showAttendanceOverview,
         canManageSessions,
         sessionToEdit,
         editSessionForm,
