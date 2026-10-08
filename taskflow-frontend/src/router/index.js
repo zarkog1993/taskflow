@@ -19,8 +19,15 @@ import SuperAdminView from "../views/SuperAdminView.vue"
 import SubscriptionPendingView from "../views/SubscriptionPendingView.vue"
 import AnalyticsView from "../views/AnalyticsView.vue";
 import FinancesView from "../views/FinancesView.vue";
+import HomeView from "../views/HomeView.vue"
 
 const routes = [
+    {
+        path: '/',
+        name: 'home',
+        component: HomeView,
+        meta: { guestOnly: true }
+    },
     {
         path: "/login",
         name: "login",
@@ -40,7 +47,7 @@ const routes = [
         meta: { requiresAuth: true, allowPendingSubscription: true }
     },
     {
-        path: '/',
+        path: '/dashboard',
         name: 'dashboard',
         component: DashboardView,
         meta: { requiresAuth: true, subscriptionRequired: true }
@@ -194,7 +201,7 @@ router.beforeEach((to, from, next) => {
     }
 
     // 3. Automatsko preusmeravanje Super Admina sa početne strane
-    if ((to.name === 'dashboard' || to.path === '/') && isSuperAdmin(user)) {
+    if (to.name === 'dashboard' && isSuperAdmin(user)) {
         return next('/super-admin')
     }
 

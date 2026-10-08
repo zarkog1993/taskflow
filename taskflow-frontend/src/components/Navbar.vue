@@ -6,7 +6,7 @@
             <div class="flex items-center gap-6 min-w-0">
                 <router-link :to="dashboardRoute" class="flex items-center gap-2 shrink-0">
           <span class="text-xl font-extrabold tracking-tight text-emerald-700 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition">
-            ProTrainer
+          ProTrainer
           </span>
                 </router-link>
 
@@ -183,7 +183,7 @@
                     :to="dashboardRoute"
                     @click="mobileMenuOpen = false"
                     class="flex min-h-[44px] items-center rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-800/60 dark:text-slate-200 dark:hover:bg-slate-800"
-                    :class="isActive(dashboardRoute) || $route.path === '/' ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400' : ''"
+                    :class="isActive(dashboardRoute) ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400' : ''"
                 >
                     Početna
                 </router-link>
@@ -321,7 +321,8 @@ const isSuperAdmin = computed(() => {
 
 // Dinamičko preusmeravanje za Dashboard
 const dashboardRoute = computed(() => {
-    return isSuperAdmin.value ? '/super-admin' : '/'
+    if (!authStore.isAuthenticated) return '/'
+    return isSuperAdmin.value ? '/super-admin' : '/dashboard'
 })
 
 const canManage = computed(() => {

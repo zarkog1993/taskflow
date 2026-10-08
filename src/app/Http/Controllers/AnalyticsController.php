@@ -15,7 +15,7 @@ class AnalyticsController extends Controller
     /**
      * Status pozivnice koji se računa kao dolazak na trening.
      */
-    private const ATTENDED_STATUS = 'accepted';
+    private const string ATTENDED_STATUS = 'accepted';
 
     /**
      * Get analytics data for the specified team and date range.

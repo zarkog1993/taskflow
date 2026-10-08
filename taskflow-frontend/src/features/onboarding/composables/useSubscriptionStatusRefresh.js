@@ -15,7 +15,7 @@ export function useSubscriptionStatusRefresh() {
             authStore.user = response.data
             localStorage.setItem('user', JSON.stringify(response.data))
             if (['approved', 'active'].includes(response.data.subscription_status)) {
-                router.replace('/')
+                router.replace({ name: 'dashboard' })
             }
         } catch (error) {
             console.error('Unable to refresh subscription status:', error)

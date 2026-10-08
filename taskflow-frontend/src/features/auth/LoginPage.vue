@@ -11,7 +11,7 @@
         >
             <div class="text-center mb-8">
                 <h1 class="text-3xl font-bold tracking-tight text-indigo-600 dark:text-indigo-400">
-                    TaskFlow
+                    ProTrainer
                 </h1>
                 <p class="text-gray-600 dark:text-gray-400 mt-2 text-sm">Prijavite se na vaš nalog</p>
             </div>

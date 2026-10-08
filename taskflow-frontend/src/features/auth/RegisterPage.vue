@@ -1,7 +1,7 @@
 <template>
     <div class="min-h-dvh bg-white dark:bg-slate-900 text-gray-900 dark:text-white flex flex-col justify-center py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
         <div class="sm:mx-auto sm:w-full sm:max-w-md text-center mb-8">
-            <h2 class="text-3xl font-extrabold text-indigo-600 dark:text-indigo-400">TaskFlow Sport</h2>
+            <h2 class="text-3xl font-extrabold text-indigo-600 dark:text-indigo-400">ProTrainer</h2>
             <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">Registrujte vaš klub i započnite upravljanje</p>
         </div>
 
